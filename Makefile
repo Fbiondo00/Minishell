@@ -5,15 +5,25 @@ LEXER	= $(wildcard lexer/*.c)
 PARSER	= $(wildcard executor/*.c)
 EXECUTOR	= $(wildcard parser/*.c)
 
-BLUE	= \033[1;34m
-RED		= \033[0;31m
-GREEN	= \033[0;32m
+ERASE	=	\033[2K\r
+GREY	=	\033[30m
+RED		=	\033[31m
+GREEN	=	\033[32m
+YELLOW	=	\033[33m
+BLUE	=	\033[34m
+PINK	=	\033[35m
+CYAN	=	\033[36m
+WHITE	=	\033[37m
+BOLD	=	\033[1m
+UNDER	=	\033[4m
+SUR		=	\033[7m
+END		=	\033[0m
+CENTER	=	\033[60G
 RESET	= \033[0;0m
 ECHO	=	@echo
 
 FLAGS = -Wextra -Werror -Wall
 CC = @gcc ${FLAGS} 
-CMP = $(ECHO) "\nCompiling minishell"
 RM = @rm -f
 
 OBJS = ${SRC:.c=.o} $(PARSER:%.c=%.o) $(LEXER:%.c=%.o) $(EXECUTOR:%.c=%.o)
@@ -25,12 +35,12 @@ SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / 7)
 
 	@$(CC) $(FLAGS) -c $< -o $@
 	@$(eval SRC_COUNT = $(shell expr $(SRC_COUNT) + 1))
-	@printf "$(GREEN)\r%100s\r[%d/%d (%d%%)] $(GREEN)$<" "" $(SRC_COUNT) 7 $(SRC_PCT)
-
+	@printf "$(BOLD)$(GREEN)\r%100s\r[%d/%d] 😊(%d%%) $(END)$(BOLD)$(BLUE)$<" "" $(SRC_COUNT) 7 $(SRC_PCT)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -lreadline -o $(NAME) 
-	$(CMP)
+	@printf "$(UNDER)$(BOLD)$(CYAN)\nCompiling minishell\n$(RESET)$(BOLD)"
+	@./minishell
 
 all: $(NAME)
 
@@ -39,7 +49,7 @@ clean:
 
 fclean: clean
 	${RM} ${NAME}
-	@printf "$(RED)Removing minishell .......$(RESET)"
+	@printf "$(UNDER)$(BOLD)$(RED)Removing minishell$(RESET)$(RED$)$(BOLD) .......$(RESET)"
 	
 re: fclean all
 	$(CMP)
