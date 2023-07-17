@@ -6,19 +6,31 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/09 17:40:26 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/16 22:22:22 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+// EXECUTOR
+// A. lancia il comando
+// QUESTE OPERAZIONI IN FASE DI EXEC o PARSER?
+// in generale le operazioni sono in questo ordine:
+//  tilde expansion (NON fare)
+//  parameter expansion (SI)
+//  command substitution (NON fare)
+//  arithmetic expansion (NON fare)
+//  pathname expansion (??)
+//  quote removal
+//  alias substitution (in che ordine?)
+// B. setta stdin/stdout/stderr se modificate dalle redirection
+// -------------------------------------------------------------
 // TODO:
 // Per debug
 //     -creare funzione che stampa il nodo ed i suoi attributi
 //     -creare funzione che naviga i nodi
 //     -creare funzione che accede al nodo di start execution, ovvero
 //         all ultimo nodo riscontrato fra tutte le left_branchç
-
 
 void print_node(t_node *node)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/14 04:21:40 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/16 22:37:33 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,35 +17,6 @@
             // intercettare segnale con signal (no thread)
     //B. una volta ricevuto la linea di comando (da cosa viene terminata?)
         // controlla se errore delle " o ' non chiuse
-    //C. TOKEN RECOGNITION ?
-//2. PARSER
-    //A. IDENTIFY literal value from special value of chars.
-        // Distinguish between
-        // WORDS
-        // OPERATOR
-        // PRECEDENCE ORDER 
-        // order of : echo ciao && echo come | echo stai 
-        // first | than &&, so:
-        //echo ciao && (echo come | echo stai)
-        // echo ciao && {echo come | echo stai} (uguale )
-
-        // ORDINE REDIRECTION
-        // echo>test2 ciao == echo ciao >test2 == >test2 echo ciao
-        
-        //--> PER POTER IDENTIFICARE ORDINE BISOGNA LEGGERE TUTTA LE RIGA 
-        // E MAPPARE TUTTI GLI OPERATORI E PAROLE.
-    
-    //B. fa le operazioni necessarie in questo ordine
-        // tilde expansion
-        // parameter expansion
-        // command substitution
-        // arithmetic expansion
-        // pathname expansion
-        // quote removal
-        // alias substitution (in which order?)
-    //C. setta stdin/stdout/stderr se modificate dalle redirection
-//3. EXECUTOR
-    //A. lancia il comando
 
 #include "minishell.h"
 
@@ -76,7 +47,7 @@ int ft_strlen( char *s)
 }
 
 // setta i valori iniziali
-// salva l environment iniziale, history a 0
+// salva l environment iniziale
 // attivazione signal
 // possiamo assegnare e modificare direttamente env o bisogna fare una copia?
 void    shell_init(int argc, char **argv, char **env, t_shell *shell)
@@ -107,6 +78,29 @@ void    ft_exit(t_shell *shell, char *str)
     exit(1);
 }
 
+int in_quotes(t_node *node, int index)
+{
+    int i;
+    int d_quotes;
+    int s_quotes;
+
+    i = -1;
+    d_quotes = 0;
+    s_quotes = 0;
+    while (++i < index)
+    {
+        if (node->quote_idx[i] == 34)
+            d_quotes++;
+        if (node->quote_idx[i] == 39)
+            s_quotes++;
+    }
+    if (s_quotes % 2 != 0)
+        return (-1);
+    if (d_quotes % 2 != 0)
+        return (1);
+    return (0);
+}
+
 //  echo a && echo b | (false && echo d | echo e)             OK > a
 //  echo a && echo b | echo c ( false && echo d | echo e )    KO
 //  echo a && echo b | echo c (&&  false && echo d | echo e ) KO
@@ -128,8 +122,11 @@ int main(int argc, char **argv, char **env)
     } 
 }
 
+
+
 // TEST a> b|c
 // -fsanitize=address
-// seg fault ogni tanto con comandi semplici ripetuti
 // a| ??  check_op_logic_than_pipe non controlla ultimo ne primo char?
 // inizializzare bene tutti i valori
+// errore se idx 0 o idx len -1 è un operatore: echo c|   o  |echo c.. check iniziale
+// se a <>b dare  errore?

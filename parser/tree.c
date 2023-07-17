@@ -6,171 +6,139 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:51:56 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/13 01:23:38 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/16 22:17:59 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-t_node	*set_node_operator(t_shell *shell, t_node *back_node, int idx_start);
-t_node	*set_node_cmd(t_shell *shell, t_node *back_node, int idx_start, int dir);
+void	set_node_operator(t_node *node, t_node *back_node, int idx_start);
+void	set_node_cmd(t_node *node, t_node *back_node);
 
-// 1. PRENDE LA RAW LINE
-// 2. CONTROLLA SE ESISTE UN OPERATORE LOGICO, OVVERO VERIFICA CHE:
-//     A. SIA PRESENTE LA SEGUENZA DI CHAR:  &&  ||
-//     B. CHE TALE SEQUENZA NON SIA in_quotes()
-// 3. SETTA IL NODO DI ORIGINE:
-//     A. SE ESISTE, PRENDE L ULTIMO OPERATORE LOGICO A DESTRA COME NODO DI START.
-//     B. SE NON ESISTE, ABBIAMO COME OPERATORI SOLO | e () E OPERATORI REDIREZIONE > etc..IN QUESTO CASO PRENDIAMO SEMPRE L ULTIMA PIPE DI DESTRA COME NODO DI ORIGINE.
-// 4. SETTIAMO IL RAMO DI SINISTRA. TALE OPERAZIONE PREVEDE:
-//     A. INDIVIDUAZIONE PROSSIMO OPERATORE LOGICO (&& || |)
-//         AA. INDIVIDUARE LA PRESENZA DI TALI CARATTERI
-//         BB. VERIFICARE CHE NON SIA in_quotes()
-//     B. LA SEQUENZA DI CARATTERI DATA DALLA DIFFERENZA DELL INDEX DELL OPERATORE DI
-//        START E QUELLO DI END DIVENTA IL RAW_CMD (che verrà elaborato dall executor)
-// --------------------------------------------------------------------------------------
-
-// INPUT:
-// idx = indice di start, contiene l operatore
-// dir = è la direzione (1 se verso destra, -1 se verso sinistra)
-// COSA FA?
-// restituisce la stringa con il comando raw
-// ovvero tutti i char tra un operatore ed un altro(senza includerli)
-// oppure se non trova un operatore nella direzione indicata, restituisce la stringa
-// dal nodo di partenza fino a str[0] o str[len - 1], in base alla dir scelta.
-// se va a sinistra il limiter sarà 0 altrimenti sarà len - 1
-// questa stringa raw_cmd contiene ancora i comandi di redirection
-// verrà ulteriormente filtrata dalla func set_redirection()
-char	*get_raw_command(t_shell *shell, int idx, int dir)
+char	*get_raw_string(char *str, int idx, int dir)
 {
 	int		i;
-	int		next_idx;
-	char	*str;
+	int		diff;
+	int		len;
+	char	*new_str;
 
 	i = -1;
-	next_idx = get_idx_next_op(shell, idx, dir);
-	printf("in get_raw_command> idx:%d\n", idx);
-	printf("in get_raw_command> next_idx:%d\n", next_idx);
 	if (dir == 1)
 	{
-		if (next_idx == 0)
-			next_idx = ft_strlen(shell->rawline) - 1; // ultimo index stringa
-		printf("new next_idx:%d\n", next_idx);
-		str = malloc(next_idx - idx + 1);
-		if (idx) // se idx è operatore è da saltare se è 0 è da stampare
-			idx++;
-		next_idx++;
-		while (idx < next_idx)
-			str[++i] = shell->rawline[idx++];
+		len = ft_strlen(str);
+		diff = len - idx;
+		new_str = malloc(diff);
+		new_str[diff - 1] = '\0';
+		while (++i < diff - 1)
+			new_str[i] = str[++idx];
 	}
 	else
 	{
-		str = malloc(idx - next_idx + 1);
-		while (next_idx < idx)
-			str[++i] = shell->rawline[next_idx++];
+		diff = idx - 0;
+		new_str = malloc(diff + 1);
+		new_str[diff] = '\0';
+		while (++i < diff)
+			new_str[i] = str[i];
 	}
-	str[++i] = '\0';
-	return (str);
+	return (new_str);
 }
 
-// INPUT:
-// 1.shell 2.index dell operatore
-// ritorna l index del primo
-// Setta il branch nella direzione indicata
-// dir -1 è verso sinistra , dir 1 è verso destra
-t_node	* set_branch(t_shell *shell, t_node *node, int idx_start, int dir)
+
+void	set_node_cmd(t_node *node, t_node *back_node)
 {
-	int	new_idx;
-
-	new_idx = check_op_logic_than_pipe(shell, idx_start, dir);
-	printf("in branch> next_op index: %d\n", new_idx);
-	if (new_idx)
-	{
-		printf("in set_branch >set_node_operator..\n");
-		return (set_node_operator(shell, node, new_idx));
-	}
-	else
-	{
-		printf("in set_branch >set_node_cmd..\n");
-		return (set_node_cmd(shell, node, idx_start, dir));
-	}
-}
-
-// V2 RICORSIVO
-// PRESUPPOSTO CONCETTUALE:
-// SE è NODO OPERATORE VADO A SETTARE I NODI BACK/LEFT/RIGHT E CONTENT SETTO
-// SOLO LA STRINGA RAPPRESENTATIVA DELL OPERATORE get_op()
-// ALTRIMENTI SETTO SOLO IL CONTENT CON IL PEZZO DI STRINGA DELIMITATO DA DUE NODI(4.B)
-// O SE è L ULTIMO NODO, ALLORA LA STRINGA è DATA DAL NODO AL EOF o SOF(start of file)
-// e setto I NODI BACK/LEFT/RIGHT a NULL
-// lo stop alla ricorsività è dato dall index che si muove e arriverà eventualmente
-// all EOF o SOF(start of file)
-t_node	*set_node_operator(t_shell *shell, t_node *back_node, int idx_start)
-{
-	t_node *node;
-
-	node = malloc(sizeof(*node));
-	node->back = back_node;
-	node->content.op = get_op(shell, idx_start);
-	printf("idx_start: %d\n", idx_start);
-	printf("operator: %d\n", node->content.op);
-	printf("set_branch: LEFT..\n");
-	node->left = set_branch(shell, node, idx_start, -1);
-	printf("set_branch: RIGHT..\n");
-	if (node->content.op == 10 || node->content.op == 11)
-		node->right = set_branch(shell, node, idx_start + 1, 1);
-	else
-		node->right = set_branch(shell, node, idx_start, 1);
-	return (node);
-}
-
-// INPUT:
-// 1.Shell
-// 2.back_node
-// 3.idx_start
-// 4.dir (3 & 4 vengono dati in input a get_raw_command)
-// dir -1 è verso sinistra , dir 1 è verso destra
-t_node	*set_node_cmd(t_shell *shell, t_node *back_node, int idx_start, int dir)
-{
-	t_node	*node;
-
-	node = malloc(sizeof(*node));
-	node->raw_cmd = get_raw_command(shell, idx_start, dir);
-	if (node->raw_cmd)
-	{
-		printf("raw_cmd of get_raw_command:\n");
-		printf("%s\n",node->raw_cmd); //seg fault a|b
-	}
 	node->back = back_node;
 	node->left = NULL;
 	node->right = NULL;
 	node->content.op = 0;
+	node->content.idx_op = -1;
+	printf("In child node_cmd, raw_cmd{%s}\n", node->raw_cmd);
 	printf("set_content..\n");
-	set_content(shell, node, 0);
-	return (node);
+	set_content(node);
 }
 
-// NELLA CREAZIONE DELL ALBERO VIENE PRIMA DETERMINATO
-// SE è PRESENTE ALMENO 1 NODO OPERATORE, SI STARTERA' DA QUELLO.
-// IN CASO CONTRARIO SIGNIFICA CHE ESISTE SOLAMENTE UN COMANDO "ATOMICO"
-//  E BISOGNA SOLO CREARE UN NODO CONTENENTE IL SINGOLO COMANDO
-// CHE COINCIDE CON LA rawline
-void	set_tree(t_shell *shell)
+void set_branch(t_node *node, t_node *back_node)
 {
-	int	idx_start;
+	int new_idx;
 
-	idx_start = check_op_logic_than_pipe(
-			shell, ft_strlen(shell->rawline) - 1, -1);
+	new_idx = check_op_logic_than_pipe(node);
+	printf("in branch> next_op index: %d\n", new_idx);
+	if (new_idx)
+	{
+		printf("in set_branch >set_node_operator..\n");
+		set_node_operator(node, back_node, new_idx);
+	}
+	else
+	{
+		printf("in set_branch >set_node_cmd..\n");
+		set_node_cmd(node, back_node);
+	}
+}
+
+void	set_node_operator(t_node *node, t_node *back_node, int idx_start)
+{
+	t_node *left_node;
+	t_node *right_node;
+
+	// malloc/setup: left & right node
+	left_node = malloc(sizeof(*left_node));
+	right_node = malloc(sizeof(*right_node));
+	node->left = left_node;
+	node->right = right_node;
+	
+	// set back_node
+	node->back = back_node;
+
+	// set op value and idx
+	node->content.op = get_op(node, idx_start);
+	node->content.idx_op = idx_start; // strategia iniziale...serve ancora?
+
+	// print stuff...(debug)
+	printf("idx_start: %d\n", idx_start);
+	printf("operator: %d\n", node->content.op);
+
+	// set raw_cmd & quote_idx in left & right node (da usare in set_branch)
+	node->left->raw_cmd = get_raw_string(node->raw_cmd, idx_start, -1);
+	node->left->quote_idx = get_raw_string(node->quote_idx, idx_start, -1);
+	if (node->content.op == 10 || node->content.op == 11)
+		idx_start++;
+	printf("idx_start:%d\n", idx_start);
+	node->right->raw_cmd = get_raw_string(node->raw_cmd, idx_start, 1);
+	node->right->quote_idx = get_raw_string(node->quote_idx, idx_start, 1);
+
+	// print stuff...(debug)
+	printf("ACTUAL raw_cmd{%s}  quote_idx{%s}\n", node->raw_cmd, node->quote_idx);
+	printf("LEFT raw_cmd{%s} quote_idx{%s}\n", node->left->raw_cmd, node->left->quote_idx);
+	printf("RIGHT raw_cmd{%s} quote_idx{%s}\n", node->right->raw_cmd, node->right->quote_idx);
+
+	// build up: left & right node
+	printf("set_branch: LEFT..\n");
+	set_branch(node->left, node);
+	printf("set_branch: RIGHT..\n");
+	set_branch(node->right, node);
+}
+
+// V2
+void set_tree(t_shell *shell)
+{
+	t_node *node;
+	int idx_start;
+	
+	// --init and set starter node ---
+	node = malloc(sizeof(*node));
+	node->raw_cmd = shell->rawline;
+	node->quote_idx = shell->quote_idx;
+	shell->tree = node;
+	// -------------------------
+	idx_start = check_op_logic_than_pipe(node);
 	printf("check_op_logic_than_pipe, index:%d\n", idx_start);
 	if (idx_start)
 	{
 		printf("set_node_operator..\n");
-		shell->tree = set_node_operator(shell, NULL, idx_start);
+		set_node_operator(node, NULL, idx_start);
 	}
 	else
 	{
 		printf("set_node_cmd..\n");
-		shell->tree = set_node_cmd(shell, NULL, 0, 1);
+		set_node_cmd(node, NULL);
 	}
 }
-

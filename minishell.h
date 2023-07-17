@@ -3,25 +3,33 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/13 01:24:40 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:14:04 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# include <termios.h>
+# include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
+# include <stdarg.h>
+# include <fcntl.h>
 # include <unistd.h>
+# include <sys/wait.h>
+# include <sys/types.h>
 # include <string.h>
+# include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
 
 // MESSAGE
-# define PROMPT_MSG "fbrdhell-0.1 $"
+# define PROMPT_MSG "fbrdhell-2.0 $"
 # define UNCLOSED_QUOTES_ERROR "Error: unclosed quotes\n"
 
 //EXECUTOR OPERATOR
@@ -51,13 +59,15 @@ typedef struct s_content
 {
 	char	**cmd;
 	int		op;
+	int		idx_op; // needed ?
 	int		kv_size;
 	t_kv	*redir;
 }	t_content;
 
 typedef struct s_node
 {
-	char				*raw_cmd;
+	char				*raw_cmd; //operator
+	char				*quote_idx; //operator
 	struct s_content	content;
 	struct s_node		*back;
 	struct s_node		*right;
@@ -66,6 +76,11 @@ typedef struct s_node
 
 typedef struct s_shell
 {
+	struct sigaction   signal_nothing;
+	struct sigaction	signal_int;
+	struct sigaction	signal_quit;
+	struct termios		tty_attrs;
+	int					error;
 	int		is_alive;
 	int		temp_input;
 	int		temp_output;
@@ -79,15 +94,17 @@ typedef struct s_shell
 // LEXER
 void	ft_read_line(t_shell *shell);
 int		unclosed_quotes(t_shell *shell);
-int		in_quotes(t_shell *shell, int index);
+int in_quotes(t_node *node, int index);
 
 // PARSER
+int check_op_logic_than_pipe(t_node *node);
+int is_last_char(t_node *node, int idx);
+int get_op(t_node *node, int idx);
+void set_redirection(t_node *node);
 void	set_tree(t_shell *shell);
-int		get_idx_next_op(t_shell *shell, int idx, int dir);
-int		check_op_logic_than_pipe(t_shell *shell, int idx_start, int dir);
-int		get_op(t_shell *shell, int idx);
-void	set_content(t_shell *shell, t_node *node, int operator);
-void	set_redirection(t_shell *shell, t_node *node);
+void set_content(t_node *node);
+void set_raw_cmd_and_quote_idx(t_node *node, int start, int finish);
+int get_len_value(t_node *node, int idx);
 
 //testing purposes
 void	print_str(char *str);
@@ -97,5 +114,7 @@ void print_node(t_node *node);
 int		ft_strlen(char *s);
 char	*ft_strchr(char *s, char ch);
 void	ft_exit(t_shell *shell, char *str);
-int		is_last_char(t_shell *shell, int idx); //cambiare in (char *, int)
+
+// signal
+void	ft_signals(t_shell *shell);
 #endif

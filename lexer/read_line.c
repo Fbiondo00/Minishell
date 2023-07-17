@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/13 00:35:12 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/15 14:32:05 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,28 +95,28 @@ void	print_str(char *str)
 // 0"0000"00000""0"000000"00000000''0
 // "ciao'"  ok "" "'come'"   stai ''a
 // TODO:test char operator / redirections in quotes
-int	in_quotes(t_shell *shell, int index)
-{
-	int	i;
-	int	d_quotes;
-	int	s_quotes;
+// int	in_quotes(t_shell *shell, int index)
+// {
+// 	int	i;
+// 	int	d_quotes;
+// 	int	s_quotes;
 
-	i = -1;
-	d_quotes = 0;
-	s_quotes = 0;
-	while (++i < index)
-	{
-		if (shell->quote_idx[i] == 34)
-			d_quotes++;
-		if (shell->quote_idx[i] == 39)
-			s_quotes++;
-	}
-	if (s_quotes % 2 != 0)
-		return (-1);
-	if (d_quotes % 2 != 0)
-		return (1);
-	return (0);
-}
+// 	i = -1;
+// 	d_quotes = 0;
+// 	s_quotes = 0;
+// 	while (++i < index)
+// 	{
+// 		if (shell->quote_idx[i] == 34)
+// 			d_quotes++;
+// 		if (shell->quote_idx[i] == 39)
+// 			s_quotes++;
+// 	}
+// 	if (s_quotes % 2 != 0)
+// 		return (-1);
+// 	if (d_quotes % 2 != 0)
+// 		return (1);
+// 	return (0);
+// }
 
 void	ft_read_line(t_shell *shell)
 {

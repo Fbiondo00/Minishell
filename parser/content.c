@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   content.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/09 17:58:01 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/17 15:14:50 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
 
 // elabora la stringa e produce l array di stringhe
 // da dare in pasto all EXECVE
@@ -27,22 +26,67 @@ void set_cmd(t_shell *shell, t_node *node)
     (void)node;
 }
 
-// setta il content
-//  l input operator può essere NULL
-//  nella struttura node c è stringa partial_raw_cmd
-//  che di volta in volta viene modificato.
-//  in primis da get_raw_command, poi da set_redirection
-// TBD: in set content ci si entra solo da set_node_cmd, corretto?
-// set_node_operator può essere modificato per utilizzare set_content?
-void set_content(t_shell *shell, t_node *node, int operator)
+// restituisce il num dei char da mallocare
+// se trova " va avanti anche se ci sono gli spazi
+// altrimenti si ferma se trova uno spazio o se trova un char di redirection
+// echo ciao >q "q"
+// echo ciao >q"q"
+int get_len_value(t_node *node, int idx)
 {
-    if (operator)
-        shell->tree->content.op = operator;
+    int count;
+
+    count = 0;
+    if (node->raw_cmd[idx] == 34)
+    {
+        while (node->raw_cmd[++idx] != 34)
+            count++;
+    }
+    else if (node->raw_cmd[idx] == 39)
+    {
+        while (node->raw_cmd[++idx] != 39)
+            count++;
+    }
     else
     {
-        // va anche a ripulire ulteriormente la stringa da passare a set_cmd
-        printf("set_redirection..\n");
-        set_redirection(shell, node);
-        //set_cmd(shell, node); // il get_cmd di pipex ?
+        while (idx < ft_strlen(node->raw_cmd))
+        {
+            if (node->raw_cmd[idx] == ' ' || node->raw_cmd[idx] == '>' ||
+                node->raw_cmd[idx] == '<')
+                break;
+            // else if (node->raw_cmd[idx] == 34 || node->raw_cmd[idx] == 39)
+            // 	;
+            count++;
+            idx++;
+        }
     }
+    return (count);
+}
+
+// filtra raw_cmd e quote_idx dopo la redirection
+// settando gli spazi in raw_cmd e gli zeri in quote_idx
+// tali caratteri diventano neutri, ovvero non influenzano il risultato finale
+// durante esecuzione codice
+void set_raw_cmd_and_quote_idx(t_node *node, int start, int finish)
+{
+    int i;
+
+    i = -1;
+    printf("finish:%d\n", finish);
+    printf("start:%d\n", start);
+    while (++i < ft_strlen(node->raw_cmd))
+    {
+        if (i >= start && i <= finish)
+        {
+            node->raw_cmd[i] = ' ';
+            node->quote_idx[i] = 48;
+        }
+    }
+}
+
+void set_content(t_node *node)
+{
+    // va anche a ripulire ulteriormente la stringa da passare a set_cmd
+    printf("set_redirection..\n");
+    set_redirection(node);
+    // set_cmd(shell, node); // il get_cmd di pipex ?
 }

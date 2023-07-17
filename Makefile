@@ -4,6 +4,7 @@ SRC			= main.c
 LEXER	= $(wildcard lexer/*.c)
 PARSER	= $(wildcard executor/*.c)
 EXECUTOR	= $(wildcard parser/*.c)
+SIGNAL = $(wildcard signal/*.c)
 
 ERASE	=	\033[2K\r
 GREY	=	\033[30m
@@ -29,13 +30,13 @@ RM = @rm -f
 OBJS = ${SRC:.c=.o} $(PARSER:%.c=%.o) $(LEXER:%.c=%.o) $(EXECUTOR:%.c=%.o)
 
 SRC_COUNT = 0
-SRC_COUNT_TOT = $(shell expr $(shell echo -n $(SRC) $(PARSER) $(LEXER) $(EXECUTOR) | wc -w))
-SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / 7)
-%.o : %.c
+SRC_COUNT_TOT = 9
+SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / 9)
 
+%.o : %.c
 	@$(CC) $(FLAGS) -c $< -o $@
 	@$(eval SRC_COUNT = $(shell expr $(SRC_COUNT) + 1))
-	@printf "$(BOLD)$(GREEN)\r%100s\r[%d/%d] 😊(%d%%) $(END)$(BOLD)$(BLUE)$<" "" $(SRC_COUNT) 7 $(SRC_PCT)
+	@printf "$(BOLD)$(GREEN)\r%100s\r[%d/%d] 😊(%d%%) $(END)$(BOLD)$(BLUE)$<" "" $(SRC_COUNT) $(SRC_COUNT_TOT) $(SRC_PCT)
 
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -lreadline -o $(NAME) 
@@ -52,6 +53,6 @@ fclean: clean
 	@printf "$(UNDER)$(BOLD)$(RED)Removing minishell$(RESET)$(RED$)$(BOLD) .......$(RESET)"
 	
 re: fclean all
-	$(CMP)
+
 
 .PHONY: all clean fclean re
