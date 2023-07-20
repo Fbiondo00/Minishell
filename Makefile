@@ -41,7 +41,6 @@ SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / 9)
 $(NAME): $(OBJS)
 	$(CC) $(OBJS) -lreadline -o $(NAME) 
 	@printf "$(UNDER)$(BOLD)$(CYAN)\nCompiling minishell\n$(RESET)$(BOLD)"
-	@./minishell
 
 all: $(NAME)
 

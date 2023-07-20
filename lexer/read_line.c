@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/15 14:32:05 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/20 15:57:03 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ void	print_str(char *str)
 void	ft_read_line(t_shell *shell)
 {
 	shell->rawline = readline(PROMPT_MSG);
+	if(!shell->rawline)
+		exit(1);
 	if (shell->rawline && ft_strlen(shell->rawline) !=0)
 		add_history(shell->rawline);
 	if (unclosed_quotes(shell)) // check_quote se è da fare void con exit

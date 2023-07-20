@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/07/17 15:13:56 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/19 14:10:34 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,4 +54,37 @@ void	ft_signals(t_shell *shell)
 	sigaction(SIGINT, &shell->signal_int, 0);
 	sigaction(SIGQUIT, &shell->signal_quit, 0);
 }
+void	ft_reset_signal(void)
+{
+	struct sigaction	signal;
+	struct termios		attribute;
 
+	tcgetattr(STDIN_FILENO, &attribute);
+	attribute.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &attribute);
+	signal.sa_handler = NULL;
+	signal.sa_flags = SA_RESTART;
+	sigemptyset(&signal.sa_mask);
+	sigaction(SIGINT, &signal, 0);
+	sigaction(SIGQUIT, &signal, 0);
+}
+int	ft_continue(t_shell *shell, int n)
+{
+	if (n == 1 && (!shell->rawline || !shell->rawline[0]))
+	{
+		shell->error = 0;
+		return (1);
+	}
+	else if (n == 2 && !shell->env)
+	{
+		shell->error = 0;
+		return (2);
+	}
+	else if (n == 3 && (!shell->env || !shell->env[0]
+			|| !shell->env[0][0]))
+	{
+		shell->error = 0;
+		return (3);
+	}
+	return (0);
+}

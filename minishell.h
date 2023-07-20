@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/17 15:14:04 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/19 13:27:13 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@
 // >>
 # define R_OUTPUT_APPEND 16
 
+extern void	rl_replace_line(const char *text, int clear_undo);
+extern void	rl_clear_history(void);
 
 // key: tipologia redirect, value: nome file
 typedef struct s_kv
@@ -117,4 +119,6 @@ void	ft_exit(t_shell *shell, char *str);
 
 // signal
 void	ft_signals(t_shell *shell);
+void	ft_reset_signal(void);
+void	ft_head(int sign);
 #endif

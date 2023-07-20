@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/16 22:37:33 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/17 17:41:14 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,7 @@ void    shell_init(int argc, char **argv, char **env, t_shell *shell)
     shell->rawline = NULL;
     shell->quote_idx = NULL;
     shell->tree = NULL;
+    ft_signals(shell);
 }
 
 void    ft_exit(t_shell *shell, char *str)
