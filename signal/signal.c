@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/07/19 14:10:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/21 14:33:02 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,11 @@ void	ft_handle_quit(int signum)
 
 void	ft_signals(t_shell *shell)
 {
+	//salva i paramatetri nella struttura
 	tcgetattr(STDIN_FILENO, &shell->tty_attrs);
+	//disattivando ECHOCTL non visualizza i caratteri di controllo nel terminale.
 	shell->tty_attrs.c_lflag &= ~(ECHOCTL);
+	//applica i nuovi parametri
 	tcsetattr(STDIN_FILENO, TCSANOW, &shell->tty_attrs);
 	shell->signal_nothing.sa_handler = ft_does_nothing;
 	shell->signal_int.sa_handler = ft_head;

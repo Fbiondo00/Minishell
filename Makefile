@@ -27,11 +27,11 @@ FLAGS = -Wextra -Werror -Wall
 CC = @gcc ${FLAGS} 
 RM = @rm -f
 
-OBJS = ${SRC:.c=.o} $(PARSER:%.c=%.o) $(LEXER:%.c=%.o) $(EXECUTOR:%.c=%.o)
+OBJS = ${SRC:.c=.o} $(PARSER:%.c=%.o) $(LEXER:%.c=%.o) $(EXECUTOR:%.c=%.o) $(SIGNAL:%.c=%.o) 
 
 SRC_COUNT = 0
 SRC_COUNT_TOT = 9
-SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / 9)
+SRC_PCT = $(shell expr 100 \* $(SRC_COUNT) / $(SRC_COUNT_TOT))
 
 %.o : %.c
 	@$(CC) $(FLAGS) -c $< -o $@
