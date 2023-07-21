@@ -20,8 +20,7 @@ UNDER	=	\033[4m
 SUR		=	\033[7m
 END		=	\033[0m
 CENTER	=	\033[60G
-RESET	= \033[0;0m
-ECHO	=	@echo
+RESET	=	\033[0;0m
 
 FLAGS = -Wextra -Werror -Wall
 CC = @gcc ${FLAGS} 
