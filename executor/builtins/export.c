@@ -1,16 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 16:17:51 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/07/21 16:18:23 by flaviobiond      ###   ########.fr       */
+/*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
+/*   Updated: 2023/08/03 17:38:17 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// pwd (Print Working Directory):
-// Per implementare il comando pwd, puoi utilizzare la funzione di libreria getcwd() 
-// per ottenere il percorso della directory di lavoro corrente. Successivamente, 
-// stampa il percorso ottenuto sulla console utilizzando printf() o write().
+#include "../../minishell.h"
+
+// export:
+
+// Per implementare il comando export, devi gestire la creazione e 
+// la modifica delle variabili d'ambiente nel tuo programma. Le variabili
+//  d'ambiente sono generalmente memorizzate come coppie di chiavi e valori. 
+//  Puoi utilizzare le funzioni di libreria get() e setenv() per ottenere e impostare
+//   le variabili d'ambiente, rispettivamento.
+

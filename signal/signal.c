@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/07/21 17:32:05 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/31 16:34:14 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,14 @@
  
 void	ft_head(int sign)
 {
-	t_shell *shell;
+	//  t_shell *shell;
 	if (sign == SIGINT)
 	{
 		write(1, "\n", 1);
-		//rl_replace_line("", 1);
+		// rl_replace_line("", 1);
 		rl_on_new_line();
 		rl_redisplay();
-		shell->error = 130;
+		//  shell->error = 130;
 	}
 }
 
@@ -39,7 +39,7 @@ void	ft_handle_quit(int signum)
 
 void	ft_signals(t_shell *shell)
 {
-	//salva i paramatetri nella struttura
+	//salva i parametri nella struttura
 	tcgetattr(STDIN_FILENO, &shell->tty_attrs);
 	//disattivando ECHOCTL non visualizza i caratteri di controllo nel terminale.
 	shell->tty_attrs.c_lflag &= ~(ECHOCTL);
@@ -57,6 +57,7 @@ void	ft_signals(t_shell *shell)
 	sigaction(SIGINT, &shell->signal_int, 0);
 	sigaction(SIGQUIT, &shell->signal_quit, 0);
 }
+
 void	ft_reset_signal(void)
 {
 	struct sigaction	signal;

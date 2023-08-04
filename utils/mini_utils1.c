@@ -1,19 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   export.c                                           :+:      :+:    :+:   */
+/*   mini_utils1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/07/21 16:19:54 by flaviobiond      ###   ########.fr       */
+/*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
+/*   Updated: 2023/07/31 16:26:05 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// export:
+#include "../minishell.h"
 
-// Per implementare il comando export, devi gestire la creazione e 
-// la modifica delle variabili d'ambiente nel tuo programma. Le variabili
-//  d'ambiente sono generalmente memorizzate come coppie di chiavi e valori. 
-//  Puoi utilizzare le funzioni di libreria getenv() e setenv() per ottenere e impostare
-//   le variabili d'ambiente, rispettivamente.
+
+void welcomeScreen()
+{
+    printf("\n-------------------------------------------------\n");
+    printf("\tWelcome to 42 Minishell  \n");
+    printf("\tPowered by : Rdolzi and Fbiondo (@42Roma)\n");
+    printf("-------------------------------------------------\n");
+        printf("\n\n");
+}

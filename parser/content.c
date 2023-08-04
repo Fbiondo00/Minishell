@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   content.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/17 15:14:50 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/22 16:36:26 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,15 @@
 // probabile questo problema debba esser risolto in set_redirection
 // che rielabora nuovamente la raw_cmd andando a fare il trim dei char che
 // ha usato per la redirection
-void set_cmd(t_shell *shell, t_node *node)
+void set_cmd(t_node *node)
 {
-    printf("set_cmd(non fa ancora nulla)..\n");
-    (void)shell;
-    (void)node;
+    int i;
+
+    i = -1;
+    node->content.cmd = ft_split(node->raw_cmd, ' ');
+    while (node->content.cmd[++i])
+        printf("cmd[%d]:%s ", i, node->content.cmd[i]);
+    printf("\n");
 }
 
 // restituisce il num dei char da mallocare
@@ -33,7 +37,7 @@ void set_cmd(t_shell *shell, t_node *node)
 // echo ciao >q"q"
 int get_len_value(t_node *node, int idx)
 {
-    int count;
+     int count;
 
     count = 0;
     if (node->raw_cmd[idx] == 34)
@@ -88,5 +92,6 @@ void set_content(t_node *node)
     // va anche a ripulire ulteriormente la stringa da passare a set_cmd
     printf("set_redirection..\n");
     set_redirection(node);
-    // set_cmd(shell, node); // il get_cmd di pipex ?
+    printf("set_cmd..\n");
+    set_cmd(node); // il get_cmd di pipex ?
 }

@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/21 17:28:18 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/01 17:11:34 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +18,104 @@
 			// intercettare segnale con signal (no thread)
 	//B. una volta ricevuto la linea di comando (da cosa viene terminata?)
 		// controlla se errore delle " o ' non chiuse
-	//C. Se viene intercettata la UP-ARROW entra in "history mode".
-	//   in tale modalità possono essere utilizzate: 
-	// UP-ARROW DOWN-ARROW  per navigazione
+// C. controllo syntax
+	//  SYNTAX ERROR:
+		// 1. primo/ultimo char è un operatore
+		// 2. dopo () deve essere presente  redirection o operatore
+			//NON puo essere vuoto ma deve essere presente un char diverso da spazio
+		// 3. unclosed quotes
+
 // ----------------------------------------------------------------------
+
+// upgrade per check parentesi
+// int in_quotes_str(char *str, int index)
+// {
+//     int i;
+//     int d_quotes;
+//     int s_quotes;
+
+//     i = -1;
+//     d_quotes = 0;
+//     s_quotes = 0;
+//     while (++i < index)
+//     {
+//         if (str[i] == 34)
+//             d_quotes++;
+//         if (str[i] == 39)
+//             s_quotes++;
+//     }
+//     if (s_quotes % 2 != 0)
+//         return (-1);
+//     if (d_quotes % 2 != 0)
+//         return (1);
+//     return (0);
+// }
+
+// // ritorna 1 se i caratteri (  ) sono dispari
+// // ritorna 0 se i caratteri (  ) sono pari
+// int 	unclosed_parentheses(t_shell *shell)
+// {
+// 	int	i;
+// 	int	left_p;
+// 	int	right_p;
+
+// 	i = -1;
+// 	left_p = 0;
+// 	right_p = 0;
+// 	while (++i < ft_strlen(shell->rawline))
+// 	{
+// 		if (shell->rawline[i] == 41 && !in_quotes_str(shell->rawline, i)) // 41 == )
+// 			right_p++;
+// 		else if (shell->rawline[i] == 40 && !in_quotes_str(shell->rawline, i)) // 40 == (
+// 			left_p++;
+// 	}
+// 	if (left_p % 2 != 0 || right_p % 2 != 0)
+// 		return (1);
+// 	return (0);
+// }
+
+// // dopo () valide deve essere presente  redirection o operatore
+// //NON puo essere vuoto ma deve essere presente un char diverso da spazio
+// // ritorna 1 in caso di errore sintassi, 0 in caso contrario
+// int check_parentheses(t_shell *shell)
+// {
+// 	if (unclosed_parentheses(shell))
+// 		return (1);
+// 	if (empty_parentheses(shell))
+// 		return (1);
+// 	// if (not_operator_in_multiple_cmd(shell))
+// 	// 	return (1);
+// 	return (0);
+// }
+
+// // ritorna 1 se il primo o ultimo elemento (esclusi gli spazi) è un operatore
+// int	check_operators(t_shell *shell)
+// {
+// 	int	i;
+// 	int len;
+// 	char *chars;
+
+// 	i = -1;
+// 	chars = "|&";
+// 	len = ft_strlen(shell->rawline);
+// 	while (++i < len)
+// 	{
+// 		if (shell->rawline[i] != ' ')
+// 			break ;
+// 	}
+// 	printf("shell->rawline[i]:%c\n", shell->rawline[i]);
+// 	if (ft_strchr(chars, shell->rawline[i]))
+// 		return (1);
+// 	while (--len >= 0)
+// 	{
+// 		if (shell->rawline[len] != ' ')
+// 			break;
+// 	}
+// 	printf("shell->rawline[len]:%c\n", shell->rawline[len]);
+// 	if (ft_strchr(chars, shell->rawline[len]))
+// 		return (1);
+// 	return (0);
+// }
 
 // ritorna 1 se i caratteri (" ') sono dispari
 // ritorna 0 se i caratteri (" ') sono pari
@@ -31,7 +125,9 @@
 // ovvero non sono da considerare se inseriti in una coppia già chiusa
 // il counter double o single si ferma in caso sia iniziato
 //              ma non concluso l altro
-// TBD è ancora il caso?: essendo len della line un dato dinamico (expansions) il dato deve essere ricalcolato ogni volta?
+
+
+
 int	unclosed_quotes(t_shell *shell)
 {
 	int	i;
@@ -76,57 +172,24 @@ int	unclosed_quotes(t_shell *shell)
 	return (0);
 }
 
-// "00000"00000""0"000000"00000000''
-// "ciao'"  ok "" "'come'"   stai ''
-void	print_str(char *str)
-{
-	int	i;
-
-	i = -1;
-	while (++i < ft_strlen(str))
-		printf("%c", str[i]);
-	printf("\n");
-}
-
-// controlla se l i-esimo char è all interno di quotes (sia " che ')
-// ritorna 1 in caso sia presente nelle double quotes "
-// ritorna -1 in caso sia presente nelle single quotes '
-// 0 in caso non sia all interno di nessuna delle due
-// 0"0000"00000""0"000000"00000000''0
-// "ciao'"  ok "" "'come'"   stai ''a
-// TODO:test char operator / redirections in quotes
-// int	in_quotes(t_shell *shell, int index)
-// {
-// 	int	i;
-// 	int	d_quotes;
-// 	int	s_quotes;
-
-// 	i = -1;
-// 	d_quotes = 0;
-// 	s_quotes = 0;
-// 	while (++i < index)
-// 	{
-// 		if (shell->quote_idx[i] == 34)
-// 			d_quotes++;
-// 		if (shell->quote_idx[i] == 39)
-// 			s_quotes++;
-// 	}
-// 	if (s_quotes % 2 != 0)
-// 		return (-1);
-// 	if (d_quotes % 2 != 0)
-// 		return (1);
-// 	return (0);
-// }
-
 void	ft_read_line(t_shell *shell)
 {
 	shell->rawline = readline(PROMPT_MSG);
-	if(!shell->rawline)
-		exit(0);
+
+	 // is to free?
+	if (!shell->rawline)
+		exit(101); // leaks readline?
 	if (shell->rawline && ft_strlen(shell->rawline) !=0)
 		add_history(shell->rawline);
+	// --- syntax checks ---
+	// a questo punto malloc quote_idx e forse rawline
 	if (unclosed_quotes(shell)) // check_quote se è da fare void con exit
-		ft_exit(shell, UNCLOSED_QUOTES_ERROR);
-	//print_str(shell->quote_idx);
+		ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 2);
+	// if (check_operators(shell) || check_parentheses(shell))
+	// 	ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 3);
+	// if (check_operators(shell))
+	// 	ft_clean_exit(shell, SYNTAX_ERROR, 3);
+	// if (check_parentheses(shell))
+	// 	ft_clean_exit(shell, SYNTAX_ERROR, 3);
 }
 

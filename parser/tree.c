@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:51:56 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/16 22:17:59 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/04 20:17:58 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,8 +51,8 @@ void	set_node_cmd(t_node *node, t_node *back_node)
 	node->right = NULL;
 	node->content.op = 0;
 	node->content.idx_op = -1;
-	printf("In child node_cmd, raw_cmd{%s}\n", node->raw_cmd);
-	printf("set_content..\n");
+	// printf("In child node_cmd, raw_cmd{%s}\n", node->raw_cmd);
+	// printf("set_content..\n");
 	set_content(node);
 }
 

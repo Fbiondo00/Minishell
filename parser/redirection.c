@@ -6,15 +6,13 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/16 23:30:59 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/07/23 15:32:49 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // start: index del primo char dopo operatore
-// TODO: in realta non e'fino a fine riga ma fino a che non trova uno spazio
-// in realtà questa func setta il value e in il key
 void    set_value(t_node *node, int start)
 {
     int i;
@@ -42,7 +40,6 @@ void    set_value(t_node *node, int start)
     node->content.redir->value=str;
 }
 
-// TODO: rework di is_last_char, che deve accettare char * come input
 void set_redir_op(t_node *node, int idx, int num)
 {
     printf("node->raw_cmd[idx]:%c\n", node->raw_cmd[idx]);
@@ -70,22 +67,6 @@ void set_redir_op(t_node *node, int idx, int num)
 
 // verifica per ogni redirection ( > >> < <<)
 // se è presente e se non sta nelle quotes
-// CASI DA GESTIRE:
-// 1.  echo a < (echo a >)(echo a >>)
-//  bash: syntax error near unexpected token `newline'
-// file1 non esiste
-// 2. echo a <file1
-//  bash: u: No such file or directory
-// 3. echo a >file1 (echo a >>file1)   -->crea il file con successo
-//  echo a > "Desktop/e u"
-//  bash: Desktop/e u: No such file or directory
-//  echo a > "/Desktop/e u"
-//  bash: /Desktop/e u: No such file or directory
-//  MORALE: ->se vede / pensa che è un path assoluto, anche con apici singoli...
-
-// idx corrispondente all ultimo char dell operatore
-// gestione ""? <>?
-// andrebbe creato un metodo che torna la lunghezza in base ai char che vengono trovati
 void set_token_redirection(t_node *node, int idx, int num)
 {
     int i;
@@ -135,8 +116,12 @@ void set_token_redirection(t_node *node, int idx, int num)
     printf("PRE node->raw_cmd|%s|\n", node->raw_cmd);
     printf("PRE node->quote_idx|%s|\n", node->quote_idx);
     printf("modify raw_cmd & quote_idx..\n");
-    if (ft_strchr(chars, node->raw_cmd[i]))
+    if (ft_strchr(chars,node->raw_cmd[i - 2]) && ft_strchr(chars,node->raw_cmd[i - 3]))
+    {
+        printf("CAZZO!\n");
+        idx--;
         i--;
+    }
     set_raw_cmd_and_quote_idx(node, idx, i);
     printf("POST node->raw_cmd|%s|\n", node->raw_cmd);
     printf("POST node->quote_idx|%s|\n", node->quote_idx);
