@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/04 20:18:33 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/05 16:12:05 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ void execute_builtin(t_node *node, t_shell *shell)
     // else if (!ft_strncmp(node->content.cmd[0], "exit", len))
     //     // ft_exit(node);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len))
-        ft_cd(node);
+        ft_cd(node, shell);
 }
 
 // ritorna 1 se è un comando builtin
@@ -176,5 +176,5 @@ void execute_demo(t_shell *shell)
     }
     else
         printf("Non è un comando builtin!\n");
-    exit(99);
+    // exit(99);
 }

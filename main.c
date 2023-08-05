@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/04 20:16:16 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/05 16:10:07 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,12 @@ int main(int argc, char **argv, char **env)
     {
         ft_read_line(&shell);
         if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
+        {
             set_tree(&shell);
         // tree_of_life(&shell);
         //execute(&shell);
         execute_demo(&shell);
+        }
     }
 }
 
