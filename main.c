@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/05 16:10:07 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/05 22:14:16 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status)
 // salva l environment iniziale
 // attivazione signal
 // possiamo assegnare e modificare direttamente env o bisogna fare una copia?
-void    shell_init(int argc, char **argv, char **env, t_shell *shell)
+void    shell_init(int argc, char **argv, t_shell *shell)
 {
     (void) argv;
     // if (argc != 1)
@@ -42,7 +42,7 @@ void    shell_init(int argc, char **argv, char **env, t_shell *shell)
     shell->temp_input = dup(STDIN_FILENO);
     shell->temp_output = dup(STDOUT_FILENO);
     shell->temp_error = dup(STDERR_FILENO);
-    shell->env = env;// get_env(env)
+    shell->env = NULL;
     shell->rawline = NULL;
     shell->quote_idx = NULL;
     shell->tree = NULL;
@@ -78,8 +78,9 @@ int main(int argc, char **argv, char **env)
 {
     t_shell shell;
     
-    shell_init(argc, argv, env, &shell);
+    shell_init(argc, argv, &shell);
     welcomeScreen();
+    mall_env(&shell, env);
     while(shell.is_alive)
     {
         ft_read_line(&shell);

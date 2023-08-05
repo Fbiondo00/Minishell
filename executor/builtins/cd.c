@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/05 19:17:48 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/05 21:24:08 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ void    updateoldpath(t_shell *shell)
             return ;
         }
     }
-     printf("\nciso\n");
     shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
     new_str = ft_strjoin("OLDPWD=", new_valu);
     shell->env[i] = new_str;
