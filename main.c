@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/06 15:11:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/06 15:43:07 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,6 @@ int main(int argc, char **argv, char **env)
     t_shell shell;
     
     shell_init(argc, argv, env, &shell);
-    mall_env(&shell, env);
     while(shell.is_alive)
     {
         ft_read_line(&shell);
