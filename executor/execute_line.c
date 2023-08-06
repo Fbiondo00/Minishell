@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/06 14:56:57 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/06 17:54:17 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -336,8 +336,8 @@ void execute_builtin(t_node *node, t_shell *shell)
         ft_pwd();
     else if (!ft_strncmp(node->content.cmd[0], "env", len))
         ft_env(shell);
-    // else if (!ft_strncmp(node->content.cmd[0], "export", len))
-    //     // ft_export(node);
+    else if (!ft_strncmp(node->content.cmd[0], "export", len))
+        ft_export(shell);
     // else if (!ft_strncmp(node->content.cmd[0], "unset", len))
     //     // ft_unset(node);
     // else if (!ft_strncmp(node->content.cmd[0], "exit", len))

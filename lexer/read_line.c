@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/30 19:02:37 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/06 17:01:50 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,9 +166,9 @@ int	unclosed_quotes(t_shell *shell)
 int empty_parentheses(t_shell *shell, int idx)
 {
 	int len;
-	int count;
+	
 
-	count = 0;
+	
 	len = ft_strlen(shell->str);
 	while (++idx < len)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/06 15:02:02 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/06 17:52:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,5 +168,6 @@ void ft_echo(t_node *node);
 void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
 void mall_env(t_shell *shell, char **env);
+void ft_export(t_shell *shell);
 
 #endif
