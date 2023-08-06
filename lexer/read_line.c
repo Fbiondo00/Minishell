@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/01 17:11:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/06 14:26:45 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,6 @@ void	ft_read_line(t_shell *shell)
 	// if (check_operators(shell))
 	// 	ft_clean_exit(shell, SYNTAX_ERROR, 3);
 	// if (check_parentheses(shell))
-	// 	ft_clean_exit(shell, SYNTAX_ERROR, 3);
+	// 	(shell, SYNTAX_ERROR, 3);
 }
 

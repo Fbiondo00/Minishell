@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/05 21:24:08 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/06 14:24:26 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,6 @@ void    updateoldpath(t_shell *shell)
         {
             new_str = ft_strjoin("OLDPWD=", new_valu);
             free(shell->env[i]);
-            printf("\nciso\n");
             shell->env[i] = new_str;
             free(new_valu);
             return ;
@@ -96,11 +95,8 @@ void    updatecd(t_node *node, t_shell *shell)
 
     pat = ft_strdup(node->content.cmd[1]);
     oldpat = getcwd(0,0);
-    printf("\nupdateoldpath\n");
     updateoldpath(shell);
-    printf("\nescedaoldpath\n");
     chdir(pat);
-    printf("\nupdatepath\n");
     updatepath(shell);
     free(pat);
     pat = getcwd(0,0);
@@ -156,11 +152,12 @@ void ft_cd(t_node *node, t_shell *shell)
         ;
     if(i == 1)
     {
+        updateoldpath(shell);
         ft_home(shell);
+        updatepath(shell);
     }
     else if(i == 2)
     {
-        printf("\nentra in upadatecd\n");
         updatecd(node, shell);
             printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
             return ;
