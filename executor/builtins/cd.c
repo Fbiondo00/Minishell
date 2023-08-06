@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/06 14:24:26 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/06 14:51:06 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,14 @@
 
 //     home = getenv("HOME");
 //     chdir(home);
-    
+
 //     // if (home != NULL) {
 //     //     printf("Home directory: %s\\n", home);
 //     // } else {
 //     //     printf("Home directory not found.\n");
 //     // }
 // }
-void    updatepath(t_shell *shell)
+void updatepath(t_shell *shell)
 {
     char *new_valu;
     char *new_str;
@@ -39,17 +39,17 @@ void    updatepath(t_shell *shell)
     int i;
 
     path_name = "PWD";
-    new_valu = getcwd(0,0);
+    new_valu = getcwd(0, 0);
     i = -1;
-    while(shell->env[++i] != NULL)
+    while (shell->env[++i] != NULL)
     {
-        if(ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
+        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
         {
             new_str = ft_strjoin("PWD=", new_valu);
             free(shell->env[i]);
             shell->env[i] = new_str;
             free(new_valu);
-            return ;
+            return;
         }
     }
     shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
@@ -57,10 +57,10 @@ void    updatepath(t_shell *shell)
     shell->env[i] = new_str;
     shell->env[i + 1] = 0;
     free(new_valu);
-    return ;
+    return;
 }
 
-void    updateoldpath(t_shell *shell)
+void updateoldpath(t_shell *shell)
 {
     char *new_valu;
     char *new_str;
@@ -68,17 +68,17 @@ void    updateoldpath(t_shell *shell)
     int i;
 
     path_name = "OLDPWD";
-    new_valu = getcwd(0,0);
+    new_valu = getcwd(0, 0);
     i = -1;
-    while(shell->env[++i] != NULL)
+    while (shell->env[++i] != NULL)
     {
-        if(ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
+        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
         {
             new_str = ft_strjoin("OLDPWD=", new_valu);
             free(shell->env[i]);
             shell->env[i] = new_str;
             free(new_valu);
-            return ;
+            return;
         }
     }
     shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
@@ -88,53 +88,51 @@ void    updateoldpath(t_shell *shell)
     free(new_valu);
 }
 
-void    updatecd(t_node *node, t_shell *shell)
+void updatecd(t_node *node, t_shell *shell)
 {
     char *pat;
     char *oldpat;
 
     pat = ft_strdup(node->content.cmd[1]);
-    oldpat = getcwd(0,0);
+    oldpat = getcwd(0, 0);
     updateoldpath(shell);
     chdir(pat);
     updatepath(shell);
     free(pat);
-    pat = getcwd(0,0);
-    if(ft_strcmp(pat, oldpat) || !ft_strcmp(node->content.cmd[1], "."))
+    pat = getcwd(0, 0);
+    if (ft_strcmp(pat, oldpat) || !ft_strcmp(node->content.cmd[1], "."))
     {
         free(oldpat);
-		free(pat);
-        return ;
+        free(pat);
+        return;
     }
     else
     {
         free(oldpat);
-		free(pat);
+        free(pat);
         shell->error = 1;
         shell->exit_builtin = 1;
         printf("No such file or directory\n");
     }
-    
 }
-
 
 void ft_home(t_shell *shell)
 {
     int i;
-    char    *home;
+    char *home;
 
     i = 0;
-    if(!shell->env)
+    if (!shell->env)
     {
         shell->error = 1;
         shell->exit_builtin = 1;
         printf("not access env\n");
     }
-    while(shell->env[i])
+    while (shell->env[i])
     {
-        if(!ft_strncmp("HOME=", shell->env[i], 5))
+        if (!ft_strncmp("HOME=", shell->env[i], 5))
             break;
-        i++;    
+        i++;
     }
     home = ft_strchr(shell->env[i], '/');
     chdir(home);
@@ -148,22 +146,22 @@ void ft_cd(t_node *node, t_shell *shell)
     // printf("Start node cmd[0]:%s\n", node->content.cmd[0]);
     //  printf("Start node cmd[1]:%s\n", node->content.cmd[1]);
 
-    while(node->content.cmd[++i])
+    while (node->content.cmd[++i])
         ;
-    if(i == 1)
+    if (i == 1)
     {
         updateoldpath(shell);
         ft_home(shell);
         updatepath(shell);
     }
-    else if(i == 2)
+    else if (i == 2)
     {
         updatecd(node, shell);
-            printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
-            return ;
-            // Aggiorna il percorso della directory corrente usata dalla tua Minishell
-            // Ad esempio, potresti usare una variabile globale per memorizzarla
+        printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
+        return;
+        // Aggiorna il percorso della directory corrente usata dalla tua Minishell
+        // Ad esempio, potresti usare una variabile globale per memorizzarla
     }
     else
-    printf("too many argm");
+        printf("too many argm");
 }

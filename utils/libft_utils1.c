@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   libft_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:29 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/05 18:46:13 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/07/23 15:51:26 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int ft_strlen( char *s)
+int ft_strlen(char *s)
 {
     int i;
 
