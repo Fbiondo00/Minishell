@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/06 14:49:03 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/07 22:05:26 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,4 +111,14 @@ void *ft_realloc(void *ptr, size_t size)
         return (new_ptr);
     }
     return ((unsigned char *)malloc(sizeof(ptr) * size));
+}
+
+int ft_get_len_mat(t_node *node)
+{
+    int ij;
+
+    ij = 0;
+    while(node->content.cmd[++ij])
+        ;
+    return (ij);
 }

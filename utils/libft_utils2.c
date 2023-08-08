@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/23 15:55:04 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/08 16:35:16 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ int ft_strncmp(char *s1, char *s2, int n)
         if (us1[i] == us2[i])
             i++;
         else
+            
             return (us1[i] - us2[i]);
     }
     return (0);

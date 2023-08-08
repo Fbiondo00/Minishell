@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/06 17:52:55 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/07 22:20:18 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_content
 
 typedef struct s_node
 {
+	
 	char				*raw_cmd; //operator
 	char				*quote_idx; //operator
 	struct s_content	content;
@@ -118,6 +119,8 @@ typedef struct s_shell
 //extern void rl_replace_line(const char *text, int clear_undo);
 //extern void rl_clear_history(void);
 
+// len del cmd passati;
+int ft_get_len_mat(t_node *node);
 // LEXER
 void	ft_read_line(t_shell *shell);
 int		unclosed_quotes(t_shell *shell);
@@ -168,6 +171,6 @@ void ft_echo(t_node *node);
 void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
 void mall_env(t_shell *shell, char **env);
-void ft_export(t_shell *shell);
+void ft_export(t_shell *shell, t_node *node);
 
 #endif
