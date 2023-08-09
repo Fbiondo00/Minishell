@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/09 01:38:30 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/09 17:44:34 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,6 +108,21 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 		ft_name_value(node, shell, ij, ++y);
 }
 
+int ft_check (t_node *node)
+{
+	int i;
+	
+	i = 1;
+	while(node->content.cmd[i])
+	{
+		if((node->content.cmd[i][0] >= 'a' && node->content.cmd[i][0] <= 'z') || (node->content.cmd[i][0] >= 'A' && node->content.cmd[i][0] <= 'Z'))
+				++i;
+		else
+		return(write(1, "checkexpo\n", 11)-10);
+	}
+	return (0);
+}
+
 void	ft_export(t_shell *shell, t_node *node)
 {
 	int	i;
@@ -118,6 +133,8 @@ void	ft_export(t_shell *shell, t_node *node)
 	ij = ft_get_len_mat(node);
 	if (ij >= 2)
 	{
+		if(ft_check(node) == 1)
+			return ;
 		ft_name_value(node, shell, ij, 1);
 		return ;
 	}

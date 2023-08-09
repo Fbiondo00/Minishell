@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/07 22:07:09 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/09 17:48:50 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -338,8 +338,8 @@ void execute_builtin(t_node *node, t_shell *shell)
         ft_env(shell);
     else if (!ft_strncmp(node->content.cmd[0], "export", len))
         ft_export(shell, node);
-    // else if (!ft_strncmp(node->content.cmd[0], "unset", len))
-    //     // ft_unset(node);
+    else if (!ft_strncmp(node->content.cmd[0], "unset", len))
+         ft_unset(node, shell);
     // else if (!ft_strncmp(node->content.cmd[0], "exit", len))
     //     // ft_exit(node);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len))
