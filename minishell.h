@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/09 17:45:52 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 00:09:19 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -153,12 +153,13 @@ char	*ft_strchr(char *s, char ch);
 void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit);
 char	**ft_split(char *s, char c);
 char	*ft_substr(char	*s, int start, int len);
-int ft_strncmp(char *s1, char *s2, int n);
+int ft_strncmp(char *s1, char *s2, int n, int flag);
 char ft_strcmp(char *s1, char *s2);
 void *ft_realloc(void *ptr, size_t size);
 char *ft_strdup(char *src);
 char *ft_strjoin(char const *s1, char const *s2);
 void welcomeScreen(void);
+int get_idx_eq_str(char *str);
 
 // testing purposes
 void print_str(char *str);
@@ -173,5 +174,6 @@ void ft_env(t_shell *shell);
 void mall_env(t_shell *shell, char **env);
 void ft_export(t_shell *shell, t_node *node);
 void    ft_unset(t_node *node, t_shell *shell);
+void	swap_(char **str1, char **str2);
 
 #endif

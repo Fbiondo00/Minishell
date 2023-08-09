@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/08 23:34:58 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 00:13:30 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,20 @@ void print_str(char *str)
     printf("\n");
 }
 
-int ft_strncmp(char *s1, char *s2, int n)
+int get_idx_eq_str(char *str)
+{
+    int i;
+
+    i = -1;
+    while (str[++i])
+    {
+        if (str[i] == '=')
+            break ;
+    }
+    return (i); 
+}
+
+int ft_strncmp(char *s1, char *s2, int n, int flag)
 {
     int i;
     unsigned char *us1;
@@ -49,8 +62,12 @@ int ft_strncmp(char *s1, char *s2, int n)
     i = 0;
     us1 = (unsigned char *)s1;
     us2 = (unsigned char *)s2;
-    // if(ft_strlen(s1) != ft_strlen(s2))
-    //     return (1);
+    printf("ft_strlen(s1):%d| get_idx_eq_str(s2):%d\n", ft_strlen(s1), get_idx_eq_str(s2));
+    if (flag && ft_strlen(s1) !=  get_idx_eq_str(s2))
+    {
+        // printf("\n\n\nEsce in flag1\n");
+        return (-999);
+    }
     
     while ((us1[i] != '\0' || us2[i] != '\0') && i < n)
     {

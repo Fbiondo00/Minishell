@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/09 02:10:30 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/09 22:30:31 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ void updatepath(t_shell *shell)
     i = -1;
     while (shell->env[++i] != NULL)
     {
-        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
+        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name), 0) == 0)
         {
             new_str = ft_strjoin("PWD=", new_valu);
             free(shell->env[i]);
@@ -72,7 +72,7 @@ void updateoldpath(t_shell *shell)
     i = -1;
     while (shell->env[++i] != NULL)
     {
-        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name)) == 0)
+        if (ft_strncmp(shell->env[i], path_name, ft_strlen(path_name), 0) == 0)
         {
             new_str = ft_strjoin("OLDPWD=", new_valu);
             free(shell->env[i]);
@@ -131,7 +131,7 @@ void ft_home(t_shell *shell)
     }
     while (shell->env[i])
     {
-        if (!ft_strncmp("HOME=", shell->env[i], 5))
+        if (!ft_strncmp("HOME=", shell->env[i], 5, 0))
             break;
         i++;
     }

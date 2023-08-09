@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/09 17:44:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 00:11:00 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,13 +60,11 @@ int    ft_reach(t_shell *shell, char *str)
     // return ;
     while(shell->env[++i] != NULL)
         {
-            if((ft_strncmp(shell->env[i], str, y)) == 0)
+            if((ft_strncmp(shell->env[i], str, y, 1)) == 0)
             {          
                 if(str[y] == '=')
                 {
-                    printf("i:%d\nenv[i]:%c\ns",i ,str[y]);
                     free(shell->env[i]);
-                    printf("i:%d\nenv[i]:%s\ns",i ,shell->env[i]);
                     shell->env[i] = str;
                       printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);
                     return(1);
