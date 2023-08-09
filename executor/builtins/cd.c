@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/07 22:57:07 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/09 02:10:30 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,6 +126,7 @@ void ft_home(t_shell *shell)
     {
         shell->error = 1;
         shell->exit_builtin = 1;
+        write(2, "not access env\n", 16);
         printf("not access env\n");
     }
     while (shell->env[i])

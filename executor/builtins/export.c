@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/08 22:26:53 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/09 01:38:30 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ int    ft_reach(t_shell *shell, char *str)
     i = -1;
     while(str[++y] != '=' && str[y])
         ;
-    printf("y:%d\n", y);
+    printf("caratteri per ogni stringa:%d\n", y);
     // return ;
     while(shell->env[++i] != NULL)
         {
@@ -64,18 +64,19 @@ int    ft_reach(t_shell *shell, char *str)
             {          
                 if(str[y] == '=')
                 {
-                    printf("i:%d\nenv[i]:%s\ns",i ,shell->env[i]);
+                    printf("i:%d\nenv[i]:%c\ns",i ,str[y]);
                     free(shell->env[i]);
                     printf("i:%d\nenv[i]:%s\ns",i ,shell->env[i]);
                     shell->env[i] = str;
                       printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);
                     return(1);
                 }
+                return(1);
              //   printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);
                 
             }
         }
-            return (0);
+    return (0);
 }
 
 void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
@@ -87,30 +88,26 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 	i = 0;
 	while (shell->env[++j])
 		;
-	while (node->content.cmd[y] && node->content.cmd[y][++i])
-		;
-	if (ij >= y)
+	while (node->content.cmd[y][++i])
+        ;
+	if (ij > y)
 	{
-        printf("\n%d\n", y);
-        if(ft_reach(shell, node->content.cmd[y]) == 1)
+        if((ft_reach(shell, node->content.cmd[y]) == 1))
         {
-            if(node->content.cmd[y])
+            if (node->content.cmd[y + 1])
                 ft_name_value(node, shell, ij, ++y);
-            else
-                return ;
+            return ;
         }
 		shell->env = ft_realloc(shell->env, sizeof(char *) * (j + 2));
 		shell->env[j] = node->content.cmd[y];
-		shell->env[j + 1] = 0;
+        shell->env[j + 1] = 0;
 	}
 	if (ij - 1 == y)
-	{
-		shell->env[j + 1] = 0;
 		return ;
-	}
 	else
 		ft_name_value(node, shell, ij, ++y);
 }
+
 void	ft_export(t_shell *shell, t_node *node)
 {
 	int	i;
