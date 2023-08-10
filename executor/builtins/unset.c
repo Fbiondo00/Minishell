@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/09 23:41:38 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 16:21:00 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,38 @@ void ft_ricorsione(t_node *node, t_shell *shell, int ij, int y)
     return ;
 }
 
+int ft_check_unset (t_node *node)
+{
+	int i;
+	int y;
+	
+	i = 1;
+	while(node->content.cmd[i])
+	{
+		if((node->content.cmd[i][0] >= 'a' && node->content.cmd[i][0] <= 'z') || (node->content.cmd[i][0] >= 'A' && node->content.cmd[i][0] <= 'Z'))
+				++i;
+		else
+		return(write(1, "checkexpo\n", 11)-10);
+	}
+	i = 0;
+	y = -1;
+	while(node->content.cmd[++i])
+	{
+		while(node->content.cmd[i][++y])
+		{
+	 		if ((node->content.cmd[i][y]  >= '0' && node->content.cmd[i][y]  <= '9') || (node->content.cmd[i][y]  >= 'a' && node->content.cmd[i][y]  <= 'z')
+				|| (node->content.cmd[i][y]  >= 'A' && node->content.cmd[i][y]  <= 'Z'))
+				{
+				
+			
+				}
+			else
+			return(write(1, "checkexpo1\n", 11)-10);
+		}
+	}	
+	return (0);
+}
+
 void    ft_unset(t_node *node, t_shell *shell)
 {
     int ij;
@@ -57,6 +89,10 @@ void    ft_unset(t_node *node, t_shell *shell)
     if(!node->content.cmd[1])
         return ;
     if(ij >= 2)
+    {
+        if(ft_check_unset(node) == 1)
+			return ;
         ft_ricorsione(node, shell, ij, 1);
+    }
     
 }

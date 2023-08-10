@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/10 00:13:30 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 15:58:24 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,9 @@ int ft_strncmp(char *s1, char *s2, int n, int flag)
     i = 0;
     us1 = (unsigned char *)s1;
     us2 = (unsigned char *)s2;
+     printf("str:%s|env[i]:%s\n\n", s1, s2);
     printf("ft_strlen(s1):%d| get_idx_eq_str(s2):%d\n", ft_strlen(s1), get_idx_eq_str(s2));
-    if (flag && ft_strlen(s1) !=  get_idx_eq_str(s2))
+    if (flag && get_idx_eq_str(s1) !=  get_idx_eq_str(s2))
     {
         // printf("\n\n\nEsce in flag1\n");
         return (-999);

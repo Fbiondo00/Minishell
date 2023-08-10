@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/10 00:09:19 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 16:19:52 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,5 +175,6 @@ void mall_env(t_shell *shell, char **env);
 void ft_export(t_shell *shell, t_node *node);
 void    ft_unset(t_node *node, t_shell *shell);
 void	swap_(char **str1, char **str2);
+
 
 #endif

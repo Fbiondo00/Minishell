@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/10 00:11:00 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/10 16:20:18 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,18 @@ void	bubble_sort_strings(char **strings, int num_strings)
 	}
 }
 
+
 int    ft_reach(t_shell *shell, char *str)
 {
     int i;
     int y;
-    // int ij;
-    
-    // ij = 0;
+	// char *str1;
+
     y = -1;
     i = -1;
     while(str[++y] != '=' && str[y])
         ;
+	// str1=str_equ_(str, y);
     printf("caratteri per ogni stringa:%d\n", y);
     // return ;
     while(shell->env[++i] != NULL)
@@ -109,6 +110,7 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 int ft_check (t_node *node)
 {
 	int i;
+	int y;
 	
 	i = 1;
 	while(node->content.cmd[i])
@@ -118,8 +120,28 @@ int ft_check (t_node *node)
 		else
 		return(write(1, "checkexpo\n", 11)-10);
 	}
+	i = 0;
+	y = -1;
+	while(node->content.cmd[++i])
+	{
+		while(node->content.cmd[i][++y])
+		{
+	 		if ((node->content.cmd[i][y]  >= '0' && node->content.cmd[i][y]  <= '9') || (node->content.cmd[i][y]  >= 'a' && node->content.cmd[i][y]  <= 'z')
+				|| (node->content.cmd[i][y]  >= 'A' && node->content.cmd[i][y]  <= 'Z') || node->content.cmd[i][y] == '=')
+				{
+				
+			
+				}
+			else
+			return(write(1, "checkexpo1\n", 11)-10);
+		}
+	}	
 	return (0);
 }
+	
+
+
+
 
 void	ft_export(t_shell *shell, t_node *node)
 {
@@ -128,6 +150,7 @@ void	ft_export(t_shell *shell, t_node *node)
 	int	ij;
 
 	y = 0;
+	printf("ci");
 	ij = ft_get_len_mat(node);
 	if (ij >= 2)
 	{
