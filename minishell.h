@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/11 14:16:00 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/11 18:48:26 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,10 @@ void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void    ft_unset(t_node *node, t_shell *shell);
-int ft_exit(t_node *node);
+int ft_exit(t_node *node, t_shell *shell);
 void	swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
+void free_envp(t_shell *shell);
 
 
 #endif
