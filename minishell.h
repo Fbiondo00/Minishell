@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/10 16:19:52 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/11 14:16:00 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,6 +160,7 @@ char *ft_strdup(char *src);
 char *ft_strjoin(char const *s1, char const *s2);
 void welcomeScreen(void);
 int get_idx_eq_str(char *str);
+int	ft_atoi(const char *str);
 
 // testing purposes
 void print_str(char *str);
@@ -171,10 +172,11 @@ void ft_pwd(void);
 void ft_echo(t_node *node);
 void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
-void mall_env(t_shell *shell, char **env);
 void ft_export(t_shell *shell, t_node *node);
 void    ft_unset(t_node *node, t_shell *shell);
+int ft_exit(t_node *node);
 void	swap_(char **str1, char **str2);
+void mall_env(t_shell *shell, char **env);
 
 
 #endif
