@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/12 01:26:28 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/12 01:33:06 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	ft_isdigit(int n)
 	return (1);
 }
 
-int	is_number(char *str)
+int	is_check(char *str)
 {
     int i;
 
@@ -49,7 +49,7 @@ void ft_exit_2(t_node *node, t_shell *shell, int i)
 {
      int y; 
      
-    if(!is_number(node->content.cmd[i -1]))
+    if(!is_check(node->content.cmd[i -1]))
         {
             free_all2_0(shell,0,1000,0);
             exit (printf("\nexit: %s: numeric argument required\n", node->content.cmd[1]) * 0 + 255);

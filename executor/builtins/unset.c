@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/10 16:21:00 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/12 01:46:02 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,7 @@ int ft_check_unset (t_node *node)
 		{
 	 		if ((node->content.cmd[i][y]  >= '0' && node->content.cmd[i][y]  <= '9') || (node->content.cmd[i][y]  >= 'a' && node->content.cmd[i][y]  <= 'z')
 				|| (node->content.cmd[i][y]  >= 'A' && node->content.cmd[i][y]  <= 'Z'))
-				{
-				
-			
-				}
+			        continue;
 			else
 			return(write(1, "checkexpo1\n", 11)-10);
 		}
