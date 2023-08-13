@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/13 13:01:13 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/13 23:36:37 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,50 +51,57 @@ void	bubble_sort_strings(char **strings, int num_strings)
 void	ft_conc_2(t_shell *shell, char *str, int i)
 {
 	int y;
-	int j;
+	//int j;
+	char *str1;
 	
 	y = -1;
-	j=0;
-		shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
-		while(str[++y] != '+')
+	str1= malloc(ft_strlen(str));
+	if(!str1)
+		return(exit(1));
+	//j=0;
+		// printf("\n\nnon-capisco%d\n\n",i) ;
+		// printf("\n\n%2s\n\n ", shell->env[i]) ;	
+		 while(str[++y] != '+')
+		 	str1[y]=str[y];
+			// printf("\n\nnon-capisco12%s\n\n",str1) ;	
+		while(str[++y] != '+' && str[y- 1])
 		{
-			printf("\n\nnon-capiscoi:%d\n\n",i) ;
-		printf("\n\ny:%d\n\n",y) ;
-		shell->env[i][j] = str[y];
-		j++;
-		printf("\n\nnon-capiscostr;%s\n\n",str) ;	
-			printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
+			str1[y - 1]=str[y];
 		}
-		printf("\n\nnon-capisco%d\n\n",y) ;
-		// while(str[++y] != '+')
-		// {
-		// printf("\n\nnon-capisco%c\n\n",str[y]) ;	
-		// shell->env[i][++j] = str[y];
-		// }
-        shell->env[i + 1] = 0;
+		shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
+		 printf("\n\nnon-capisco11%s\n\n",str1) ;	
+		shell->env[i] = str1;
+			printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
+		free(str1);
+        shell->env[i +1] = 0;
 	
 }
 void ft_conc(t_shell *shell,char *str, int y)
 {
 	int j;
 	int i;
+	int x;
 	
+	x = 1;
 	i = -1;
 	j = -1;
 	while(shell->env[++i])
         {
-			printf("\ny:%d\n", i);
+			printf("\nn.elementidienv:%d\n", i);
             if((ft_strncmp(shell->env[i], str, y, 0)) == 0)
 			{
 				while(shell->env[i][++j])
-						;
+					{
+						if(shell->env[i][j] == '=')
+							x+=1;
+				printf("\ny:%d\n", x);
+					}
+				j = -1;
+				while(shell->env[i][++j])
+					;
 				printf("\n\nnon-capisco%c\n\n",str[y +2]) ;	
-				while(str[y + 2])
-				{
-				shell->env[i][j] = str[y + 2];
-					y++;
-					j++;
-				}
+				while(str[y + x])
+				shell->env[i][j++] = str[y++ + x];
 				shell->env[i][j + 1] = 0;
 				return ;
 			}
