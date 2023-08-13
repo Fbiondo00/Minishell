@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/12 10:01:50 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/13 13:01:13 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,60 @@ void	bubble_sort_strings(char **strings, int num_strings)
 	}
 }
 
+void	ft_conc_2(t_shell *shell, char *str, int i)
+{
+	int y;
+	int j;
+	
+	y = -1;
+	j=0;
+		shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
+		while(str[++y] != '+')
+		{
+			printf("\n\nnon-capiscoi:%d\n\n",i) ;
+		printf("\n\ny:%d\n\n",y) ;
+		shell->env[i][j] = str[y];
+		j++;
+		printf("\n\nnon-capiscostr;%s\n\n",str) ;	
+			printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
+		}
+		printf("\n\nnon-capisco%d\n\n",y) ;
+		// while(str[++y] != '+')
+		// {
+		// printf("\n\nnon-capisco%c\n\n",str[y]) ;	
+		// shell->env[i][++j] = str[y];
+		// }
+        shell->env[i + 1] = 0;
+	
+}
+void ft_conc(t_shell *shell,char *str, int y)
+{
+	int j;
+	int i;
+	
+	i = -1;
+	j = -1;
+	while(shell->env[++i])
+        {
+			printf("\ny:%d\n", i);
+            if((ft_strncmp(shell->env[i], str, y, 0)) == 0)
+			{
+				while(shell->env[i][++j])
+						;
+				printf("\n\nnon-capisco%c\n\n",str[y +2]) ;	
+				while(str[y + 2])
+				{
+				shell->env[i][j] = str[y + 2];
+					y++;
+					j++;
+				}
+				shell->env[i][j + 1] = 0;
+				return ;
+			}
+		}
+		ft_conc_2(shell, str, i);
+}
+
 
 int    ft_reach(t_shell *shell, char *str)
 {
@@ -58,10 +112,15 @@ int    ft_reach(t_shell *shell, char *str)
     i = -1;
     while(str[++y] != '=' && str[y])
         ;
-    while(shell->env[++i] != NULL)
+	if(str[y - 1] == '+')
+	{
+		ft_conc(shell,str,--y);
+		return(1);
+	}
+    while(shell->env[++i])
         {
             if((ft_strncmp(shell->env[i], str, y, 1)) == 0)
-            {          
+            {
                 if(str[y] == '=')
                 {
                     free(shell->env[i]);
@@ -69,7 +128,7 @@ int    ft_reach(t_shell *shell, char *str)
                     return(1);
                 }
                 return(1);
-             //   printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);   
+             //printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);   
             }
         }
     return (0);
@@ -124,7 +183,7 @@ int ft_check (t_node *node)
 		while(node->content.cmd[i][++y])
 		{
 	 		if ((node->content.cmd[i][y]  >= '0' && node->content.cmd[i][y]  <= '9') || (node->content.cmd[i][y]  >= 'a' && node->content.cmd[i][y]  <= 'z')
-				|| (node->content.cmd[i][y]  >= 'A' && node->content.cmd[i][y]  <= 'Z') || node->content.cmd[i][y] == '=')
+				|| (node->content.cmd[i][y]  >= 'A' && node->content.cmd[i][y]  <= 'Z') || node->content.cmd[i][y] == '=' || node->content.cmd[i][y] == '+')
 						continue;
 			else
 			return(write(1, "checkexpo1\n", 11)-10);
