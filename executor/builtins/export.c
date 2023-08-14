@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/13 23:36:37 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/14 12:18:57 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	ft_conc_2(t_shell *shell, char *str, int i)
 		shell->env[i] = str1;
 			printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
 		free(str1);
-        shell->env[i +1] = 0;
+        // shell->env[i +1] = 0;
 	
 }
 void ft_conc(t_shell *shell,char *str, int y)
@@ -109,6 +109,15 @@ void ft_conc(t_shell *shell,char *str, int y)
 		ft_conc_2(shell, str, i);
 }
 
+int	ft_get_equ(char *env)
+{
+	int	i;
+
+	i = -1;
+	while (env[++i] && env[i] != '=')
+		;
+	return (i);
+}
 
 int    ft_reach(t_shell *shell, char *str)
 {
@@ -206,6 +215,7 @@ void	ft_export(t_shell *shell, t_node *node)
 	int	i;
 	int	y;
 	int	ij;
+	int len;
 
 	y = 0;
 	ij = ft_get_len_mat(node);
@@ -219,12 +229,23 @@ void	ft_export(t_shell *shell, t_node *node)
 	else
 	{
 		while (shell->env[++y])
-			;
+			;	
 		i = -1;
 		while (shell->env[++i])
 			bubble_sort_strings(shell->env, y);
 		i = -1;
-		while (shell->env[++i])
-			printf("declare -x %s\n", shell->env[i]);
+		while (shell->env[++i]) 
+		{
+		y=-1;
+			printf("declare -x ");
+			len = ft_get_equ(shell->env[i]);
+			// printf("\nlen:%d\n", len);
+			while(++y <= len)
+			printf("%c", shell->env[i][y]);
+			if (len < (int)ft_strlen(shell->env[i]))
+			printf("\"%s\"",shell->env[i] + len + 1);
+			printf("\n");
+			// printf("declare -x %s\n", shell->env[i]);	
+		}
 	}
 }
