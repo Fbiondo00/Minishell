@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/14 12:18:57 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/16 01:24:08 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,25 +55,17 @@ void	ft_conc_2(t_shell *shell, char *str, int i)
 	char *str1;
 	
 	y = -1;
-	str1= malloc(ft_strlen(str));
+	str1= malloc(ft_strlen(str) + 1);
 	if(!str1)
 		return(exit(1));
-	//j=0;
-		// printf("\n\nnon-capisco%d\n\n",i) ;
-		// printf("\n\n%2s\n\n ", shell->env[i]) ;	
 		 while(str[++y] != '+')
 		 	str1[y]=str[y];
-			// printf("\n\nnon-capisco12%s\n\n",str1) ;	
 		while(str[++y] != '+' && str[y- 1])
-		{
 			str1[y - 1]=str[y];
-		}
 		shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
-		 printf("\n\nnon-capisco11%s\n\n",str1) ;	
-		shell->env[i] = str1;
-			printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
-		free(str1);
-        // shell->env[i +1] = 0;
+		shell->env[i] = str1;	
+        shell->env[i+ 1] = 0;
+		//  free(str1); problem?
 	
 }
 void ft_conc(t_shell *shell,char *str, int y)
@@ -88,7 +80,7 @@ void ft_conc(t_shell *shell,char *str, int y)
 	while(shell->env[++i])
         {
 			printf("\nn.elementidienv:%d\n", i);
-            if((ft_strncmp(shell->env[i], str, y, 0)) == 0)
+            if((ft_strncmp(shell->env[i], str, y, 1)) == 0)
 			{
 				while(shell->env[i][++j])
 					{
@@ -107,6 +99,7 @@ void ft_conc(t_shell *shell,char *str, int y)
 			}
 		}
 		ft_conc_2(shell, str, i);
+		printf("\n\nnon-capiscoshell:%s\n\n",shell->env[i]) ;	
 }
 
 int	ft_get_equ(char *env)
@@ -131,8 +124,10 @@ int    ft_reach(t_shell *shell, char *str)
 	if(str[y - 1] == '+')
 	{
 		ft_conc(shell,str,--y);
+		printf("\n\nnon-entratoft_reachhell111:%s\n\n",str) ;	
 		return(1);
 	}
+	printf("\n\nnon-uscito da ft_reach:%s\n\n",shell->env[i]) ;	
     while(shell->env[++i])
         {
             if((ft_strncmp(shell->env[i], str, y, 1)) == 0)
@@ -143,8 +138,7 @@ int    ft_reach(t_shell *shell, char *str)
                     shell->env[i] = str;
                     return(1);
                 }
-                return(1);
-             //printf("str:%s|env[i]:%s\n%d\n", str, shell->env[i], y);   
+                return(1);   
             }
         }
     return (0);

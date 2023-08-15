@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/12 21:38:40 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/15 20:39:42 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ int get_idx_eq_str(char *str)
     i = -1;
     while (str[++i])
     {
-        if (str[i] == '=')
+        if (str[i] == '=' || str[i] == '+')
             break ;
     }
-    return (i); 
+    return (i -1); 
 }
 
 int ft_strncmp(char *s1, char *s2, int n, int flag)
