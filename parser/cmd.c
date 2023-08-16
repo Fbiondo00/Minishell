@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:32:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/17 00:08:00 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,12 +111,13 @@ char *var_expand(t_node *node, char *str)
     {
         // printf("i:%d\n", i);
         // ritorna 0 se sono uguali
+        // printf("str:%s|env[i]:%s,|get_idx_eq:%d\n", str, node->shell->env[i], get_idx_eq(node, i));
         if (!ft_strncmp2(str, node->shell->env[i], get_idx_eq(node, i), 1))
         {
             new_str = node->shell->env[i] + get_idx_eq(node, i) + 1;
-            printf("get_idx_eq:%d\n", get_idx_eq(node, i));
-            printf("node->shell->env[i]:%s|\n", node->shell->env[i]);
-            printf("new_str:%s|\n", new_str);
+            // printf("get_idx_eq:%d\n", get_idx_eq(node, i));
+            // printf("node->shell->env[i]:%s|\n", node->shell->env[i]);
+            // printf("new_str:%s|\n", new_str);
             break;
         }
     }
@@ -147,7 +148,7 @@ char *find_var(t_node *node, int idx)
         flag++;
     }
     printf("POST y:%d| FLAG:%d|node->raw_cmd[y]:%c\n", y, flag, node->raw_cmd[y]);
-    if (flag == 1)
+    if (flag == 0)
         return (NULL);
     str = malloc(flag + 1);
     str[flag] = '\0';
@@ -179,11 +180,11 @@ void ft_do_expand(t_node *node)
     {
         if (node->raw_cmd[i] == '$' && in_quotes(node, i) != -1)
         {
-            // printf("IN node->raw_cmd[i] == '$' \n");
-            // printf("in_quotes(node, i):%d\n", in_quotes(node, i));
+            printf("IN node->raw_cmd[i:%d] == '$' \n", i);
+            printf("in_quotes(node, i):%d\n", in_quotes(node, i));
             // ritorna il valore della variabile
             str = find_var(node, i);
-            // printf("str:%s\n", str);
+            printf("find_var(),str:%s\n", str);
             // if (str)
             // {
             raw = modify_raw_and_quote(node, i, str, 32);
@@ -210,12 +211,10 @@ void ft_do_expand(t_node *node)
 // NUOVO: ho aggiunto attributo shell al nodo
 void set_cmd(t_node *node)
 {
-    // creare file.c contenente questo set di funzioni
-    // set_lvl(node);
     ft_do_expand(node);
-    // printf("--- AFTER EXPAND ---\n");
-    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
-    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
+    printf("--- AFTER EXPAND ---\n");
+    printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
     remove_quotes(node);
     // printf("--- AFTER REMOVE_QUOTES ---\n");
     // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));

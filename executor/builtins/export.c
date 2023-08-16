@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/16 23:01:17 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/17 00:07:34 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void ft_conc_2(t_shell *shell, char *str, int i)
     char *str1;
 
     y = -1;
-    printf("i:%d|str:%s|ft_strlen(str):%d\n", i, str, ft_strlen(str));
+    // printf("i:%d|str:%s|ft_strlen(str):%d\n", i, str, ft_strlen(str));
     // str1 = malloc(ft_strlen(str) + 1);  // OLD
     str1 = malloc(ft_strlen(str)); // DEBUG
     if (!str1)
@@ -67,7 +67,7 @@ void ft_conc_2(t_shell *shell, char *str, int i)
     shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
     shell->env[i] = str1;
     printf("shell->env[i:%d]:%s\n", i, shell->env[i]);
-    shell->env[i + 1] = 0; // OLD
+    shell->env[i + 1] = 0;
     // free(str1);
 }
 void ft_conc(t_shell *shell, char *str, int y)
