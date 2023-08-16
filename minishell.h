@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/11 18:48:26 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/16 05:24:11 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,11 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
-#include <errno.h> // ?
-#include <fcntl.h> // ?
-#include <stdarg.h> // ?
-#include <sys/types.h> // ?
-#include <sys/wait.h>  // ?
+#include <errno.h>
+#include <fcntl.h>
+#include <stdarg.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <termios.h>
 #include <signal.h>
 
@@ -33,13 +33,9 @@
 
 // SYNTAX ERRORS (LEXER)
 // exit 1
-# define INVALID_ARGS "Error: invalid arguments\n" 
+# define INVALID_ARGS "Error: invalid arguments\n"
 // exit 2
 # define UNCLOSED_QUOTES_ERROR "Error: unclosed quotes\n"
-// bash-3.2$ |echo a
-// bash: syntax error near unexpected token `|'
-// bash-3.2$ (ls) echo a
-// bash : syntax error near unexpected token `echo'
 // exit 3
 #define SYNTAX_ERROR "Error: invalid syntax\n"
 
@@ -70,6 +66,7 @@
 // key: tipologia redirect, value: nome file
 typedef struct s_kv
 {
+	int		fd;
 	int		key;
 	char	*value;
 }	t_kv;
@@ -78,20 +75,23 @@ typedef struct s_content
 {
 	char	**cmd;
 	int		op;
-	int		idx_op; // needed ?
+	int		idx_op;
 	int		kv_size;
 	t_kv	*redir;
 }	t_content;
 
 typedef struct s_node
 {
-	
-	char				*raw_cmd; //operator
-	char				*quote_idx; //operator
+	char				*raw_cmd;
+	char				*quote_idx;
+	int					lvl_subshell;
+	int					lvl_lock;
+	int 				flag;
 	struct s_content	content;
 	struct s_node		*back;
 	struct s_node		*right;
 	struct s_node		*left;
+	struct s_shell      *shell;
 }	t_node;
 
 typedef struct s_shell
@@ -104,7 +104,6 @@ typedef struct s_shell
 	struct	termios tty_attrs;
 	int		error;
 	// ------
-	int		is_alive; // needed in signals?
 	int		temp_input;
 	int		temp_output;
 	int		temp_error;
@@ -119,13 +118,11 @@ typedef struct s_shell
 //extern void rl_replace_line(const char *text, int clear_undo);
 //extern void rl_clear_history(void);
 
-// len del cmd passati;
-int ft_get_len_mat(t_node *node);
 // LEXER
 void	ft_read_line(t_shell *shell);
 int		unclosed_quotes(t_shell *shell);
 int in_quotes(t_node *node, int index);
-int in_quotes_str(char *str, int index);
+int in_quotes_str(t_shell *shell, int index);
 
 // PARSER
 int check_op_logic_than_pipe(t_node *node);
@@ -136,6 +133,13 @@ void	set_tree(t_shell *shell);
 void set_content(t_node *node);
 void set_raw_cmd_and_quote_idx(t_node *node, int start, int finish);
 int get_len_value(t_node *node, int idx);
+void set_components(t_shell *shell);
+void set_cmd(t_node *node);
+void remove_quotes(t_node *node);
+void ft_lowercase_cmd(t_node *node);
+//init
+void shell_init(int argc, char **argv, char **env, t_shell *shell);
+void node_init(t_node *node);
 
 // SIGNAL
 void ft_signals(t_shell *shell);
@@ -145,7 +149,23 @@ void ft_head(int sign); //?
 // EXECUTOR
 void    execute(t_shell *shell);
 void execute_demo(t_shell *shell); // per testare le func builtins
-
+t_node  *get_starter_node(t_shell *shell);
+// navigation
+t_node *go_to_starter_node(t_node *node);
+int is_left_branch(t_node *node);
+int is_node_cmd(t_node *node);
+t_node *next_cmd(t_shell *shell, t_node *node);
+// bultin
+void ft_pwd(void);
+void ft_echo(t_node *node);
+void ft_cd(t_node *node, t_shell *shell);
+void ft_env(t_shell *shell);
+void ft_export(t_shell *shell, t_node *node);
+void ft_unset(t_node *node, t_shell *shell);
+int ft_exit(t_node *node, t_shell *shell);
+void swap_(char **str1, char **str2);
+void mall_env(t_shell *shell, char **env);
+void free_envp(t_shell *shell);
 
 // UTILS
 int		ft_strlen(char *s);
@@ -159,25 +179,13 @@ void *ft_realloc(void *ptr, size_t size);
 char *ft_strdup(char *src);
 char *ft_strjoin(char const *s1, char const *s2);
 void welcomeScreen(void);
+int get_idx_eq(t_node *node, int idx);
 int get_idx_eq_str(char *str);
-int	ft_atoi(const char *str);
+int ft_isdigit2(int c);
+int ft_get_len_mat(t_node *node);
+int ft_atoi(const char *str);
 
-// testing purposes
-void print_str(char *str);
-// void    tree_of_life(t_shell *shell);
-void putstr(const char *str);
-
-// bultin
-void ft_pwd(void);
-void ft_echo(t_node *node);
-void ft_cd(t_node *node, t_shell *shell);
-void ft_env(t_shell *shell);
-void ft_export(t_shell *shell, t_node *node);
-void    ft_unset(t_node *node, t_shell *shell);
-int ft_exit(t_node *node, t_shell *shell);
-void	swap_(char **str1, char **str2);
-void mall_env(t_shell *shell, char **env);
-void free_envp(t_shell *shell);
-
+// test
+void print_node(t_shell *shell, t_node *node);
 
 #endif

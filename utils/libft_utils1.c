@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft_utils1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:29 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/11 18:52:50 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/14 23:16:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,3 +86,5 @@ char **ft_split(char *s, char c)
     }
     return (end_str(ret, i));
 }
+
+// 5 func

@@ -3,53 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/11 14:15:41 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/14 23:17:57 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-
-int	ft_atoi(const char *str)
-{
-	int	i;
-	int	j;
-	int	segn;
-	int	check;
-
-	check = 0;
-	i = 0;
-	j = 0;
-	segn = 1;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	while (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i++] == '-')
-			segn = -1;
-			check++;
-	}
-	if (check > 1)
-		return (j);
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		j = j * 10 + (str[i] - '0');
-		i++;
-	}
-	return (j * segn);
-}
-
-void welcomeScreen()
-{
-    printf("\n-------------------------------------------------\n");
-    printf("\tWelcome to 42 Minishell  \n");
-    printf("\tPowered by : Rdolzi and Fbiondo (@42Roma)\n");
-    printf("-------------------------------------------------\n");
-    printf("\n\n");
-}
 
 char *ft_strjoin(char const *s1, char const *s2)
 {
@@ -143,12 +104,4 @@ void *ft_realloc(void *ptr, size_t size)
     return ((unsigned char *)malloc(sizeof(ptr) * size));
 }
 
-int ft_get_len_mat(t_node *node)
-{
-    int ij;
-
-    ij = 0;
-    while(node->content.cmd[++ij])
-        ;
-    return (ij);
-}
+// 5 func

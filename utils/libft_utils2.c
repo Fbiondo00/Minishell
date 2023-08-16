@@ -3,14 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   libft_utils2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/15 20:39:42 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/14 23:17:41 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void welcomeScreen()
+{
+    printf("\n-------------------------------------------------\n");
+    printf("\tWelcome to 42 Minishell  \n");
+    printf("\tPowered by : Rdolzi and Fbiondo (@42Roma)\n");
+    printf("-------------------------------------------------\n");
+    printf("\n\n");
+}
 
 char *ft_strchr(char *s, char ch)
 {
@@ -28,31 +37,6 @@ char *ft_strchr(char *s, char ch)
     return (NULL);
 }
 
-// "00000"00000""0"000000"00000000''
-// "ciao'"  ok "" "'come'"   stai ''
-void print_str(char *str)
-{
-    int i;
-
-    i = -1;
-    while (++i < ft_strlen(str))
-        printf("%c", str[i]);
-    printf("\n");
-}
-
-int get_idx_eq_str(char *str)
-{
-    int i;
-
-    i = -1;
-    while (str[++i])
-    {
-        if (str[i] == '=' || str[i] == '+')
-            break ;
-    }
-    return (i -1); 
-}
-
 int ft_strncmp(char *s1, char *s2, int n, int flag)
 {
     int i;
@@ -62,20 +46,17 @@ int ft_strncmp(char *s1, char *s2, int n, int flag)
     i = 0;
     us1 = (unsigned char *)s1;
     us2 = (unsigned char *)s2;
-     printf("str:%s|env[i]:%s\n\n", s2, s1);
-    printf("ft_strlen(s1):%d| get_idx_eq_str(s2):%d\n",  get_idx_eq_str(s1), get_idx_eq_str(s2));
-    if (flag && get_idx_eq_str(s1) !=  get_idx_eq_str(s2))
+    printf("ft_strlen(s1):%d| get_idx_eq_str(s2):%d\n", ft_strlen(s1), get_idx_eq_str(s2));
+    if (flag && ft_strlen(s1) !=  get_idx_eq_str(s2))
     {
-        // printf("\n\n\nEsce in flag1\n");
+        printf("\n\n\nEsce in flag1\n");
         return (-999);
     }
-    
     while ((us1[i] != '\0' || us2[i] != '\0') && i < n)
     {
         if (us1[i] == us2[i])
             i++;
         else
-            
             return (us1[i] - us2[i]);
     }
     return (0);
@@ -125,3 +106,5 @@ char *ft_substr(char *s, int start, int len)
     substr[j] = '\0';
     return (substr);
 }
+
+// 5 func

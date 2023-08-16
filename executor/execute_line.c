@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/11 18:48:07 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/16 05:13:34 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,20 +90,6 @@
 // e a scalare le altre flag interne scalano con livello -1
 
 
-
-// -------------|
-// REWORK PARSER|
-// -------------|
-
-// nuovo attributo da settare in node_operator(non node_cmd):   int lvl_subshell;
-// logica:
-// 1. parte da starter node (node_cmd):
-//      - se incontra il char ( ,o anche piu di uno,  fa lvl_subshell++ sul node_operator successivo.
-//      - se incontra il char ) ,o anche piu di uno,  fa lvl_subshell-- sul node_operator successivo.
-//      - se incontra sia il char ( sia il char ) fa la differenza ed eventualmente  fa lvl_subshell++/-- sul node_operator successivo.
-//      - se non incontra nessuno dei due char eredita il lvl_subshell del node_operator precedente.
-// risale tutto l albero fino ad arrivare all ultimo nodo.
-
 // --------|
 // EXECUTOR|
 // --------|
@@ -150,8 +136,7 @@
 // come gestire e comunicare eventuale errore della subshell al livello precedente?
 // come fare a sapere se sei in subshell o no? in caso e'possibile usare flag  is_subshell che viene settata prima del fork.
 
-
-
+// non utilizzata attualmente
 t_node  *get_starter_node(t_shell *shell)
 {
     t_node *nod;
@@ -166,7 +151,6 @@ t_node  *get_starter_node(t_shell *shell)
                break ;
             nod = nod->left;
         }
-        printf("p:%p\n", nod);
     }
     return (nod);
 }
@@ -196,20 +180,6 @@ void execute_initial_redirections(t_node *node)
 }
 
 */
-
-
-void print_node(t_node *node)
-{
-    int i;
-
-    i = -1;
-    printf("----EXECUTE PHASE----\n\n");
-    printf("Start node address:%p\n", node);
-    while (node->content.cmd[++i])
-        printf("Start node cmd[%d]:%s\n", i, node->content.cmd[i]);
-    printf("node->raw_cmd:%s\n", node->raw_cmd);
-    //dove e'presente info delle (??
-}
 
 
 //  (echo b && (echo a >o && (echo d))) >p | echo c    --->
@@ -265,8 +235,8 @@ void print_node(t_node *node)
 // (echo a >d && (echo b && (echo c)))| cat   : res> b c , dentro d ce' a
 
 // ---------------  IMPO: EXECUTE()  --------------
-// esempio: (echo a && (echo b && (echo c))>d)| cat  ==> su terminale: stampa a / dentro d: stampa b c
-//                  1          2              0
+// esempio: (echo a && (echo b && echo c && echo d)>d)| cat  ==> su terminale: stampa a / dentro d: stampa b c
+//                  1          2          2           0
 
 // si potrebbe pensare questa sequenza:
 // creazione subshell ricorsiva, nel senso che:
@@ -306,6 +276,38 @@ void print_node(t_node *node)
 // che va a risolvere la parte iniziale sul check dell exit_status e porta avanti il rework redir + parser (lvl_subshell)
 
 
+// V1: al momento senza parentesi, ovvero subshell, lvl_subshell etc..etc..
+// regole sulle redir:
+
+// echo a >b || echo b >c (ma anche >>c)  => non crea c, perche non esegue il comando
+// echo a >b || echo b <<c   solo nel caso dell here_doc lo esegue comunque
+// echo a >b || (echo b >c && echo d >e) => non crea c & e perche non esegue il cmd
+
+// do_redir(t_node *node)
+// 1. vado start node.
+// 2. mi giro tutti i nodi ed eseguo tutti gli here_doc (forse anche i cat senza input)
+// 3. ritorno allo start node.
+// relativamente al singolo nodo fa le seguenti valutazioni:
+
+// PREMESSA:
+// 1. echo a >b | (echo b >c && echo d >e) => CREA B C E
+//                0            1
+// 2. echop a >b &&  (echo b >c && echo d >e) => errore echop + CREA SOLO B
+// ovvero di default non fa le redirections
+// echo a >b ||  (echo b >c && echo d >e) => CREA B
+//    A. esegue tutte le redir se stesso lvl_subshell & pipe, ese
+
+// CONCLUSIONE:
+// possiamo dire che vengono eseguite tutte le redir dei cmd legati con pipe,
+// ci fermiamo solo se incontriamo gli altri due operatori && ||
+// tuttavia se c è parentesi dopo pipe, ovvero se lvl_subshell del successivo 
+// è maggiore del precedente allora eseguo tutte le redir fino a che non torno nuovamente
+// al livello precedente, ovvero il livello del primo cmd
+// quindi se ci sono altri livelli innestati all interno vengono eseguiti. quindi tutti
+// fino a che non torno livello di origine
+
+// ovvero caso: echo a >b | (echo b >c && (echo d >e | echo f >o)) => CREA B C E O
+
 void    execute(t_shell *shell)
 {
     t_node *node;
@@ -313,12 +315,9 @@ void    execute(t_shell *shell)
     printf("Shell->tree address:%p\n", shell->tree);
     printf("Calculating starting node...\n");
     node = get_starter_node(shell);
-    print_node(node);
+    print_node(shell, node);
     // attualmente il parser non ha tolto le parentesi
 }
-
-
-
 
 // ------------------ INIZIO CODICE FBIONDO --------------------------
 // attenzione al subject:
@@ -339,7 +338,7 @@ void execute_builtin(t_node *node, t_shell *shell)
     else if (!ft_strncmp(node->content.cmd[0], "export", len, 1))
         ft_export(shell, node);
     else if (!ft_strncmp(node->content.cmd[0], "unset", len, 1))
-         ft_unset(node, shell);
+        ft_unset(node, shell);
     else if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
         ft_exit(node, shell);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
@@ -351,7 +350,7 @@ void execute_builtin(t_node *node, t_shell *shell)
 int is_builtin(t_node *node)
 {
     int len;
-    
+
     len = ft_strlen(node->content.cmd[0]);
     if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))
         return (1);

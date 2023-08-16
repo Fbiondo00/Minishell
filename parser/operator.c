@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 18:59:12 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/07/16 22:10:31 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/14 23:11:36 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,3 +103,5 @@ int check_op_logic_than_pipe(t_node *node)
     }
     return (0);
 }
+
+// 5 func
