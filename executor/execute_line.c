@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:13:34 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:14:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -300,9 +300,10 @@ void execute_initial_redirections(t_node *node)
 // CONCLUSIONE:
 // possiamo dire che vengono eseguite tutte le redir dei cmd legati con pipe,
 // ci fermiamo solo se incontriamo gli altri due operatori && ||
-// tuttavia se c è parentesi dopo pipe, ovvero se lvl_subshell del successivo 
+// tuttavia se c è parentesi dopo pipe, ovvero se lvl_subshell del successivo
 // è maggiore del precedente allora eseguo tutte le redir fino a che non torno nuovamente
 // al livello precedente, ovvero il livello del primo cmd
+// [FALSO] anche nella subshell si esegue fino a che non trovi && o ||
 // quindi se ci sono altri livelli innestati all interno vengono eseguiti. quindi tutti
 // fino a che non torno livello di origine
 
@@ -397,4 +398,21 @@ void execute_demo(t_shell *shell)
         printf("Non è un comando builtin!\n");
     // exit(99);
 }
-// ------------------ FINE CODICE FBIONDO --------------------------
+// ------------------ FINE CODICE FBIONDO ----------------------------------
+
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+// --------------------------------------------------------------------------
+
+// 2. executor & subshells
+//    A.  cat senza input fare here_doc!(di default oppure a seconda di op logici?)
+//    B.  PER EXECUTOR lvl_subshell: se termina senza operatore fuori dalle tonde,
+//        effettivamente non esiste un nodo_op con lvl 0. quindi si puo
+//        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
+//        esempio creazione is_last_cmd() se necessario
+
+// void execute(t_shell *shell)
+// {
+//     t_node *node;
+    
+// }

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 03:58:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:32:29 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,9 +125,7 @@ int	unclosed_quotes(t_shell *shell)
 int empty_parentheses(t_shell *shell, int idx)
 {
 	int len;
-	int count;
 
-	count = 0;
 	len = ft_strlen(shell->str);
 	while (++idx < len)
 	{

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 04:02:56 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:32:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ char *var_expand(t_node *node, char *str)
     {
         // printf("i:%d\n", i);
         // ritorna 0 se sono uguali
-        if (!ft_strncmp(str, node->shell->env[i], get_idx_eq(node, i), 1))
+        if (!ft_strncmp2(str, node->shell->env[i], get_idx_eq(node, i), 1))
         {
             new_str = node->shell->env[i] + get_idx_eq(node, i) + 1;
             printf("get_idx_eq:%d\n", get_idx_eq(node, i));
@@ -210,9 +210,6 @@ void ft_do_expand(t_node *node)
 // NUOVO: ho aggiunto attributo shell al nodo
 void set_cmd(t_node *node)
 {
-    int i;
-
-    i = -1;
     // creare file.c contenente questo set di funzioni
     // set_lvl(node);
     ft_do_expand(node);

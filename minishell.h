@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:24:11 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:34:20 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -173,17 +173,19 @@ char	*ft_strchr(char *s, char ch);
 void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit);
 char	**ft_split(char *s, char c);
 char	*ft_substr(char	*s, int start, int len);
-int ft_strncmp(char *s1, char *s2, int n, int flag);
+int ft_strncmp2(char *s1, char *s2, int n, int flag);
 char ft_strcmp(char *s1, char *s2);
 void *ft_realloc(void *ptr, size_t size);
 char *ft_strdup(char *src);
 char *ft_strjoin(char const *s1, char const *s2);
 void welcomeScreen(void);
 int get_idx_eq(t_node *node, int idx);
-int get_idx_eq_str(char *str);
+int get_idx_eq_str2(char *str);
 int ft_isdigit2(int c);
 int ft_get_len_mat(t_node *node);
 int ft_atoi(const char *str);
+int ft_strncmp(char *s1, char *s2, int n, int flag);
+int get_idx_eq_str(char *str);
 
 // test
 void print_node(t_shell *shell, t_node *node);

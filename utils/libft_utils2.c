@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:42 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/14 23:17:41 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:35:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,7 @@ char *ft_strchr(char *s, char ch)
     return (NULL);
 }
 
-int ft_strncmp(char *s1, char *s2, int n, int flag)
+int ft_strncmp2(char *s1, char *s2, int n, int flag)
 {
     int i;
     unsigned char *us1;
@@ -57,6 +57,34 @@ int ft_strncmp(char *s1, char *s2, int n, int flag)
         if (us1[i] == us2[i])
             i++;
         else
+            return (us1[i] - us2[i]);
+    }
+    return (0);
+}
+
+int ft_strncmp(char *s1, char *s2, int n, int flag)
+{
+    int i;
+    unsigned char *us1;
+    unsigned char *us2;
+
+    i = 0;
+    us1 = (unsigned char *)s1;
+    us2 = (unsigned char *)s2;
+    printf("str:%s|env[i]:%s\n\n", s2, s1);
+    printf("ft_strlen(s1):%d| get_idx_eq_str(s2):%d\n", get_idx_eq_str(s1), get_idx_eq_str(s2));
+    if (flag && get_idx_eq_str(s1) != get_idx_eq_str(s2))
+    {
+        // printf("\n\n\nEsce in flag1\n");
+        return (-999);
+    }
+
+    while ((us1[i] != '\0' || us2[i] != '\0') && i < n)
+    {
+        if (us1[i] == us2[i])
+            i++;
+        else
+
             return (us1[i] - us2[i]);
     }
     return (0);

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 04:59:04 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:00:50 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int main(int argc, char **argv, char **env)
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-// -2 fix new syntax errors
+//-2 fix new syntax errors
 //-1. WILDCARDS!!
 // 0. echo a>b|echo b|echo c && pi zi ||   pippo <u z    >to_test
 
@@ -98,18 +98,16 @@ int main(int argc, char **argv, char **env)
 //    casi:(&>  <>  >& | ><   &< <&)dare errore!fare set chars per redir e dare errore if in
 //    A2: aggiungere anche altre syntax error di sotto(anche op)
 
-// 2. merge code
-
-// 3. executor & subshells
+// 2. executor & subshells
 //    A.  cat senza input fare here_doc!(di default oppure a seconda di op logici?)
 //    B.  PER EXECUTOR lvl_subshell: se termina senza operatore fuori dalle tonde,
 //        effettivamente non esiste un nodo_op con lvl 0. quindi si puo
 //        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
+//        esempio creazione is_last_cmd() se necessario
 
-// 4. ("echo')")  per errore elimina l apice singolo, gestito in set_cmd o in_quotes_str?
-// 5. fare init_node() con valori a null? o sono gia tutti settati ?
-// 6. se ft_read_line fallisce fare il free di quote_idx e del resto
-// 7. quando errore syntaxnon deve uscire dal terminale!, ma pulire solo le strutture
+// 3. ("echo')")  per errore elimina l apice singolo, gestito in set_cmd o in_quotes_str?
+// 4. se ft_read_line fallisce fare il free di quote_idx e del resto
+// 5. quando errore syntax non deve uscire dal terminale!, ma pulire solo le strutture
 // ------------------- WIP -------------------
 // CASI DA GESTIRE REDIRECTION (set_token_redirection) :
 // 1.  echo a < (echo a >)(echo a >>)  [in syntax: to fix!]

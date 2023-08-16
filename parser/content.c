@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 04:24:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:35:19 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int get_idx_eq(t_node *node, int idx)
     return (i);
 }
 
-int get_idx_eq_str(char *str)
+int get_idx_eq_str2(char *str)
 {
     int i;
 
@@ -35,6 +35,32 @@ int get_idx_eq_str(char *str)
     {
         if (str[i] == '=')
             break ;
+    }
+    return (i);
+}
+
+int get_idx_eq_str(char *str)
+{
+    int i;
+
+    i = -1;
+    while (str[++i])
+    {
+        if (str[i] == '=' || str[i] == '+')
+            break;
+    }
+    return (i - 1);
+}
+
+int get_idx_eq_st2(char *str)
+{
+    int i;
+
+    i = -1;
+    while (str[++i])
+    {
+        if (str[i] == '=')
+            break;
     }
     return (i);
 }
