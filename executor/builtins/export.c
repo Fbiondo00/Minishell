@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/16 05:16:29 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 23:01:17 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,9 @@ void ft_conc_2(t_shell *shell, char *str, int i)
     char *str1;
 
     y = -1;
-    str1 = malloc(ft_strlen(str) + 1);
+    printf("i:%d|str:%s|ft_strlen(str):%d\n", i, str, ft_strlen(str));
+    // str1 = malloc(ft_strlen(str) + 1);  // OLD
+    str1 = malloc(ft_strlen(str)); // DEBUG
     if (!str1)
         return (exit(1));
     while (str[++y] != '+')
@@ -64,39 +66,56 @@ void ft_conc_2(t_shell *shell, char *str, int i)
         str1[y - 1] = str[y];
     shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
     shell->env[i] = str1;
-    shell->env[i + 1] = 0;
-    //  free(str1); problem?
+    printf("shell->env[i:%d]:%s\n", i, shell->env[i]);
+    shell->env[i + 1] = 0; // OLD
+    // free(str1);
 }
 void ft_conc(t_shell *shell, char *str, int y)
 {
     int j;
     int i;
     int x;
-
+    char *new_str;
+    
     x = 1;
     i = -1;
-    j = -1;
+    printf("in conc, y:%d\n", y);
     while (shell->env[++i])
     {
+        printf("shell->env[i:%d]:%s\n",i, shell->env[i]);
+        printf("ft_strncmp:%d\n", ft_strncmp(shell->env[i], str, y, 1));
         printf("\nn.elementidienv:%d\n", i);
         if ((ft_strncmp(shell->env[i], str, y, 1)) == 0)
         {
-            while (shell->env[i][++j])
-            {
-                if (shell->env[i][j] == '=')
-                    x += 1;
-                printf("\ny:%d\n", x);
-            }
             j = -1;
-            while (shell->env[i][++j])
-                ;
-            printf("\n\nnon-capisco%c\n\n", str[y + 2]);
-            while (str[y + x])
-                shell->env[i][j++] = str[y++ + x];
-            shell->env[i][j + 1] = 0;
+            while (str[++j])
+            {
+                if (str[j] == '=')
+                    break ;
+            }
+            printf("j:%d\n",j);
+            // while (shell->env[i][++j])
+            // {
+            //     if (shell->env[i][j] == '=')
+            //         x += 1;
+            //     printf("y:%d|x:%d\n",y, x);
+            // }
+            // j = -1;
+            // while (shell->env[i][++j])
+            //     ;
+            // printf("\n\nnon-capisco%c\n\n", str[y + 2]);
+            // while (str[y + x])
+            //     shell->env[i][j++] = str[y++ + x];
+            // shell->env[i][j + 1] = 0;
+            // creare stringa
+            new_str = ft_strjoin(shell->env[i], str + ++j );
+            printf("new_str:%s|shell->env[i]:%s|str + j + 1:%s\n", new_str,shell->env[i], str + j);
+            free(shell->env[i]);
+            shell->env[i] = new_str;
             return;
         }
     }
+    printf("entra in conc_2\n");
     ft_conc_2(shell, str, i);
     printf("\n\nnon-capiscoshell:%s\n\n", shell->env[i]);
 }
@@ -118,12 +137,15 @@ int ft_reach(t_shell *shell, char *str)
 
     y = -1;
     i = -1;
-    while (str[++y] != '=' && str[y])
+    while (str && str[++y] != '=')
         ;
-    if (str[y - 1] == '+')
+    printf("dopo while, y:%d\n", y);
+    printf("str:%s|y:%d|str[y]:%c|str[y-1]:%c\n", str, y, str[y], str[y - 1]);
+    if (str && (str[y - 1] == '+'))
     {
+        printf("22\n");
         ft_conc(shell, str, --y);
-        printf("\n\nnon-entratoft_reachhell111:%s\n\n", str);
+        printf("\n\nnon-entratoft_reach:%s\n\n", str);
         return (1);
     }
     printf("\n\nnon-uscito da ft_reach:%s\n\n", shell->env[i]);
@@ -150,12 +172,16 @@ void ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 
     j = -1;
     i = 0;
+    printf("Q\n");
     while (shell->env[++j])
         ;
+    printf("A\n");
     while (node->content.cmd[y][++i])
         ;
+    printf("B\n");
     if (ij > y)
     {
+        printf("ij:%d|node->content.cmd[y]:%s\n",ij, node->content.cmd[y]);
         if ((ft_reach(shell, node->content.cmd[y]) == 1))
         {
             if (node->content.cmd[y + 1])
@@ -178,6 +204,7 @@ int ft_check(t_node *node)
     int y;
 
     i = 1;
+    printf("entra in ft_check...\n");
     while (node->content.cmd[i])
     {
         if ((node->content.cmd[i][0] >= 'a' && node->content.cmd[i][0] <= 'z') || (node->content.cmd[i][0] >= 'A' && node->content.cmd[i][0] <= 'Z'))
@@ -185,6 +212,7 @@ int ft_check(t_node *node)
         else
             return (write(1, "checkexpo\n", 11) - 10);
     }
+    printf("esce dal while ft_check...\n");
     i = 0;
     y = -1;
     while (node->content.cmd[++i])
@@ -197,6 +225,7 @@ int ft_check(t_node *node)
                 return (write(1, "checkexpo1\n", 11) - 10);
         }
     }
+    printf("esce dal secondo while ft_check...\n");
     return (0);
 }
 
@@ -209,11 +238,17 @@ void ft_export(t_shell *shell, t_node *node)
 
     y = 0;
     ij = ft_get_len_mat(node);
+    printf("ft_get_len_mat(node):%d\n", ft_get_len_mat(node));
     if (ij >= 2)
     {
         if (ft_check(node) == 1)
+        {
+            printf("esce in  ft_check(node) == 1\n");
             return;
+        }
+        printf("prima ft_name_value(node, shell, ij, 1);\n");
         ft_name_value(node, shell, ij, 1);
+        printf("dopo ft_name_value(node, shell, ij, 1);\n");
         return;
     }
     else
@@ -223,6 +258,7 @@ void ft_export(t_shell *shell, t_node *node)
         i = -1;
         while (shell->env[++i])
             bubble_sort_strings(shell->env, y);
+        printf("in else, dopo bubble_sort\n");
         i = -1;
         while (shell->env[++i])
         {
@@ -237,5 +273,6 @@ void ft_export(t_shell *shell, t_node *node)
             printf("\n");
             // printf("declare -x %s\n", shell->env[i]);
         }
+        printf("fine else....\n");
     }
 }

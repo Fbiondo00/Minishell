@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:14:39 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 21:34:16 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -337,7 +337,10 @@ void execute_builtin(t_node *node, t_shell *shell)
     else if (!ft_strncmp(node->content.cmd[0], "env", len, 1))
         ft_env(shell);
     else if (!ft_strncmp(node->content.cmd[0], "export", len, 1))
+    {
+        printf("prima di ft_export..\n");
         ft_export(shell, node);
+    }
     else if (!ft_strncmp(node->content.cmd[0], "unset", len, 1))
         ft_unset(node, shell);
     else if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))

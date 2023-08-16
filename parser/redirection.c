@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:24:11 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:45:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -186,9 +186,6 @@ int get_rd_size(t_node *node)
 // controlla se è presente fd valido prima della redir
 int is_fd_valid(t_node *node, int idx)
 {
-    int i;
-
-    i = idx;
     while (--idx > 0)
     {
         if (node->raw_cmd[idx] == ' ')

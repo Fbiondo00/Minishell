@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:00:50 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/16 19:59:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -176,6 +176,9 @@ int main(int argc, char **argv, char **env)
 
 // ------------------- TESTER: OK/KO in base a risultati bash -------------------
 // --------------- WIP -------------------
+
+// $HOME  seg fault
+// seg se export a+=aaaaaaa
 // Gestire: echo 7>1>2     dovrebbe dare syntax error.
 //  soluzione: in fase di check syntax nella str spacchettare a partire da ultima redir
 // quindi l ultima redir si prende 1>2 e li setta a spazi.
