@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 21:34:16 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/17 22:44:03 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -347,6 +347,8 @@ void execute_builtin(t_node *node, t_shell *shell)
         ft_exit(node, shell);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
         ft_cd(node, shell);
+     else if (!ft_strncmp(node->content.cmd[0], "ls", len, 1))
+        ft_wild();
 }
 
 // ritorna 1 se è un comando builtin
@@ -369,6 +371,8 @@ int is_builtin(t_node *node)
     else if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
         return (1);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
+        return (1);
+      else if (!ft_strncmp(node->content.cmd[0], "ls", len, 1))
         return (1);
     return (0);
 }

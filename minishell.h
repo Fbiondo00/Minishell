@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:34:20 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/17 22:47:59 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <sys/wait.h>
 #include <termios.h>
 #include <signal.h>
+#include <dirent.h>
 
 // MESSAGE
 # define PROMPT_MSG "fbrdhell-2.0 $"
@@ -162,6 +163,7 @@ void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void ft_unset(t_node *node, t_shell *shell);
+int ft_wild();
 int ft_exit(t_node *node, t_shell *shell);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
