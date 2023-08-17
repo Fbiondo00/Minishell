@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/17 00:07:34 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/17 03:32:28 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,10 +74,9 @@ void ft_conc(t_shell *shell, char *str, int y)
 {
     int j;
     int i;
-    int x;
     char *new_str;
     
-    x = 1;
+
     i = -1;
     printf("in conc, y:%d\n", y);
     while (shell->env[++i])
@@ -219,9 +218,15 @@ int ft_check(t_node *node)
     {
         while (node->content.cmd[i][++y])
         {
-            if ((node->content.cmd[i][y] >= '0' && node->content.cmd[i][y] <= '9') || (node->content.cmd[i][y] >= 'a' && node->content.cmd[i][y] <= 'z') || (node->content.cmd[i][y] >= 'A' && node->content.cmd[i][y] <= 'Z') || node->content.cmd[i][y] == '=' || node->content.cmd[i][y] == '+')
+            if ((node->content.cmd[i][y] >= '0' && node->content.cmd[i][y] <= '9') || (node->content.cmd[i][y] >= 'a' && node->content.cmd[i][y] <= 'z') || (node->content.cmd[i][y] >= 'A' && node->content.cmd[i][y] <= 'Z'))
                 continue;
             else
+                if(node->content.cmd[i][y] == '='  )
+                    continue;
+                else
+                    if(node->content.cmd[i][y] == '+' && node->content.cmd[i][++y] == '=' )
+                        continue;
+                    else
                 return (write(1, "checkexpo1\n", 11) - 10);
         }
     }
