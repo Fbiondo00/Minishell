@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   component.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/17 22:32:00 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/19 11:56:31 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,6 +216,7 @@ void print_node(t_shell *shell, t_node *node)
                 printf("-----------------------\n");
             printf("REDIR N°%d\n", i + 1);
             printf("FD:%d| ", node->content.redir[i].fd);
+            printf("LVL:%d| ", node->content.redir[i].lvl);
             if (node->content.redir[i].key == 13)
                 printf("KEY: R_INPUT| ");
             if (node->content.redir[i].key == 14)

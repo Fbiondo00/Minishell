@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/17 22:47:59 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/19 18:34:03 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,10 @@
 // bash: piz: command not found
 # define CMD_NOT_FOUND "command not found\n"
 
+#ifndef BUFFER_SIZE
+#define BUFFER_SIZE 1
+#endif
+
 //EXECUTOR OPERATOR
 # define AND 10
 # define OR 11
@@ -69,6 +73,7 @@ typedef struct s_kv
 {
 	int		fd;
 	int		key;
+	int		lvl;
 	char	*value;
 }	t_kv;
 
@@ -88,6 +93,9 @@ typedef struct s_node
 	int					lvl_subshell;
 	int					lvl_lock;
 	int 				flag;
+	int					std_in;
+	int					std_out;
+	int					std_err;
 	struct s_content	content;
 	struct s_node		*back;
 	struct s_node		*right;
@@ -138,6 +146,7 @@ void set_components(t_shell *shell);
 void set_cmd(t_node *node);
 void remove_quotes(t_node *node);
 void ft_lowercase_cmd(t_node *node);
+char *var_expand(t_node *node, char *str);
 //init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
 void node_init(t_node *node);
@@ -163,8 +172,8 @@ void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void ft_unset(t_node *node, t_shell *shell);
-int ft_wild();
 int ft_exit(t_node *node, t_shell *shell);
+int ft_wild(t_node *node, int i);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);
@@ -188,8 +197,17 @@ int ft_get_len_mat(t_node *node);
 int ft_atoi(const char *str);
 int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
+char *ft_strjoin2(char const *s1, char const *s2);
 
 // test
 void print_node(t_shell *shell, t_node *node);
+
+// GNL
+char *get_next_line(int fd);
+char *ft_strjoin_gnl(char *s1, char *s2);
+int ft_strchr_gnl(char *s1, char c);
+size_t ft_strlen_gnl(char *str);
+void *ft_free(char *s1, char *s2);
+size_t ft_is_newline(char c);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:23:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/19 12:47:59 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,9 @@ void node_init(t_node *node)
     node->left = NULL;
     node->right = NULL;
     node->shell = NULL;
+    node->std_in = -1;
+    node->std_out = -1;
+    node->std_err = -1;
     node->content.cmd = NULL;
     node->content.idx_op = 0;
     node->content.kv_size = 0;

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:45:28 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/18 02:20:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -219,6 +219,8 @@ void set_fd(t_node *node, int idx, int num)
     }
     else
         node->content.redir[num].fd = -1;
+    // valore per testare. da creare poi func set_lvl
+    node->content.redir[num].lvl = 0;
 }
 
 void set_redirection(t_node *node)
@@ -238,6 +240,9 @@ void set_redirection(t_node *node)
             if (node->raw_cmd[i] == '>' && !in_quotes(node, i))
             {
                 printf("trovato un redir che inizia con >...\n");
+                // setta il lvl relativa alla redir salvata, prima o dopo set_fd?
+                // set_lvl(node, i, num);
+                // settato attualmente a 0 in set_fd (da togliere poi..)
                 set_fd(node, i, num);
                 if (!is_last_char(node, i) && node->raw_cmd[i + 1] == '>')
                     i++;
@@ -246,6 +251,7 @@ void set_redirection(t_node *node)
             else if (node->raw_cmd[i] == '<' && !in_quotes(node, i))
             {
                 printf("trovato un redir che inizia con <...\n");
+                // set_lvl(node, i, num);
                 set_fd(node, i, num);
                 if (!is_last_char(node, i) && node->raw_cmd[i + 1] == '<')
                     i++;

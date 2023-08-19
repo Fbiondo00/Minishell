@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/17 22:44:03 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/19 16:53:44 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,16 +309,7 @@ void execute_initial_redirections(t_node *node)
 
 // ovvero caso: echo a >b | (echo b >c && (echo d >e | echo f >o)) => CREA B C E O
 
-void    execute(t_shell *shell)
-{
-    t_node *node;
 
-    printf("Shell->tree address:%p\n", shell->tree);
-    printf("Calculating starting node...\n");
-    node = get_starter_node(shell);
-    print_node(shell, node);
-    // attualmente il parser non ha tolto le parentesi
-}
 
 // ------------------ INIZIO CODICE FBIONDO --------------------------
 // attenzione al subject:
@@ -347,8 +338,6 @@ void execute_builtin(t_node *node, t_shell *shell)
         ft_exit(node, shell);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
         ft_cd(node, shell);
-     else if (!ft_strncmp(node->content.cmd[0], "ls", len, 1))
-        ft_wild();
 }
 
 // ritorna 1 se è un comando builtin
@@ -371,8 +360,6 @@ int is_builtin(t_node *node)
     else if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
         return (1);
     else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
-        return (1);
-      else if (!ft_strncmp(node->content.cmd[0], "ls", len, 1))
         return (1);
     return (0);
 }
@@ -402,7 +389,7 @@ void execute_demo(t_shell *shell)
         execute_builtin(node, shell);
     }
     else
-        printf("Non è un comando builtin!\n");
+        printf("Non è builtin!\n");
     // exit(99);
 }
 // ------------------ FINE CODICE FBIONDO ----------------------------------
@@ -410,16 +397,378 @@ void execute_demo(t_shell *shell)
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-
 // 2. executor & subshells
+
 //    A.  cat senza input fare here_doc!(di default oppure a seconda di op logici?)
+// here_doc implicito del cat non viene eseguito a prescindere ma durante exec
+// del proprio cmd, pertanto puo anche non essere mai eseguito, (se: && ||)
+// ex. echo a || cat
+
 //    B.  PER EXECUTOR lvl_subshell: se termina senza operatore fuori dalle tonde,
 //        effettivamente non esiste un nodo_op con lvl 0. quindi si puo
 //        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
 //        esempio creazione is_last_cmd() se necessario
 
-// void execute(t_shell *shell)
+
+// -------------------- fd.c / execve.c / open_file.c --------------------
+
+// se il cmd[0] fa parte di un set di comandi che richiedono un input esegue un
+// here_doc implicito. tale here_doc viene bloccato solo da signal ctrl+D
+// un check tipo is_builtin
+// void ft_do_implicit_heredoc(t_shell *node)
 // {
-//     t_node *node;
-    
+//     (void) node;
 // }
+
+// si scorre tutto l albero ed esegue tutti gli here_doc settati +
+// void ft_do_heredoc(t_shell *shell)
+// {
+//     (void) shell;
+// }
+
+// reset fd originali(con dup2), salvati in shell
+// non facciamo chiusura dei dup temp_.. perche servono per il comandi successivi.
+// possibile che questa funzione vada usata quando incontriamo AND e OR, PIPE
+void ft_reset_original_fd(t_node *node)
+{
+    dup2(node->shell->temp_input, STDIN_FILENO);
+    dup2(node->shell->temp_output, STDOUT_FILENO);
+    dup2(node->shell->temp_error, STDERR_FILENO);
+}
+
+int ft_dup2(int *fd, int arg)
+{
+    if (dup2(*fd, arg) == -1)
+    {
+        perror("Dup2 error");
+        return (0);
+    }
+    close(*fd);
+    return (1);
+}
+
+int	ft_here_doc(int *fd, char *limiter)
+{
+	char	*str;
+
+    str = NULL;
+	*fd = open("temp.txt", O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR);
+    if (*fd == -1)
+        return (0);
+	while ((ft_strncmp(str, limiter, ft_strlen(str) - 1, 0)) || (
+			ft_strlen(str) - 1) != ft_strlen(limiter))
+	{
+		write(1, &">", 1);
+		str = get_next_line(0);
+		if ((ft_strncmp(str, limiter, ft_strlen(str) - 1, 0)) && write(
+				*fd, str, ft_strlen(str)) == -1)
+			perror("Write error");
+		if (!str)
+		{
+			if (unlink("./temp.txt") != 0)
+				perror("unlink error");
+		}
+		free(str);
+	}
+    close(*fd);
+    *fd = open("temp.txt", O_RDONLY, 0777);
+    return (1);
+}
+
+int ft_open(int *fd, char *str, int key)
+{
+    if (key == R_OUTPUT_APPEND)
+    {
+        // printf("FT_OPEN:key == R_OUTPUT_APPEND\n");
+        *fd = open(str, O_RDWR | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
+    }
+    else if (key == R_OUTPUT_TRUNC)
+    {
+        // printf("FT_OPEN:key == R_OUTPUT_TRUNC\n");
+        *fd = open(str, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0777);
+    }
+    else if (key == R_INPUT)
+    {
+        // printf("FT_OPEN:key == R_INPUT\n");
+        *fd = open(str, O_RDONLY | O_CLOEXEC, 0777);
+    }
+    if (*fd == -1)
+        return (0);
+    // printf("ft_open: FILE APERTO!\n");
+    return (1);
+    }
+
+// int type > node->content.redir[i].key
+// int fd > node->content.redir[i].fd
+// N.B: per far vincere l ultimo continuare con gli n-open, salvarli sempre in node->std..
+//      se presenti successivi chiuderle il precedente prima di apertura nuovo
+// in realtà è possibile che non serva utilizzare questi attributi!
+// gia avviene la pulizia corretta degli fd.
+void ft_clean_prev_fd(t_node *node, int type, int fd)
+{
+    if ( node->std_in != -1  && (type == R_INPUT || type == R_INPUT_HERE_DOC))
+        close(node->std_in);
+    else if ( node->std_out != -1  && fd == 1 && (type == R_OUTPUT_APPEND || type == R_OUTPUT_TRUNC))
+        close(node->std_out);
+    else if (node->std_out != -1 && fd == 2 && (type == R_OUTPUT_APPEND || type == R_OUTPUT_TRUNC))
+        close(node->std_err);
+}
+
+// esegue le seguenti operazioni sul redir[idx]
+// open file
+// se ok -> fa il dup2, con l fd relativo (se non input o se non -1)
+// se ok -> ritorna null
+// ritorna 1 se ok, 0 se errore
+//-9. chiudere here_doc dopo utilizzo ?? salvare variabile in struct?
+
+int ft_open_file(t_node *node, int i)
+{
+    int fd;
+
+    if (node->content.redir[i].key == R_INPUT_HERE_DOC)
+        ft_here_doc(&fd, node->content.redir[i].value);
+    else
+        ft_open(&fd, node->content.redir[i].value, node->content.redir[i].key);
+    if (fd == -1)
+    {
+        perror("Open error");
+        return (0);
+    }
+    // ft_clean_prev_fd(node, node->content.redir[i].key, node->content.redir[i].fd);
+    if (node->content.redir[i].fd != -1 && (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND))
+    {
+        // printf("node->content.redir[i].fd != -1 && KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND");
+        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, node->content.redir[i].fd);
+        ft_dup2(&fd, node->content.redir[i].fd);
+    }
+    else if (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)
+    {
+        // printf("KEY:R_INPUT|| R_INPUT_HERE_DOC");
+        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, STDIN_FILENO);
+        ft_dup2(&fd, 0);
+    }
+    else if (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND)
+    {
+        // printf("KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND");
+        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, STDOUT_FILENO);
+        ft_dup2(&fd, 1);
+    }
+    return (1);
+}
+
+// esegue la redir del lvl indicato.
+// nel caso si trattasse di redir di input, o anche here_doc(?)
+// esegue solo se is_first == 1
+// se si tratta di output esegue sempre.
+// ritorna 1 se ok, 0 se errore
+int ft_fd_sub_level(t_node *node, int lvl, int is_first)
+{
+    int i;
+
+    i = -1;
+    printf("in ft_fd_sub_level...\n");
+    while (++i < node->content.kv_size)
+    {
+        printf("A\n");
+       if (node->content.redir[i].lvl == lvl && (is_first && (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)))
+       {
+            printf("ft_fd_sub_level: FAft_open_file!\n");
+            if(!ft_open_file(node, i))
+                return (0);
+        }
+    }
+    return (1);
+}
+
+// esegue tutte le redir con lvl 0(cmd_level)
+// ritorna 1 se ok, 0 se errore
+// check if (node->content.redir)
+int  ft_fd_cmd_level(t_node *node)
+{
+    int i;
+
+    i =-1;
+    printf("in ft_fd_cmd_level...\n");
+    while (++i < node->content.kv_size)
+    {
+         if (node->content.redir[i].lvl == 0)
+         {
+            // printf("ft_fd_cmd_level: FAft_open_file!\n");
+            if (!ft_open_file(node, i))
+                return (0);
+         }
+    }
+    return (1);
+}
+
+void free_matrix(char **matrix)
+{
+    int i;
+
+    i = -1;
+    while (matrix[++i])
+        free(matrix[i]);
+    free(matrix);
+}
+
+char *get_path(char *cmd, char **env)
+{
+    int i;
+    char *temp;
+    char *path;
+    char **base;
+
+    i = 0;
+    // var_expand(node, "PATH") in alternativa al while 
+    while (ft_strncmp(env[i], "PATH=", 5, 0))
+        i++;
+    base = ft_split((env[i] + 5), ':');
+    i = -1;
+    while (base && base[++i])
+    {
+        temp = ft_strjoin(base[i], "/");
+        path = ft_strjoin(temp, cmd);
+        free(temp);
+        if (access(path, X_OK) == 0)
+        {
+            free_matrix(base);
+            return (path);
+        }
+        free(path);
+    }
+    free_matrix(base);
+    return (NULL);
+}
+
+void    ft_execve(t_node *node)
+{
+    char *path;
+    
+    if (node->content.cmd[0][0] != '/')
+        path = get_path(node->content.cmd[0], node->shell->env);
+    else
+        path = node->content.cmd[0];
+    if (!path)
+    {
+        write(2,"Error: command not found\n", 25);
+        exit(20);
+    }
+    // passare il terzo param, ovvero l env fittizio??
+    if (execve(path, node->content.cmd, node->shell->env) == -1) 
+    {
+        perror("Command Error");
+        exit(30);
+    }
+}
+
+// esegue il singolo cmd, ovvero:
+// fa le redir (tranne here_doc che è gia fatta)
+// if r_input fail, stampa errore
+// altrimenti esegue il cmd
+// reset fd_originali
+void ft_single_cmd(t_node *node)
+{
+    pid_t   pid;
+    int     max_lvl;
+
+    printf("in ft_single_cmd...\n");
+    if (node->content.redir)
+        max_lvl = node->content.redir[node->content.kv_size - 1].lvl;
+    else
+        max_lvl = 0;
+    printf("max_lvl:%d\n", max_lvl);
+    // fa here_doc impliciti se necessario
+    // ovvero se non presenti altri r_input e se cmd corretto
+    // ft_implicit_heredoc(node);
+    // esegue tutti gli fd cmd_level in ordine decrescente, non esegue lo zero
+    while (max_lvl > 0)
+    {
+        printf("max_lvl:%d\ns", max_lvl);
+        if (!ft_fd_sub_level(node, max_lvl--, 0))
+            return ;
+    }
+    printf("PRE: ft_fd_cmd_level(node)\n");
+    if (!ft_fd_cmd_level(node))
+        return ;
+    if (is_builtin(node))
+    {
+        // printf("eseguo comando builtin...\n");
+        execute_builtin(node, node->shell);
+    }
+    else
+    {
+        pid = fork();
+        // printf("Non è un comando builtin!\n");
+        if (pid == 0)
+        {
+            // printf("nel processo figlio!\n");
+            ft_execve(node);
+        }
+        else
+        {
+            // eventualmente catturare gli exit_status, se serve
+            waitpid(pid, NULL, 0);
+        }
+    }
+
+    ft_reset_original_fd(node);
+    printf("POST: ft_reset_original_fd|pid:%d\n",getpid());
+}
+
+// LOGICA FD != LOGICA ()
+// LOGICA FD == LOGICA OP
+// echo a>1|(echo b>2||echo c  >3) |out:  |1:a |2:b  // il file 3 non viene creato
+// non viene neanche eseguito. però si va in subshell, in quanto il cmd prima va eseguito.
+// quindi: la logica di priorità dei fd non è influenzata dalla logica delle parentesi
+// ma segue la logica degli operatori
+
+// a livello operativo corrisponde a fare la redir solo prima dell esecuzione del suo cmd
+// e non in blocco insieme alle redir di altri cmd
+
+// se fallisce calcolo redir input, non viene eseguito il cmd
+// EX. echo a <1
+// bash: 1: No such file or directory
+
+// si puo risolvere prima single_cmd , poi senza (), poi con () ...
+void execute(t_shell *shell)
+{
+    // t_node *node;
+
+    // esegue tutti gli here_doc settati in s_kv
+    // ft_do_heredoc(shell);
+    if (is_node_cmd(shell->tree))
+    {
+        // fare funz
+        shell->tree->std_in = shell->tree->shell->temp_input;
+        shell->tree->std_out = shell->tree->shell->temp_output;
+        shell->tree->std_err = shell->tree->shell->temp_error;
+        // --
+        printf("nodo op è assente...\n");
+        ft_single_cmd(shell->tree);
+        // esce sia se ha riscontrato errore che no. In ogni caso fare
+        // ft_clean_exit a cui seguirà una newline.
+        return ;
+    }
+    // qui di seguito è presente almeno 1 nodo op
+    printf("nodo op è presente...\n");
+    printf("PRIMO LOOP...\n");
+    // node = go_to_starter_node(shell->tree->left);
+    // a livello operativo corrisponde fare la redir solo prima dell esecuzione del suo cmd
+    // se fallisce r_input dare errore: No such file or directory  (senza exec cmd)
+    // while (1)
+    // {
+        
+    //     if (is_left_branch(node))
+    //     {
+    //     }
+    //     if (!is_left_branch(node) && !node->back->back->lvl_lock)
+    //     {
+    //     }
+    //     else if (!is_left_branch(node) && node->back->back->lvl_lock)
+    //     {
+    //     }
+    //     node = next_cmd(shell, node);
+    //     if (!node) // è NULL se è stato navigato tutto il left branch
+    //         break;
+    // }
+}

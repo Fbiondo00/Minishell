@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:59:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/19 16:56:07 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,11 +30,15 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
         free(shell->rawline);
     if (shell->str)
         free(shell->str);
+    
     //---
     if (to_exit)
     {
         // shell->env free in to_exit?
         exit(write_error(str,exit_status));
+        close(shell->temp_input);
+        close(shell->temp_output);
+        close(shell->temp_error);
     }
 }
 
@@ -76,8 +80,8 @@ int main(int argc, char **argv, char **env)
         {
             set_tree(&shell);
             set_components(&shell);
-            // execute(&shell);
-            execute_demo(&shell);
+            execute(&shell);
+            // execute_demo(&shell);
             ft_clean_exit(&shell, NULL , 3, 0);
         }
         // mettere clean_exit qui per pulire anche in caso di syntax error?
@@ -85,12 +89,18 @@ int main(int argc, char **argv, char **env)
     }
 }
 
-
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-2 fix new syntax errors
-//-1. WILDCARDS!!
-// 0. echo a>b|echo b|echo c && pi zi ||   pippo <u z    >to_test
+//-8.Sostituire perror con write(2,,)?
+//-7. chiudere here_doc dopo utilizzo
+//-6. se >1 here_doc, generazione nome univoco. variabile array in node?
+//-5. creare fd.c & execve.c
+//-4. FT_CHECK += RIGA223 merge
+//-3. inserire attributo lvl in s_kv. in modo tale da capire se è cmd o subshell related.
+//    la logica dovrebbe essere semplice: per ogni ) prima della redir: lvl++; (parte da 0)
+//-2. seg fault if !exist $var
+//-1. fix new syntax errors
+// 0. WILDCARDS!!
 
 // 1. fix + logic redir
 //    CASI:
@@ -258,3 +268,133 @@ int main(int argc, char **argv, char **env)
 // -- test components --
 // (ECHO"b" && (ECHO "a" && (ECHO "d")))|ECHO "c"                   OK
 // ((echo a|echo b|echo u&& echo h|echo c|echo d)|(ECHO E&&ECHO F))&&(G|LS O|LS U) OK
+
+// echo a >1 && ( echo b >2 || echo c>3) || echo d >4  (crea 1 e 2) OK
+
+// echo a >1 && ( echo b >2 || echo c <<3) || echo d <<4            OK
+// esegue tutti here_doc a prescindere.
+
+// bash-3.2$ echo a| (cat ||echo c  >3 ) | echo d<4                 OK
+// bash : 4 : No such file or directory
+
+// bash-3.2$ echo a| (cat ||echo c  >3 ) && echo d<4                OK
+// a
+// bash: 4: No such file or directory
+
+// ((((echo a)>1)>2)>3)  il valore finisce in 1                     OK
+
+// priorità input in subshell
+// caso PIPE(cmd partenza lvl.0):
+// next_cmd : è in fork, input viene dato solo al primo cmd della subshell
+
+// bash-3.2$ echo a | (cat || echo b) | cat
+// a
+
+// se presente una redir di subshell
+// PROBLEMA: non ho questa informazione. non so se la redir è sub_level o cmd related..
+// TO FIX!
+
+// supponendo di sapere se redir è sub_level o cmd related
+
+// se è presente anche input redir sub_level: la  redir vince sulla PIPE!!
+
+// bash-3.2$ echo a | (cat || echo b) <test| cat   (test:gg)
+// gg
+
+// se aggiungiamo anche input cmd related ( e:ok|test:gg)
+
+// bash-3.2$ echo a | (cat <e || echo b) <test| cat
+// ok
+
+// LS $HOME/Desktop
+
+// -------
+// CONCLUSIONE: ordine importanza INPUT
+// 1: cmd_level
+// 2: sub_level
+// 3: PIPE
+
+// tuttavia l ordine in cui vanno settate è inverso, ovvero:
+// 1: setto PIPE input (vale per solo per primo cmd se subshell)
+// 2: setto sub_level input
+// 3: setto cmd_level input
+
+// quindi operativamente prima di ogni pipe si esegue la func pipe()
+
+// CONCLUSIONE: ordine importanza OUTPUT
+// 1: cmd_level
+// 2: sub_level
+// 3: PIPE
+
+// tuttavia l ordine in cui vanno settate è inverso, ovvero:
+// 1: setto PIPE output (vale per solo per ultimo cmd se subshell) 
+// 2: setto sub_level output
+// 3: setto cmd_level output
+
+
+// 1: bash-3.2$ echo a | (echo d &&  echo b) | cat
+// d
+// b
+
+// 2: bash-3.2$ echo a | (echo d >z &&  echo b) | cat  (z:d)
+// b
+
+// bash-3.2$ echo a | (echo d >z &&  echo b) >u | cat  (z:d|u:b)
+// bash-3.2$ 
+
+// -------
+
+// N.B:
+// - sub_level R_INPUT viene settato SOLO NEL PRIMO CMD!
+// - sub_level R_INPUT_HERE_DOC viene settato SOLO NEL PRIMO CMD!
+// - sub_level TRUNC_OUTPUT viene settato in TUTTI i CMD!
+// - sub_level APPEND_OUTPUT viene settato in TUTTI i CMD!
+
+// N.B:
+// bash ha un comportamento anomalo nel caso successivo
+// (cat && cat ) <test
+// ovvero non richiede here_doc per il secondo comando. sembra non esegua il cmd proprio
+// SOLUZIONE: noi facciamo sempre here_doc, come in tutti gli altri casi!
+// -------
+
+
+
+// HERE_DOC implicito != here_doc settato, infatti:
+
+// se settato esegue subito here_doc, anche se il comando non viene eseguito
+// echop aa && cat <<u
+
+// se implicito non viene eseguito, ma è eseguito solo prima dell esecuzione cmd
+// echop aa && cat 
+
+// When the cat command does not contain any arguments, it waits for an input from your keyboard. If you try to run the cat command lacking any arguments, cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard, cat command will simply repeat any input and display it on the screen.
+
+
+// how to restore FD 
+// https://stackoverflow.com/questions/55771495/what-are-the-rules-of-closing-file-descriptors-after-calling-dup-dup2
+
+
+// int i;
+// // m*i*.*
+// while ((entry = readdir(dir)) != NULL)
+// {
+//     i = -1;
+//     while (str[++i])
+//     {
+//         if (str[i] != '*')
+//         {
+//             if (entry->d_name[i] != str[i])
+//                break ;
+//             else 
+//             {
+//                 // free();
+//                 new_str = malloc(entry->d_name + 1(32) + 1(\0)) // ' '
+//                 new_str = str_join(entry->d_name + 32);
+                
+//             }
+//         }
+//     }
+//     free(str);
+//     return (new_str);
+// }
+

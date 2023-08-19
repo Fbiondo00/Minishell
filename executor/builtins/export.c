@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/17 03:32:28 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/19 23:25:40 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,9 +74,10 @@ void ft_conc(t_shell *shell, char *str, int y)
 {
     int j;
     int i;
+    // int x;
     char *new_str;
     
-
+    // x = 1;
     i = -1;
     printf("in conc, y:%d\n", y);
     while (shell->env[++i])
@@ -136,18 +137,18 @@ int ft_reach(t_shell *shell, char *str)
 
     y = -1;
     i = -1;
-    while (str && str[++y] != '=')
+    while (str[++y] && str[y] != '=')
         ;
-    printf("dopo while, y:%d\n", y);
-    printf("str:%s|y:%d|str[y]:%c|str[y-1]:%c\n", str, y, str[y], str[y - 1]);
-    if (str && (str[y - 1] == '+'))
+    // printf("dopo while, y:%d\n", y);
+    // printf("str:%s|y:%d|str[y]:%c|str[y-1]:%c\n", str, y, str[y], str[y - 1]);
+    if (str[y - 1] == '+')
     {
         printf("22\n");
         ft_conc(shell, str, --y);
-        printf("\n\nnon-entratoft_reach:%s\n\n", str);
+        // printf("\n\nnon-entratoft_reach:%s\n\n", str);
         return (1);
     }
-    printf("\n\nnon-uscito da ft_reach:%s\n\n", shell->env[i]);
+    // printf("\n\nnon-uscito da ft_reach:%s\n\n", shell->env[i]);
     while (shell->env[++i])
     {
         if ((ft_strncmp(shell->env[i], str, y, 1)) == 0)
@@ -218,15 +219,9 @@ int ft_check(t_node *node)
     {
         while (node->content.cmd[i][++y])
         {
-            if ((node->content.cmd[i][y] >= '0' && node->content.cmd[i][y] <= '9') || (node->content.cmd[i][y] >= 'a' && node->content.cmd[i][y] <= 'z') || (node->content.cmd[i][y] >= 'A' && node->content.cmd[i][y] <= 'Z'))
+            if ((node->content.cmd[i][y] >= '0' && node->content.cmd[i][y] <= '9') || (node->content.cmd[i][y] >= 'a' && node->content.cmd[i][y] <= 'z') || (node->content.cmd[i][y] >= 'A' && node->content.cmd[i][y] <= 'Z') || node->content.cmd[i][y] == '=' || node->content.cmd[i][y] == '+')
                 continue;
             else
-                if(node->content.cmd[i][y] == '='  )
-                    continue;
-                else
-                    if(node->content.cmd[i][y] == '+' && node->content.cmd[i][++y] == '=' )
-                        continue;
-                    else
                 return (write(1, "checkexpo1\n", 11) - 10);
         }
     }
