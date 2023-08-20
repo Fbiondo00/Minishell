@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 17:25:53 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/19 23:05:11 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/20 02:13:15 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,14 @@ char *ft_asterisk(char *str)
     return (new_str);
 }
 
-int ft_wild(t_node *node, int i)
+void ft_wild(t_node *node, int i, int y)
 {
     int max;
     int min;
     char *str;
     char *new_str;
+    char *raw;
+    char *quote;
     int ij;
     
     ij=0;
@@ -127,5 +129,10 @@ int ft_wild(t_node *node, int i)
     printf("ft_wildfinalestr:%s\n", str);
     new_str = ft_asterisk(str);
         printf("ft_wildfinalestr2:%s\n", new_str);
-    return (0);
+        raw = modify_raw_and_quote(node, y, new_str, 32);
+        // free(node->raw_cmd);
+        node->raw_cmd = raw;
+       quote = modify_raw_and_quote(node, y, new_str, 48);
+    //    free(node->quote_idx);
+        node->quote_idx = quote;
 }

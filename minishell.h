@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 18:34:03 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/20 01:46:19 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,6 +147,7 @@ void set_cmd(t_node *node);
 void remove_quotes(t_node *node);
 void ft_lowercase_cmd(t_node *node);
 char *var_expand(t_node *node, char *str);
+char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
 //init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
 void node_init(t_node *node);
@@ -173,7 +174,7 @@ void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void ft_unset(t_node *node, t_shell *shell);
 int ft_exit(t_node *node, t_shell *shell);
-int ft_wild(t_node *node, int i);
+void ft_wild(t_node *node, int i, int y);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);

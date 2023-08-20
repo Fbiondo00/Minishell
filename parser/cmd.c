@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 17:31:37 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/20 02:29:41 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,14 +22,22 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
     char *new_st;
 
     y = idx + 1;
-    // printf("PRE:Y:%d\n", y);
+    printf("PRE:Y:%d\n", y);
     while (y < ft_strlen(node->raw_cmd))
     {
         y++;
-        if (node->raw_cmd[y] == ' ' || node->raw_cmd[y] == 34 || node->raw_cmd[y] == 39 || node->raw_cmd[y] == '$' || node->raw_cmd[y] == '/')
-            break;
+        if(node->raw_cmd[y] == '$')
+            {
+		    if (node->raw_cmd[y] == ' ' || node->raw_cmd[y] == 34
+			    || node->raw_cmd[y] == 39 || node->raw_cmd[y] == '$'
+			    || node->raw_cmd[y] == '/')
+			break ;
+            }
+        else
+        if(node->raw_cmd[y] == ' ')
+            break ;
     }
-    // printf("POST:Y:%d\n", y);
+    printf("POST:Y:%d\n", y);
     // TOT_LEN = idx($) +  ft_strlen(str) + strlen-idx(fine$) + 1;
     if (str)
         tot_len = idx + ft_strlen(str) + ft_strlen(node->raw_cmd) - y; // LEN SE VAR EXISTE
@@ -37,7 +45,8 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
         tot_len = ft_strlen(node->raw_cmd);
     //  tot_len = ft_strlen(node->raw_cmd) - (y - idx); // LEN SE VAR NON EXISTE
     // printf("ft_strlen(node->raw_cmd):%d|y:%d|idx:%d\n", ft_strlen(node->raw_cmd), y, idx);
-    printf("TOT_LEN:%d\n", tot_len);
+    // printf("ft_strlen(str):%d\n", ft_strlen(str));
+    // printf("TOT_LEN:%d\n", tot_len);
     // printf("ft_strlen(node->raw_cmd) - y:%d|y:%d\n", ft_strlen(node->raw_cmd) - y, y);
     new_st = malloc(tot_len + 1);
     new_st[tot_len] = '\0';
@@ -45,13 +54,13 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
     j = -1;
     if (c == 32) // ovvero SPACE, raw_cmd
     {
-        // printf("MODIFICO RAW_CMD\n");
+        printf("MODIFICO RAW_CMD\n");
         while (++i < tot_len)
         {
-            // printf("i:%d|IDX:%d\n", i, idx);
+            printf("i:%d|IDX:%d\n", i, idx);
             if (i < idx)
             {
-                // printf("A\n");
+                printf("A\n");
                 new_st[i] = node->raw_cmd[i];
             }
             else if (!str && (i >= idx && i < y))
@@ -65,16 +74,16 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
             }
             else if (str && ++j < ft_strlen(str))
             {
-                // printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
+                printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
                 new_st[i] = str[j];
             }
             else if (str && j >= ft_strlen(str))
             {
-                // printf("C\n");
+                printf("C\n");
                 new_st[i] = node->raw_cmd[y++];
                 j++;
             }
-            // printf("D\n");
+            printf("D\n");
         }
     }
     else if (c == 48) // ovvero SPACE, quote_idx
@@ -207,17 +216,19 @@ void ft_do_expand(t_node *node)
 void ft_do_asterisk(t_node *node)
 {
     int i;
-    // char *raw;
-    // char *quote;
-    // char *str;
+    int y;
+
     i = -1;
     while (++i < ft_strlen(node->raw_cmd))
     {
         if (node->raw_cmd[i] == '*' && !in_quotes(node, i))
         {
+            y = i;
+            while(node->raw_cmd[--y] == ' ')
+                ;
              printf("IN node->raw_cmd[i:%d] == '*' \n", i);
             printf("in_quotes(node, i):%d\n", in_quotes(node, i));
-             ft_wild(node, i);
+             ft_wild(node, i, y+1);
              return ;
         }
     }
@@ -235,9 +246,12 @@ void ft_do_asterisk(t_node *node)
 // NUOVO: ho aggiunto attributo shell al nodo
 void set_cmd(t_node *node)
 {
-    ft_do_expand(node);
-    printf("\nesce da ft_expand\n");
     ft_do_asterisk(node);
+    printf("\nesce da ft_expand\n");
+     printf("--- AFTER ASTERISK ---\n");
+    printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
+    ft_do_expand(node);
     printf("\nesce da ft_asterisk\n");
     printf("--- AFTER EXPAND ---\n");
     printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
