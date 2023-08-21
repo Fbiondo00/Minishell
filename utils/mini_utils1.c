@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 18:33:47 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/21 01:21:09 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,6 +102,7 @@ char *ft_strjoin2(char const *s1, char const *s2)
     while (s2 && s2[i])
         s3[j++] = s2[i++];
     s3[j] = 0;
+    printf("SEG??\n");
     return (s3);
 }
 

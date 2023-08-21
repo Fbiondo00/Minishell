@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/20 02:29:41 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/21 05:01:02 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,13 +54,13 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
     j = -1;
     if (c == 32) // ovvero SPACE, raw_cmd
     {
-        printf("MODIFICO RAW_CMD\n");
+        // printf("MODIFICO RAW_CMD\n");
         while (++i < tot_len)
         {
-            printf("i:%d|IDX:%d\n", i, idx);
+            // printf("i:%d|IDX:%d\n", i, idx);
             if (i < idx)
             {
-                printf("A\n");
+                // printf("A\n");
                 new_st[i] = node->raw_cmd[i];
             }
             else if (!str && (i >= idx && i < y))
@@ -74,16 +74,16 @@ char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
             }
             else if (str && ++j < ft_strlen(str))
             {
-                printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
+                // printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
                 new_st[i] = str[j];
             }
             else if (str && j >= ft_strlen(str))
             {
-                printf("C\n");
+                // printf("C\n");
                 new_st[i] = node->raw_cmd[y++];
                 j++;
             }
-            printf("D\n");
+            // printf("D\n");
         }
     }
     else if (c == 48) // ovvero SPACE, quote_idx
@@ -223,13 +223,19 @@ void ft_do_asterisk(t_node *node)
     {
         if (node->raw_cmd[i] == '*' && !in_quotes(node, i))
         {
+             printf("ASTERISK:RAW_CMD|%s|strlen:%d\n", node->raw_cmd, ft_strlen(node->raw_cmd));
             y = i;
-            while(node->raw_cmd[--y] == ' ')
-                ;
+            while(node->raw_cmd[y])
+                {
+                if(node->raw_cmd[y] == ' ')
+                    break ;
+                y--;
+                }
+            y++;
              printf("IN node->raw_cmd[i:%d] == '*' \n", i);
             printf("in_quotes(node, i):%d\n", in_quotes(node, i));
-             ft_wild(node, i, y+1);
-             return ;
+            printf("\ny:%d\n", y);
+             ft_wild(node, i, y);
         }
     }
 }
