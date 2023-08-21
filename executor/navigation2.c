@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   navigation2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 22:03:04 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 23:30:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,16 +62,16 @@ t_node *next_cmd_same_lvl(t_node *node)
 // utilizza: next_cmd_same_lvl
 t_node *go_next_cmd_and_or(t_node *node)
 {
-    t_node *temp;
+    // t_node *temp;
     t_node *next_node;
 
-    temp = node;
+    // temp = node;
     next_node = NULL;
     // printf("-----------!CERCO: ..go_next_cmd_and_or...--------------\n\n");
     while (1)
     {
         next_node = next_cmd_same_lvl(node);
-        temp = next_node;
+        // temp = next_node;
         if (!next_node)
             break;
         if (next_node->content.op != PIPE)
@@ -82,5 +82,3 @@ t_node *go_next_cmd_and_or(t_node *node)
     }
     return (NULL);
 }
-
-// 2 func
