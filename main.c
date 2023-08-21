@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 12:33:50 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 21:40:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ int main(int argc, char **argv, char **env)
             set_tree(&shell);
             set_components(&shell);
             execute(&shell);
-            // execute_demo(&shell);
             ft_clean_exit(&shell, NULL , 3, 0);
         }
        // ci entra ogni volta che fai invio senza scrivere nulla
@@ -91,10 +90,9 @@ int main(int argc, char **argv, char **env)
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-10. $HOMEc  / u* bugga a volte, anche multipli u* u*
-//-9. next_cmd_same_lvl(,flag)  .. if (flag == 1) setta valori, else no
+//-9. $HOMEc  / u* bugga a volte, anche multipli u* u*
 // ==1 solo nei return, altri posti flag a 0
-//-8.$? is used to find the return value of the last executed command.
+//-8. $? is used to find the return value of the last executed command.
 //-7. protrebbero esserci dei buchi nei lvl, seg fault?
 //-6. BASH:(echo ciao > a) >b .. crea redir a) .. perche include )??
 //-5. Sostituire perror con write(2,,)?
@@ -123,11 +121,6 @@ int main(int argc, char **argv, char **env)
 // 2. echo a <file1  [to do in executor...]
 //  bash: u: No such file or directory
 // 3. echo a >file1 (echo a >>file1)   -->crea il file con successo
-//  echo a > "Desktop/e u"  [DONE]
-//  bash: Desktop/e u: No such file or directory
-//  echo a > "/Desktop/e u"
-//  bash: /Desktop/e u: No such file or directory
-//  MORALE: ->se vede / pensa che è un path assoluto, anche con apici singoli...
 
 // idx corrispondente all ultimo char dell operatore
 // gestione ""?  [DONE]
@@ -254,6 +247,11 @@ int main(int argc, char **argv, char **env)
 // ----
 // export v="test" && (echo $v && v="modified" && echo $v) && echo $v  OK
 
+// echo a > "/Desktop/e u"
+//  bash: /Desktop/e u: No such file or directory
+
+//  echo a > "Desktop/e u"  
+//  bash: Desktop/e u: No such file or directory
 // ----
 //  echo a && echo b | (false && echo d | echo e)             OK > a
 //  echo a && echo b | echo c &&(  false && echo d | echo e ) OK > a c

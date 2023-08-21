@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 12:27:53 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 22:05:02 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -184,6 +184,14 @@ void free_envp(t_shell *shell);
 t_node *next_cmd_same_lvl(t_node *node);
 void ft_reset_original_fd(t_node *node);
 void ft_wild(t_node *node, int i, int y);
+// execve
+void ft_execve(t_node *node);
+void free_matrix(char **matrix);
+// fd
+int ft_do_redir(t_node *node);
+void ft_reset_original_fd(t_node *node);
+// open_file
+int ft_open_file(t_node *node, int i);
 
 // UTILS
 int		ft_strlen(char *s);
@@ -205,6 +213,13 @@ int ft_atoi(const char *str);
 int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
+// exec_utils
+int ft_dup2(int *fd, int arg);
+int ok_status(t_node *node);
+t_node *next_cmd_same_lvl(t_node *node);
+int is_builtin(t_node *node);
+t_node *go_next_cmd_and_or(t_node *node);
+void execute_builtin(t_node *node, t_shell *shell);
 
 // test
 void print_node(t_shell *shell, t_node *node);

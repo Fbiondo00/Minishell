@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 03:49:42 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 21:36:26 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,4 +85,34 @@ t_node *next_cmd(t_shell *shell, t_node *node)
     }
 }
 
-// 4 func
+// V2: torna il generico next_cmd
+// torna null se non trova nulla
+// entra che è sempre un node_cmd, esce sempre node_cmd
+t_node *next_cmd2(t_shell *shell, t_node *node)
+{
+    if (!is_left_branch(node) && node->back == shell->tree)
+    {
+        printf("return null!!\n");
+        return NULL;
+    }
+    if (is_left_branch(node)) // siamo in un nodo sinistro, ma sempre check if node_op a destra
+    {
+        if (is_node_cmd(node->back->right))
+            return (node->back->right);
+        else
+        {
+            // si tratta di nodo_op, quindi vado a cercare il next_cmd
+            return (go_to_starter_node(node->back->right));
+        }
+    }
+    else
+    { // siamo in un nodo destro
+
+        if (is_node_cmd(node->back->back->right))
+            return (node->back->back->right);
+        else
+            return (go_to_starter_node(node->back->back->right));
+    }
+}
+
+// 5 func
