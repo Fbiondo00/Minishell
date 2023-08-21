@@ -3,14 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 01:21:09 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/19 18:31:26 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+// S1"main.c", NULL
+// S2 = S1, " "
+// S3 = s2, " MINISHELL.c"
+char *ft_strjoin2(char const *s1, char const *s2)
+{
+    size_t i;
+    size_t j;
+    char *s3;
+    int lens2;
+
+    i = 0;
+    j = 0;
+    if (!s1)
+        return (0);
+    if (!s2)
+        lens2 = 0;
+    else
+        lens2 = ft_strlen((char *)s2);
+    s3 = malloc(ft_strlen((char *)s1) + lens2 + 1);
+    if (!s3)
+        return (0);
+    while (s1[i])
+        s3[j++] = s1[i++];
+    i = 0;
+    while (s2 && s2[i])
+        s3[j++] = s2[i++];
+    s3[j] = 0;
+    return (s3);
+}
 
 char *ft_strjoin(char const *s1, char const *s2)
 {
@@ -76,34 +106,6 @@ void *ft_memcpy(void *dest, const void *src, size_t n)
         i++;
     }
     return (dest);
-}
-
-char *ft_strjoin2(char const *s1, char const *s2)
-{
-    size_t i;
-    size_t j;
-    char *s3;
-    int lens2;
-
-    i = 0;
-    j = 0;
-    if (!s1)
-        return (0);
-    if (!s2)
-        lens2 = 0;
-    else
-        lens2 = ft_strlen((char *)s2);
-    s3 = malloc(ft_strlen((char *)s1) + lens2 + 1);
-    if (!s3)
-        return (0);
-    while (s1[i])
-        s3[j++] = s1[i++];
-    i = 0;
-    while (s2 && s2[i])
-        s3[j++] = s2[i++];
-    s3[j] = 0;
-    printf("SEG??\n");
-    return (s3);
 }
 
 void *ft_realloc(void *ptr, size_t size)

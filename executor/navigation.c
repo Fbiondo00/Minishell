@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/14 23:13:34 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 03:49:42 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,9 @@ int is_node_cmd(t_node *node)
 t_node *next_cmd(t_shell *shell, t_node *node)
 {
     printf("IN NEXT_CMD...\n");
+    // non dovrebbe essere aggiunto nell OR anche se  node->back == shell->tree ?
     if (node->back == shell->tree || (!is_left_branch(node) &&
-                                      node->back->back == shell->tree))
+        node->back->back == shell->tree))
     {
         printf("return null\n");
         return NULL;
@@ -77,8 +78,6 @@ t_node *next_cmd(t_shell *shell, t_node *node)
         else
         {
             printf("return go_to_starter_node(node->back->back->right) & set lvl..\n");
-            printf("go_to_starter_node(node->back->back->right)->lvl_subshell:%d\n", go_to_starter_node(node->back->back->right)->lvl_subshell);
-            printf("node->back->back->lvl_subshell:%d\n", node->back->back->lvl_subshell);
             go_to_starter_node(node->back->back->right)->back->lvl_subshell += node->back->back->lvl_subshell;
             go_to_starter_node(node->back->back->right)->back->lvl_lock = 1;
             return (go_to_starter_node(node->back->back->right));

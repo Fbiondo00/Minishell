@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/16 05:15:08 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 05:15:02 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ void updatecd(t_node *node, t_shell *shell)
         free(pat);
         shell->error = 1;
         shell->exit_builtin = 1;
+        shell->exit_status = 1;
         printf("No such file or directory\n");
     }
 }
@@ -126,6 +127,7 @@ void ft_home(t_shell *shell)
     {
         shell->error = 1;
         shell->exit_builtin = 1;
+        shell->exit_status = 1;
         write(2, "not access env\n", 16);
         printf("not access env\n");
     }
@@ -155,7 +157,7 @@ void ft_cd(t_node *node, t_shell *shell)
         ft_home(shell);
         updatepath(shell);
     }
-    else if (i == 2)
+    else
     {
         updatecd(node, shell);
         printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
@@ -163,6 +165,4 @@ void ft_cd(t_node *node, t_shell *shell)
         // Aggiorna il percorso della directory corrente usata dalla tua Minishell
         // Ad esempio, potresti usare una variabile globale per memorizzarla
     }
-    else
-        printf("too many argm");
 }

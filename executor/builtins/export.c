@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/19 23:25:40 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/21 12:26:07 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,13 +76,13 @@ void ft_conc(t_shell *shell, char *str, int y)
     int i;
     // int x;
     char *new_str;
-    
+
     // x = 1;
     i = -1;
     printf("in conc, y:%d\n", y);
     while (shell->env[++i])
     {
-        printf("shell->env[i:%d]:%s\n",i, shell->env[i]);
+        printf("shell->env[i:%d]:%s\n", i, shell->env[i]);
         printf("ft_strncmp:%d\n", ft_strncmp(shell->env[i], str, y, 1));
         printf("\nn.elementidienv:%d\n", i);
         if ((ft_strncmp(shell->env[i], str, y, 1)) == 0)
@@ -91,9 +91,9 @@ void ft_conc(t_shell *shell, char *str, int y)
             while (str[++j])
             {
                 if (str[j] == '=')
-                    break ;
+                    break;
             }
-            printf("j:%d\n",j);
+            printf("j:%d\n", j);
             // while (shell->env[i][++j])
             // {
             //     if (shell->env[i][j] == '=')
@@ -108,8 +108,8 @@ void ft_conc(t_shell *shell, char *str, int y)
             //     shell->env[i][j++] = str[y++ + x];
             // shell->env[i][j + 1] = 0;
             // creare stringa
-            new_str = ft_strjoin(shell->env[i], str + ++j );
-            printf("new_str:%s|shell->env[i]:%s|str + j + 1:%s\n", new_str,shell->env[i], str + j);
+            new_str = ft_strjoin(shell->env[i], str + ++j);
+            printf("new_str:%s|shell->env[i]:%s|str + j + 1:%s\n", new_str, shell->env[i], str + j);
             free(shell->env[i]);
             shell->env[i] = new_str;
             return;
@@ -181,7 +181,7 @@ void ft_name_value(t_node *node, t_shell *shell, int ij, int y)
     printf("B\n");
     if (ij > y)
     {
-        printf("ij:%d|node->content.cmd[y]:%s\n",ij, node->content.cmd[y]);
+        printf("ij:%d|node->content.cmd[y]:%s\n", ij, node->content.cmd[y]);
         if ((ft_reach(shell, node->content.cmd[y]) == 1))
         {
             if (node->content.cmd[y + 1])

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 12:47:59 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 09:51:36 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,8 @@ void shell_init(int argc, char **argv, char **env, t_shell *shell)
     (void)argv;
     shell->error = 0;        // ok?
     shell->exit_builtin = 0; // ok?
+    shell->exit_status = -1;
+    shell->lvl_subshell = 0;
     shell->temp_input = dup(STDIN_FILENO);
     shell->temp_output = dup(STDOUT_FILENO);
     shell->temp_error = dup(STDERR_FILENO);
@@ -38,6 +40,7 @@ void node_init(t_node *node)
     node->quote_idx = NULL;
     node->lvl_subshell = 0;
     node->lvl_lock = 0;
+    node->done_lock = 0;
     node->flag = -1;
     node->back = NULL;
     node->left = NULL;

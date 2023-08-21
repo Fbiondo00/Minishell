@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/18 02:20:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/19 22:13:33 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void set_token_redirection(t_node *node, int idx, int num)
     char *new_str;
     
     new_str = NULL;
-    chars = "><";
+    chars = "><()";
     i = idx + 1; // siamo al char dopo op redirection
     while (node->raw_cmd[i] == ' ')
         i++;                      // i rappresenta il char dopo ' '
@@ -105,7 +105,8 @@ void set_token_redirection(t_node *node, int idx, int num)
     j = -1;
     while (i < ft_strlen(node->raw_cmd))
     {
-        if (node->raw_cmd[i] == ' ' || (ft_strchr(chars, node->raw_cmd[i]) && !in_quotes(node, i)))
+        if (node->raw_cmd[i] == ' ' ||
+         (ft_strchr(chars, node->raw_cmd[i]) && !in_quotes(node, i)))
             break ;
         else if (node->raw_cmd[i] == 34 && !in_quotes(node, i))
         {
@@ -129,9 +130,9 @@ void set_token_redirection(t_node *node, int idx, int num)
         }
            str[++j] = node->raw_cmd[i++];
     }
-    // printf("PRE_str: {%s}|ft_strlen(str):%d\n", str, ft_strlen(str));
+    printf("PRE_str: {%s}|ft_strlen(str):%d\n", str, ft_strlen(str));
     new_str = modify_str(node, str);
-    // printf("POST_NEW_str: {%s}\n", new_str);
+    printf("POST_NEW_str: {%s}\n", new_str);
     if (new_str)
     {
         // printf("new esiste!\n");
@@ -220,7 +221,26 @@ void set_fd(t_node *node, int idx, int num)
     else
         node->content.redir[num].fd = -1;
     // valore per testare. da creare poi func set_lvl
+    // node->content.redir[num].lvl = 0;
+}
+
+// i: indice del primo operatore (anche in caso di << >>)
+// num: index della redir
+// la logica dovrebbe essere semplice: per ogni ) prima della redir: lvl++; (parte da 0)
+// setta il lvl relativa alla redir salvata, prima o dopo set_fd?
+// (cat || echo b) <test
+// (echo b && (echo c)<2)>p)
+void set_lvl(t_node *node, int i, int num)
+{
     node->content.redir[num].lvl = 0;
+    while (--i >= 0)
+    {
+        printf("IN\n");
+       if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
+        break ;
+       if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
+        node->content.redir[num].lvl++;
+    }
 }
 
 void set_redirection(t_node *node)
@@ -240,8 +260,8 @@ void set_redirection(t_node *node)
             if (node->raw_cmd[i] == '>' && !in_quotes(node, i))
             {
                 printf("trovato un redir che inizia con >...\n");
-                // setta il lvl relativa alla redir salvata, prima o dopo set_fd?
-                // set_lvl(node, i, num);
+                // setta il lvl relativa alla redir salvata
+                set_lvl(node, i, num);
                 // settato attualmente a 0 in set_fd (da togliere poi..)
                 set_fd(node, i, num);
                 if (!is_last_char(node, i) && node->raw_cmd[i + 1] == '>')
@@ -251,7 +271,7 @@ void set_redirection(t_node *node)
             else if (node->raw_cmd[i] == '<' && !in_quotes(node, i))
             {
                 printf("trovato un redir che inizia con <...\n");
-                // set_lvl(node, i, num);
+                set_lvl(node, i, num);
                 set_fd(node, i, num);
                 if (!is_last_char(node, i) && node->raw_cmd[i + 1] == '<')
                     i++;

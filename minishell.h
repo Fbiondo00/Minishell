@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/20 01:46:19 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/21 12:27:53 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ typedef struct s_node
 	char				*quote_idx;
 	int					lvl_subshell;
 	int					lvl_lock;
+	int					done_lock;
 	int 				flag;
 	int					std_in;
 	int					std_out;
@@ -106,6 +107,8 @@ typedef struct s_node
 typedef struct s_shell
 {
 	int		exit_builtin;
+	int		exit_status;
+	int		lvl_subshell;
 	// ------
 	struct	sigaction signal_nothing;
 	struct	sigaction signal_int;
@@ -147,7 +150,7 @@ void set_cmd(t_node *node);
 void remove_quotes(t_node *node);
 void ft_lowercase_cmd(t_node *node);
 char *var_expand(t_node *node, char *str);
-char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
+char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c);
 //init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
 void node_init(t_node *node);
@@ -159,13 +162,14 @@ void ft_head(int sign); //?
 
 // EXECUTOR
 void    execute(t_shell *shell);
-void execute_demo(t_shell *shell); // per testare le func builtins
 t_node  *get_starter_node(t_shell *shell);
 // navigation
 t_node *go_to_starter_node(t_node *node);
 int is_left_branch(t_node *node);
 int is_node_cmd(t_node *node);
 t_node *next_cmd(t_shell *shell, t_node *node);
+t_node *next_cmd2(t_shell *shell, t_node *node);
+t_node *next_cmd_same_lvl(t_node *node);
 // bultin
 void ft_pwd(void);
 void ft_echo(t_node *node);
@@ -174,10 +178,12 @@ void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void ft_unset(t_node *node, t_shell *shell);
 int ft_exit(t_node *node, t_shell *shell);
-void ft_wild(t_node *node, int i, int y);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);
+t_node *next_cmd_same_lvl(t_node *node);
+void ft_reset_original_fd(t_node *node);
+void ft_wild(t_node *node, int i, int y);
 
 // UTILS
 int		ft_strlen(char *s);

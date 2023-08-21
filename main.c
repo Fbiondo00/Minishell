@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 16:56:07 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 12:33:50 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,15 +30,16 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
         free(shell->rawline);
     if (shell->str)
         free(shell->str);
-    
+    // friare tutto l albero ...
     //---
-    if (to_exit)
+    if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
     {
         // shell->env free in to_exit?
-        exit(write_error(str,exit_status));
+        // ft_reset_original_fd(); ??
         close(shell->temp_input);
         close(shell->temp_output);
         close(shell->temp_error);
+        exit(write_error(str, exit_status));
     }
 }
 
@@ -84,23 +85,25 @@ int main(int argc, char **argv, char **env)
             // execute_demo(&shell);
             ft_clean_exit(&shell, NULL , 3, 0);
         }
-        // mettere clean_exit qui per pulire anche in caso di syntax error?
-        // (togliere anche l exit)
+       // ci entra ogni volta che fai invio senza scrivere nulla
     }
 }
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-8.Sostituire perror con write(2,,)?
-//-7. chiudere here_doc dopo utilizzo
-//-6. se >1 here_doc, generazione nome univoco. variabile array in node?
-//-5. creare fd.c & execve.c
-//-4. FT_CHECK += RIGA223 merge
-//-3. inserire attributo lvl in s_kv. in modo tale da capire se è cmd o subshell related.
+//-10. $HOMEc  / u* bugga a volte, anche multipli u* u*
+//-9. next_cmd_same_lvl(,flag)  .. if (flag == 1) setta valori, else no
+// ==1 solo nei return, altri posti flag a 0
+//-8.$? is used to find the return value of the last executed command.
+//-7. protrebbero esserci dei buchi nei lvl, seg fault?
+//-6. BASH:(echo ciao > a) >b .. crea redir a) .. perche include )??
+//-5. Sostituire perror con write(2,,)?
+//-4. chiudere here_doc dopo utilizzo
+//-3. se >1 here_doc, generazione nome univoco. variabile array in node?
+//-2. creare fd.c & execve.c
 //    la logica dovrebbe essere semplice: per ogni ) prima della redir: lvl++; (parte da 0)
-//-2. seg fault if !exist $var
-//-1. fix new syntax errors
-// 0. WILDCARDS!!
+//-1. seg fault if !exist $var
+// 0. fix new syntax errors
 
 // 1. fix + logic redir
 //    CASI:
@@ -109,12 +112,6 @@ int main(int argc, char **argv, char **env)
 //    A2: aggiungere anche altre syntax error di sotto(anche op)
 
 // 2. executor & subshells
-//    A.  cat senza input fare here_doc!(di default oppure a seconda di op logici?)
-//    B.  PER EXECUTOR lvl_subshell: se termina senza operatore fuori dalle tonde,
-//        effettivamente non esiste un nodo_op con lvl 0. quindi si puo
-//        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
-//        esempio creazione is_last_cmd() se necessario
-
 // 3. ("echo')")  per errore elimina l apice singolo, gestito in set_cmd o in_quotes_str?
 // 4. se ft_read_line fallisce fare il free di quote_idx e del resto
 // 5. quando errore syntax non deve uscire dal terminale!, ma pulire solo le strutture
@@ -186,9 +183,8 @@ int main(int argc, char **argv, char **env)
 
 // ------------------- TESTER: OK/KO in base a risultati bash -------------------
 // --------------- WIP -------------------
-
-// $HOME  seg fault
-// seg se export a+=aaaaaaa
+// echo ok || echo zi && echo ciao || << gg  
+// (echo ciao > a) > b     ..non deve dare essere. gli da fastidio lo spazio dopo > b
 // Gestire: echo 7>1>2     dovrebbe dare syntax error.
 //  soluzione: in fase di check syntax nella str spacchettare a partire da ultima redir
 // quindi l ultima redir si prende 1>2 e li setta a spazi.
@@ -200,6 +196,8 @@ int main(int argc, char **argv, char **env)
 // (echo a >)    KO DEVONO DARE ERRORE!!!
 // (echo a >>)   KO DEVONO DARE ERRORE!!!
 
+// echo a || echo b | echo c | echo d && echo e ..
+// echo a &&echo b | echo c   ... entra in loop
 // 2. Gestire: |||    |&    &||      va all index not in quotes and if >2 err
 
 // 3. a|b>d<e ..? non dovrebbe dare errore..  solo se primo nodo ha solo 1 elemento
@@ -241,14 +239,17 @@ int main(int argc, char **argv, char **env)
 // (echo a && ls)                            OK
 // (echo a && ls) |cat                       OK
 // (echo b || echo a >e)                     OK
-// (echo a && (echo b && (echo c))) >p| cat  OK
-// (echo a && (echo b && (echo c))>p) | cat  OK
+// (echo a && (echo b && (echo c <z))) >p| cat  OK
+// (echo a && (echo b && (echo c <u))>p) | cat  OK
 
 // echo a <      KO
 // (echo a >)    KO
 // (echo a >>)   KO
 // echo ciao >q "r" OK
 // echo ciao >q"r"  OK
+
+// se fallisce calcolo redir input, non viene eseguito il cmd
+// EX. echo a <1
 
 // ----
 // export v="test" && (echo $v && v="modified" && echo $v) && echo $v  OK
@@ -357,8 +358,7 @@ int main(int argc, char **argv, char **env)
 // SOLUZIONE: noi facciamo sempre here_doc, come in tutti gli altri casi!
 // -------
 
-
-
+// execve gestisce da solo l here_doc implicito! [DONE]
 // HERE_DOC implicito != here_doc settato, infatti:
 
 // se settato esegue subito here_doc, anche se il comando non viene eseguito
@@ -372,29 +372,4 @@ int main(int argc, char **argv, char **env)
 
 // how to restore FD 
 // https://stackoverflow.com/questions/55771495/what-are-the-rules-of-closing-file-descriptors-after-calling-dup-dup2
-
-
-// int i;
-// // m*i*.*
-// while ((entry = readdir(dir)) != NULL)
-// {
-//     i = -1;
-//     while (str[++i])
-//     {
-//         if (str[i] != '*')
-//         {
-//             if (entry->d_name[i] != str[i])
-//                break ;
-//             else 
-//             {
-//                 // free();
-//                 new_str = malloc(entry->d_name + 1(32) + 1(\0)) // ' '
-//                 new_str = str_join(entry->d_name + 32);
-                
-//             }
-//         }
-//     }
-//     free(str);
-//     return (new_str);
-// }
 

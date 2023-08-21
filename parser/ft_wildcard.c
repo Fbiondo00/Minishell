@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_wildcard.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 17:25:53 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/21 05:58:58 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/21 12:11:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -208,10 +208,10 @@ void ft_wild(t_node *node, int i, int y)
     if(new_str)
     {
         printf("ft_wildfinalestr2:%s\n", new_str);
-        raw = modify_raw_and_quote(node, y, new_str, 32);
+        raw = modify_raw_and_quote2(node, y, new_str, 32);
         // free(node->raw_cmd);
         node->raw_cmd = raw ;
-       quote = modify_raw_and_quote(node, y, new_str, 48);
+       quote = modify_raw_and_quote2(node, y, new_str, 48);
     //    free(node->quote_idx);
         node->quote_idx = quote;
     }
