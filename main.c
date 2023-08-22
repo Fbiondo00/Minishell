@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 23:21:14 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/23 00:27:09 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
     // if (shell->tree)
         // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
     if (str)
-        shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + 1;
+        shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + exit_status;
     printf("fine line: shell->exit_status:%d\n", shell->exit_status);
     if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
     {
