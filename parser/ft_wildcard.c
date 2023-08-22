@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 23:21:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/22 12:47:57 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/22 15:07:22 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -227,8 +227,8 @@ void	ft_wild(t_node *node, int i, int y)
 		min--;
 	}
 	min++;
-	if (min < 0)
-		min = 0;
+	// if (min < 0)
+	// 	min = 0;
 	printf("\nft_wildmin: %d\n", min);
 	str = create_str(node, max, min);
 	new_str = ft_asterisk(str);
