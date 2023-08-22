@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 22:05:02 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/22 13:41:49 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,8 @@ int ft_do_redir(t_node *node);
 void ft_reset_original_fd(t_node *node);
 // open_file
 int ft_open_file(t_node *node, int i);
+void ft_do_heredoc(t_node *node);
+void ft_remove_heredoc(t_shell *shell);
 
 // UTILS
 int		ft_strlen(char *s);

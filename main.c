@@ -6,40 +6,39 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 21:40:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/22 23:21:14 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// stampa errore e ritorna exit status desiderato
-int write_error(char *str, int exit_status)
-{
-    write(1, str, ft_strlen(str));
-    return (exit_status);
-}
-
 // to_exit == 1 se bisogna fare anche exit
 // to_exit == 0 per fare solo clean
 void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 {
-    // shell->tree: navigazione nodi, poi free.
+
     if (shell->quote_idx)
         free(shell->quote_idx);
     if (shell->rawline)
         free(shell->rawline);
     if (shell->str)
         free(shell->str);
-    // friare tutto l albero ...
-    //---
+    if (shell->tree)
+        ft_remove_heredoc(shell);
+    // if (shell->tree)
+        // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
+    if (str)
+        shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + 1;
+    printf("fine line: shell->exit_status:%d\n", shell->exit_status);
     if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
     {
-        // shell->env free in to_exit?
+        free_envp(shell);
         // ft_reset_original_fd(); ??
+        
         close(shell->temp_input);
         close(shell->temp_output);
         close(shell->temp_error);
-        exit(write_error(str, exit_status));
+        exit(exit_status);
     }
 }
 
@@ -72,7 +71,8 @@ int in_quotes(t_node *node, int index)
 int main(int argc, char **argv, char **env)
 {
     t_shell shell;
-    
+    if (argc != 1)
+        exit(write(2, "Error: invalid arguments\n", 25) - 24);
     shell_init(argc, argv, env, &shell);
     while(1)
     {
@@ -90,19 +90,13 @@ int main(int argc, char **argv, char **env)
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-9. $HOMEc  / u* bugga a volte, anche multipli u* u*
-// ==1 solo nei return, altri posti flag a 0
-//-8. $? is used to find the return value of the last executed command.
-//-7. protrebbero esserci dei buchi nei lvl, seg fault?
-//-6. BASH:(echo ciao > a) >b .. crea redir a) .. perche include )??
-//-5. Sostituire perror con write(2,,)?
-//-4. chiudere here_doc dopo utilizzo
-//-3. se >1 here_doc, generazione nome univoco. variabile array in node?
-//-2. creare fd.c & execve.c
-//    la logica dovrebbe essere semplice: per ogni ) prima della redir: lvl++; (parte da 0)
-//-1. seg fault if !exist $var
-// 0. fix new syntax errors
 
+//-5. ==1 solo nei return, altri posti flag a 0
+//-4. $? is used to find the return value of the last executed command.
+//-3. protrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
+//-2. BASH:(echo ciao > a) >b .. crea redir a) .. perche include )??
+//-1. Sostituire perror con write(2,,)?
+// 0. fix new syntax errors
 // 1. fix + logic redir
 //    CASI:
 //    A: AGGIUNGERE SINTAX ERROR
@@ -111,8 +105,7 @@ int main(int argc, char **argv, char **env)
 
 // 2. executor & subshells
 // 3. ("echo')")  per errore elimina l apice singolo, gestito in set_cmd o in_quotes_str?
-// 4. se ft_read_line fallisce fare il free di quote_idx e del resto
-// 5. quando errore syntax non deve uscire dal terminale!, ma pulire solo le strutture
+// 4. quando errore syntax non deve uscire dal terminale!, ma pulire solo le strutture
 // ------------------- WIP -------------------
 // CASI DA GESTIRE REDIRECTION (set_token_redirection) :
 // 1.  echo a < (echo a >)(echo a >>)  [in syntax: to fix!]
@@ -191,6 +184,10 @@ int main(int argc, char **argv, char **env)
 
 // echo a || echo b | echo c | echo d && echo e ..
 // echo a &&echo b | echo c   ... entra in loop
+
+// echop a && echo b | echo c | echo d && echo e
+// echop a && echo b | echo c | echo d || echo e .. problema set_components
+
 // 2. Gestire: |||    |&    &||      va all index not in quotes and if >2 err
 
 // 3. a|b>d<e ..? non dovrebbe dare errore..  solo se primo nodo ha solo 1 elemento

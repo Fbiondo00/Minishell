@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 11:56:31 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/22 14:21:07 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,7 @@ void print_node(t_shell *shell, t_node *node)
         printf("\n\nBASH:%s\n", shell->str);
     printf("---------------------------\n");
     printf("----------|NODO|-----------\n");
-    printf("node:%p\n", node);
+    printf(">node:%p\n", node);
     while (node->content.cmd[++i])
         printf("cmd[%d]:%s ", i, node->content.cmd[i]);
     printf("\n");

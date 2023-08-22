@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:16:12 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/22 23:13:56 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,22 +27,20 @@ int is_check(char *str)
     i = -1;
     while (str[++i])
     {
-        if (str[0] == '+' || str[0] == '-')
-        {
-            i++;
-            continue;
-        }
-
+        // if (str[0] == '+' || str[0] == '-')
+        // {
+        //     i++;
+        //     continue;
+        // }
         if (!ft_isdigit(str[i]))
             return (0);
-        i++;
+        // i++;
     }
     return (1);
 }
 
 void free_all2_0(t_shell *shell, char *str, int exit_status, int to_exit)
 {
-    free_envp(shell);
     ft_clean_exit(shell, str, exit_status, to_exit);
 }
 void ft_exit_2(t_node *node, t_shell *shell, int i)
@@ -51,8 +49,9 @@ void ft_exit_2(t_node *node, t_shell *shell, int i)
 
     if (!is_check(node->content.cmd[i - 1]))
     {
-        free_all2_0(shell, 0, 1000, 0);
-        exit(printf("\nexit: %s: numeric argument required\n", node->content.cmd[1]) * 0 + 255);
+        free_all2_0(shell, "numeric argument required\n", 255, 1);
+        // exit(write(2, , ) * 0 + 255)
+            // exit(printf("\nexit: %s: numeric argument required\n", node->content.cmd[1]));
     }
     else
     {
@@ -61,7 +60,7 @@ void ft_exit_2(t_node *node, t_shell *shell, int i)
             y -= 256;
         while (y < 0)
             y += 256;
-        free_all2_0(shell, "exit", y, 1);
+        free_all2_0(shell, "exit\n", y, 1);
     }
 }
 
@@ -72,12 +71,13 @@ int ft_exit(t_node *node, t_shell *shell)
     i = -1;
     while (node->content.cmd[++i])
         ;
+    printf("exit:i:%d\n", i );
     if (i == 1)
-        free_all2_0(shell, "exit", 0, 1);
+        free_all2_0(shell, "exit\n", 0, 1);
     else
     {
-        if (i == 3)
-            return (write(1, "exit: too many arguments\n\n", 25) * 0);
+        if (i >3)
+            free_all2_0(shell, "exit: too many arguments\n", 0, 1);
         ft_exit_2(node, shell, i);
     }
     return (0);

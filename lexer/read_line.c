@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 19:32:29 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/22 22:18:13 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -431,10 +431,16 @@ void	ft_read_line(t_shell *shell)
 	{
 		add_history(shell->rawline);
 		printf("------------------|FASE: CHECK SINTASSI|------------------\n");
-		if (unclosed_quotes(shell)) 
-			ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 2, 1);
+		if (unclosed_quotes(shell))
+		{
+			ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 2, 0);
+			return;
+		}
 		if (check_operators(shell) || check_parentheses(shell))
-			ft_clean_exit(shell, SYNTAX_ERROR, 3, 1);
+		{
+			ft_clean_exit(shell, SYNTAX_ERROR, 3, 0);
+			return;
+		}
 	}
 }
 
