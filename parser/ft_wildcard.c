@@ -6,40 +6,72 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 01:45:48 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 02:46:33 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/23 13:43:51 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+char *new_str_1(char *str)
+{
+    char *tem;
+    char *new_str =NULL;
+	struct dirent *entry;
+    int flag;
+      const char *dirname = getcwd(0, 0);
+    DIR *dir = opendir(dirname);
+    
+    if (dir == NULL)
+	{
+		perror("opendir() error");
+		return ((char *)1);
+	}
+     while ((entry = readdir(dir)) != NULL)
+        {
+            flag = flag1(entry->d_name,str);
+            if (flag == 0) // significa che ha passato tutti i check richiesti e allora inserire in new_str
+            {
+                tem = ft_strjoin2(entry->d_name, " ");
+                    printf("ft_sterrick tmp:%s\n", tem);
+                if (!new_str)
+                    new_str = ft_strjoin2(tem, " ");
+                else
+                new_str = ft_strjoin2(new_str, tem);
+                free(tem);   
+            }  
+        }       
+    free(str);
+	closedir(dir);
+    return (new_str);
+}
+
+
+
 
 int flag1(char *entry, char *str)
 {
     int i;
+
     i = -1;
-        
             while (str[++i]) // str = "s*po"  //d->name:echoppo[7- 4 +3 ] = [7-1]
             {
                 if (str[i] != '*') // .."s"(fisso-left)..."i"(variab).."p"(fisso-right)
                 {
-                    if(ft_middle(str,i))
+                if(ft_middle(str,i))
+                {
+                    if(!ft_strchr(entry, str[i])) // ls *mm*
+                        return(1);
+                }
+                else
                     {
-                         if(!ft_strchr(entry, str[i])) // ls *mm*
-                           return(1);
-                    }
-                    else //CHAR FISSO
+                    if(check_left(str, i) == 1) // fisso-left
                     {
-                         if(check_left(str, i) == 1) // fisso-left
-                        {
                             if (entry[i] != str[i])
                                 return(1);
-                        }
-                        else if (check_left(str, i) == 0) // fisso-right
-                        {
-            
+                    }
+                    else if (check_left(str, i) == 0) // fisso-right
                             if (entry[ft_strlen(entry) - (ft_strlen(str) - i)] != str[i])
-                                                                    return(1) ;
-                        }
+                                            return(1) ;                     
                     } 
                 }
             }
@@ -99,7 +131,7 @@ int ft_middle(char *str, int index)
 char  *ft_one()
 {
     char *tem;
-    char *new_str;
+    char *new_str = NULL;
     struct dirent *entry;
 	const char *dirname = getcwd(0, 0);
     DIR *dir = opendir(dirname);
@@ -112,7 +144,6 @@ char  *ft_one()
      printf("entryft_one");
     while ((entry = readdir(dir)) != NULL)
     {
-     printf("ft_wildfinalestr:%s\n", new_str);
             tem = ft_strjoin2(entry->d_name, " ");
              if (!new_str)
                      new_str = ft_strjoin2(tem, " ");
@@ -120,4 +151,35 @@ char  *ft_one()
             free(tem);
     }
     return (new_str);
+}
+
+
+int ft_max(t_node *node, int i)
+{
+    int max;
+    
+    max = i;
+    while(node->raw_cmd[max])
+    {
+        if(node->raw_cmd[max] == 32 || (node->raw_cmd[max] == 39  || node->raw_cmd[max] == 34))
+            break;
+        max++;
+    }
+    max--;
+    return(max);
+}
+
+int ft_min(t_node *node, int i)
+{
+    int min;
+    
+     min = i;
+ while(node->raw_cmd[min])
+    {
+        if(node->raw_cmd[min] == 32 || (node->raw_cmd[min] == 39  || node->raw_cmd[min] == 34))
+            break;
+        min--;
+    }
+    min++;
+    return(min);
 }
