@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/22 23:23:40 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 12:26:07 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,10 +172,13 @@ void ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 
     j = -1;
     i = 0;
+    printf("Q\n");
     while (shell->env[++j])
         ;
+    printf("A\n");
     while (node->content.cmd[y][++i])
         ;
+    printf("B\n");
     if (ij > y)
     {
         printf("ij:%d|node->content.cmd[y]:%s\n", ij, node->content.cmd[y]);

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:47:03 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 23:17:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 21:52:09 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,13 +32,18 @@ int ft_fd_sub_level(t_node *node, int lvl, int is_first)
     int i;
 
     i = -1;
-    // printf("lvl:%d|is_first:%d\n", lvl, is_first);
-    // printf("in ft_fd_sub_level...\n");
+    printf("lvl:%d\n", lvl);
+    printf("in ft_fd_sub_level...\n");
     while (++i < node->content.kv_size)
     {
         if (node->content.redir[i].lvl == lvl && (is_first == 0 && (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)))
         {
-            // printf("lvl:%d|ft_fd_sub_level: FAft_open_file!\n", lvl);
+            printf("ft_fd_sub_level: FAft_open_file!\n");
+            if (!ft_open_file(node, i))
+                return (0);
+        }
+        else
+        {
             if (!ft_open_file(node, i))
                 return (0);
         }
@@ -59,7 +64,7 @@ int ft_fd_cmd_level(t_node *node)
     {
         if (node->content.redir[i].lvl == 0)
         {
-            printf("ft_fd_cmd_level: FAft_open_file!\n");
+            // printf("ft_fd_cmd_level: FAft_open_file!\n");
             if (!ft_open_file(node, i))
                 return (0);
         }
@@ -90,7 +95,7 @@ int ft_do_redir(t_node *node)
         // printf("max_lvl:%d\n", max_lvl);
         if (!ft_fd_sub_level(node, max_lvl--, flag))
         {
-            printf("esce in ft_fd_sub_level...\n");
+            // printf("esce in ft_fd_sub_level...\n");
             ft_reset_original_fd(node);
             return (0);
         }

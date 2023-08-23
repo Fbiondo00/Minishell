@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 23:19:57 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 22:07:00 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -267,6 +267,18 @@
 //        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
 //        esempio creazione is_last_cmd() se necessario
 
+
+// -------------------- fd.c / execve.c / open_file.c --------------------
+// si scorre tutto l albero ed esegue tutti gli here_doc settati +
+// void ft_do_heredoc(t_shell *shell)
+// {
+//     (void) shell;
+// }
+
+
+
+
+
 // esegue il singolo cmd, ovvero:
 // fa le redir (tranne here_doc che è gia fatta)
 // if r_input fail, stampa errore
@@ -276,36 +288,28 @@ void ft_single_cmd(t_node *node)
 {
     int     status;
     pid_t   pid;
-
-    printf("in single_cmd...\n");
+    
     if (!ft_do_redir(node))
     {
-        printf("!ft_do_redir\n");
         node->shell->exit_status = 1;
-        ft_reset_original_fd(node);
         return;
     }
-    // printf("OUT\n");
-    if (node->content.cmd && node->content.cmd[0])
+    if (is_builtin(node))
+        execute_builtin(node, node->shell);
+    else
     {
-        // printf("IN\n");
-        if (is_builtin(node))
-            execute_builtin(node, node->shell);
+        // refactor per utilizzo anche in pipe
+        pid = fork();
+        if (pid == 0)
+            ft_execve(node);
         else
         {
-            // printf("fork..\n");
-            // refactor per utilizzo anche in pipe
-            pid = fork();
-            if (pid == 0)
-                ft_execve(node);
-            else
-            {
-                waitpid(pid, &status, 0);
-                node->shell->exit_status = WSTOPSIG(status);
-                // printf("node->shell->exit_status:%d\n", node->shell->exit_status);
-            }
+            waitpid(pid, &status, 0);
+            node->shell->exit_status = WSTOPSIG(status);
+            // printf("node->shell->exit_status:%d\n", node->shell->exit_status);
         }
     }
+
     ft_reset_original_fd(node);
     // printf("POST: ft_reset_original_fd|pid:%d\n",getpid());
 }
@@ -313,8 +317,7 @@ void ft_single_cmd(t_node *node)
 void ft_do_subshell(t_node *node)
 {
     (void) node;
-    // 1. crea file fittizio in append (se non esiste già), se esistono i file fa
-    // ft_fd_sub_level del livello in oggetto
+    // 1. crea file fittizio in append (se non esiste già)
     // 2. fork()
     // 3. set std_out ad ogni cmd finchè lvl_subshell (next_cmd) è >0
     //    se invece è <= 0 non settare. break.
@@ -328,6 +331,11 @@ void ft_do_subshell(t_node *node)
     // if(node->shell->pid == 0)
         // sono nella shell padre... si forka dalla figlia però?
 }
+
+
+
+
+
 
 
 // singola funzione che gestisce sia l or che l and
@@ -363,7 +371,7 @@ t_node *ft_do_pipe(t_node* node)
     int status;
     int len;
     int fd[2];
-    
+
     len = ft_strlen(node->content.cmd[0]);
     if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
     { // fork in tutti i casi tranne exit.
@@ -390,7 +398,7 @@ t_node *ft_do_pipe(t_node* node)
         {
             if (next_cmd_same_lvl(node) && next_cmd_same_lvl(node)->back->content.op == PIPE && next_cmd_same_lvl(node)->done_lock != 1)
             {
-                printf("FINISCE QUI!\n");
+                // printf("FINISCE QUI!\n");
                 // print_node(node->shell, node);
                 close(fd[0]);
                 ft_dup2(&fd[1], STDOUT_FILENO);
@@ -425,6 +433,8 @@ t_node *ft_do_pipe(t_node* node)
 }
 
 
+
+
 // LOGICA FD != LOGICA ()
 // LOGICA FD == LOGICA OP
 // echo a>1|(echo b>2||echo c  >3) |out:  |1:a |2:b  // il file 3 non viene creato
@@ -443,24 +453,22 @@ void execute(t_shell *shell)
     printf("------------------|FASE: EXECUTOR|------------------\n");
     //  fa tutti gli open degli here_doc settati in s_kv, non fa il dup2
     //  echo a || echo b | cat <<2
+    // ft_do_heredoc(shell); //TODO
     if (is_node_cmd(shell->tree))
     {
         printf("nodo op è assente...\n");
-        ft_do_heredoc(shell->tree);
         ft_single_cmd(shell->tree);
         return ;
     }
     printf(" è presente almeno 1 nodo op...\n");
     node = go_to_starter_node(shell->tree->left);
-    ft_do_heredoc(node);
     // V1: multi_cmd_without parantheses
     // tutti i nodi sullo stesso livello.
     while (1)
     {
         if (!node || node->done_lock == 1)
         {
-            if (!node)
-                ft_reset_original_fd(shell->tree);
+            // printf("QUI\n");
             if (node && node->done_lock == 1)
                 ft_reset_original_fd(node);
             break;
@@ -468,20 +476,7 @@ void execute(t_shell *shell)
         if (node->back && node->back->content.op == PIPE)
         {
             printf("ft_do_pipe...\n");
-            if (node->content.cmd && node->content.cmd[0])
-                next_node = ft_do_pipe(node);
-            else
-            {
-                printf("PIPE && ONLY REDIR\n");
-                if (!ft_do_redir(node))
-                {
-                    node->shell->exit_status = 1;
-                    ft_reset_original_fd(node); 
-                }
-                else
-                    node->shell->exit_status = 0;
-                next_node = next_cmd_same_lvl(node);
-            }
+            next_node = ft_do_pipe(node);
             printf("next_node:p%p\n", next_node);
         }
         else if (node->back && (node->back->content.op == AND || node->back->content.op == OR))
@@ -499,7 +494,3 @@ void execute(t_shell *shell)
 }
 
 // 5 func
-
-
-// subshell + hidden here_doc
-// syntax error

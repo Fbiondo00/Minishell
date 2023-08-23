@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 22:08:33 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 09:51:36 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,6 @@
 
 void shell_init(int argc, char **argv, char **env, t_shell *shell)
 {
-    (void)argc;
     (void)argv;
     shell->error = 0;        // ok?
     shell->exit_builtin = 0; // ok?
@@ -28,6 +27,8 @@ void shell_init(int argc, char **argv, char **env, t_shell *shell)
     shell->quote_idx = NULL;
     shell->tree = NULL;
     shell->str = NULL;
+    if (argc != 1)
+        ft_clean_exit(shell, INVALID_ARGS, 1, 1);
     ft_signals(shell);
     welcomeScreen();
     mall_env(shell, env);

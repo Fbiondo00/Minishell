@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:56:05 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 11:57:26 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/21 22:02:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ int ft_dup2(int *fd, int arg)
 {
     if (dup2(*fd, arg) == -1)
     {
-        write(2, "Dup2 error\n", 11);
+        write(2, "Dup2 error", 10);
         return (0);
     }
     close(*fd);
@@ -46,7 +46,7 @@ int ft_dup2(int *fd, int arg)
 void execute_builtin(t_node *node, t_shell *shell)
 {
     int len;
-    // printf("execute_builtin\n");
+
     len = ft_strlen(node->content.cmd[0]);
     if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))
         ft_echo(node);

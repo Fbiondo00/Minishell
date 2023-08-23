@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 13:41:49 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/23 02:39:32 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,6 +183,13 @@ void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);
 t_node *next_cmd_same_lvl(t_node *node);
 void ft_reset_original_fd(t_node *node);
+//wild
+int ft_stronly(const char *str, char c);
+int check_left(char *str, int i);
+int ft_middle(char *str, int index);
+char  *ft_one();
+void ft_input(char *new_str, t_node *node, int y);
+ int flag1(char *entry, char *str);
 void ft_wild(t_node *node, int i, int y);
 // execve
 void ft_execve(t_node *node);
@@ -192,8 +199,6 @@ int ft_do_redir(t_node *node);
 void ft_reset_original_fd(t_node *node);
 // open_file
 int ft_open_file(t_node *node, int i);
-void ft_do_heredoc(t_node *node);
-void ft_remove_heredoc(t_shell *shell);
 
 // UTILS
 int		ft_strlen(char *s);
