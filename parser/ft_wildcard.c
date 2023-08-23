@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 01:45:48 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 13:43:51 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/23 15:27:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ char *new_str_1(char *str)
     char *new_str =NULL;
 	struct dirent *entry;
     int flag;
-      const char *dirname = getcwd(0, 0);
+    const char *dirname = getcwd(0, 0);
     DIR *dir = opendir(dirname);
     
     if (dir == NULL)
@@ -26,7 +26,7 @@ char *new_str_1(char *str)
 		perror("opendir() error");
 		return ((char *)1);
 	}
-     while ((entry = readdir(dir)) != NULL)
+     while (( entry = readdir(dir)))
         {
             flag = flag1(entry->d_name,str);
             if (flag == 0) // significa che ha passato tutti i check richiesti e allora inserire in new_str
@@ -44,8 +44,6 @@ char *new_str_1(char *str)
 	closedir(dir);
     return (new_str);
 }
-
-
 
 
 int flag1(char *entry, char *str)
@@ -77,7 +75,6 @@ int flag1(char *entry, char *str)
             }
         return(0);
 }
-//  flag = flag1(entry->d_name,str);
 
 
 // torna 0 se asterisk è a destra

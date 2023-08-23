@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/16 05:17:10 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/23 22:18:54 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,7 +37,6 @@ void ft_ricorsione(t_node *node, t_shell *shell, int ij, int y)
     }
     while (shell->env[i + 1])
     {
-        printf("i:%d", i);
         swap_(&shell->env[i], &shell->env[i + 1]);
         i++;
     }

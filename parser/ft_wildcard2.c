@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 15:20:21 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 13:44:40 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/23 15:22:42 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,6 @@ void ft_wild(t_node *node, int i, int y)
     }
     else    
     new_str = new_str_1(str);
-
     // new_str = ft_asterisk(str);
     ft_input(new_str, node, y);
 }
