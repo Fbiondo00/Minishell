@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/23 22:18:54 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/24 18:14:06 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void ft_ricorsione(t_node *node, t_shell *shell, int ij, int y)
             }
         }
     }
-    while (shell->env[i + 1])
+    while (shell->env[i++ + 1])
     {
         swap_(&shell->env[i], &shell->env[i + 1]);
-        i++;
+        
     }
     shell->env[i] = 0;
     if (node->content.cmd[y + 1])
