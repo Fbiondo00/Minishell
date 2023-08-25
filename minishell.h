@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/25 01:58:58 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/25 03:01:29 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -197,7 +197,7 @@ char  *ft_one();
 void ft_input(char *new_str, t_node *node, int y);
  int flag1(char *entry, char *str, int i);
 void ft_wild(t_node *node, int i, int y);
-char *new_str_1( char *str);
+char *new_str_1( char *str, char *new_str, int flag);
 int ft_max(t_node *node, int i);
 int ft_min(t_node *node, int i);
 
