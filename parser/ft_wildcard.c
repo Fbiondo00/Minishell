@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 01:45:48 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 15:27:55 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/25 01:56:37 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,10 @@ char *new_str_1(char *str)
 		perror("opendir() error");
 		return ((char *)1);
 	}
-     while (( entry = readdir(dir)))
+    entry = readdir(dir);
+     while (( entry))
         {
-            flag = flag1(entry->d_name,str);
+            flag = flag1(entry->d_name,str, -1);
             if (flag == 0) // significa che ha passato tutti i check richiesti e allora inserire in new_str
             {
                 tem = ft_strjoin2(entry->d_name, " ");
@@ -37,8 +38,11 @@ char *new_str_1(char *str)
                     new_str = ft_strjoin2(tem, " ");
                 else
                 new_str = ft_strjoin2(new_str, tem);
-                free(tem);   
-            }  
+                free(tem);
+                entry = readdir(dir);
+            }
+            else
+            entry = readdir(dir);
         }       
     free(str);
 	closedir(dir);
@@ -46,11 +50,8 @@ char *new_str_1(char *str)
 }
 
 
-int flag1(char *entry, char *str)
+int flag1(char *entry, char *str, int i)
 {
-    int i;
-
-    i = -1;
             while (str[++i]) // str = "s*po"  //d->name:echoppo[7- 4 +3 ] = [7-1]
             {
                 if (str[i] != '*') // .."s"(fisso-left)..."i"(variab).."p"(fisso-right)
@@ -139,13 +140,15 @@ char  *ft_one()
 		return ((char *)1);
 	}
      printf("entryft_one");
-    while ((entry = readdir(dir)) != NULL)
+     entry = readdir(dir);
+    while ((entry))
     {
             tem = ft_strjoin2(entry->d_name, " ");
              if (!new_str)
                      new_str = ft_strjoin2(tem, " ");
             new_str = ft_strjoin2(new_str, tem);
             free(tem);
+            entry = readdir(dir);
     }
     return (new_str);
 }

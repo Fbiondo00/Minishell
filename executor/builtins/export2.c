@@ -1,54 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   unset.c                                            :+:      :+:    :+:   */
+/*   export2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/24 18:52:24 by flaviobiond      ###   ########.fr       */
+/*   Created: 2023/08/25 01:29:36 by flaviobiond       #+#    #+#             */
+/*   Updated: 2023/08/25 01:59:28 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_ric2(int i, t_shell *shell)
-{
-	while (shell->env[i + 1])
-	{
-		swap_(&shell->env[i], &shell->env[i + 1]);
-		i++;
-	}
-	shell->env[i] = 0;
-}
-
-void	ft_ricorsione(t_node *node, t_shell *shell, int ij, int y)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	while (shell->env[++i])
-	{
-		j = -1;
-		while (shell->env[i][++j] != '=' && shell->env[i][j])
-			;
-		if (((ft_strncmp(shell->env[i], node->content.cmd[y], j, 0)) == 0))
-		{
-			if (((ft_strncmp(shell->env[i], node->content.cmd[y],
-							ft_strlen(node->content.cmd[y]), 0)) == 0))
-			{
-				free(shell->env[i]);
-				break ;
-			}
-		}
-	}
-	ft_ric2(i, shell);
-	if (node->content.cmd[y + 1])
-		ft_ricorsione(node, shell, ij, ++y);
-}
-
-int	ft_check12(t_node *node)
+int	ftcheck11(t_node *node)
 {
 	int	i;
 	int	y;
@@ -64,7 +28,9 @@ int	ft_check12(t_node *node)
 				|| (node->content.cmd[i][y] >= 'a'
 					&& node->content.cmd[i][y] <= 'z')
 				|| (node->content.cmd[i][y] >= 'A'
-					&& node->content.cmd[i][y] <= 'Z'))
+					&& node->content.cmd[i][y] <= 'Z')
+				|| node->content.cmd[i][y] == '='
+				|| node->content.cmd[i][y] == '+')
 				continue ;
 			else
 				return (1);
@@ -73,11 +39,12 @@ int	ft_check12(t_node *node)
 	return (0);
 }
 
-int	ft_check_unset(t_node *node)
+int	ft_check(t_node *node)
 {
 	int	i;
 
 	i = 1;
+	printf("entra in ft_check...\n");
 	while (node->content.cmd[i])
 	{
 		if ((node->content.cmd[i][0] >= 'a' && node->content.cmd[i][0] <= 'z')
@@ -87,22 +54,7 @@ int	ft_check_unset(t_node *node)
 		else
 			return (write(1, "checkexpo\n", 11) - 10);
 	}
-	if (ft_check12(node) == 1)
-		return (write(1, "checkexpo\n", 11) - 10);
+	if (ftcheck11(node) == 1)
+		return (write(1, "checkexpo1\n", 11) - 10);
 	return (0);
-}
-
-void	ft_unset(t_node *node, t_shell *shell)
-{
-	int	ij;
-
-	ij = ft_get_len_mat(node);
-	if (!node->content.cmd[1])
-		return ;
-	if (ij >= 2)
-	{
-		if (ft_check_unset(node) == 1)
-			return ;
-		ft_ricorsione(node, shell, ij, 1);
-	}
 }

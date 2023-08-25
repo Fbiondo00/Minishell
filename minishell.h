@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/23 13:43:37 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/25 01:58:58 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -178,18 +178,24 @@ void ft_env(t_shell *shell);
 void ft_export(t_shell *shell, t_node *node);
 void ft_unset(t_node *node, t_shell *shell);
 int ft_exit(t_node *node, t_shell *shell);
+void ft_ricorsione(t_node *node, t_shell *shell, int ij, int y);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);
 t_node *next_cmd_same_lvl(t_node *node);
 void ft_reset_original_fd(t_node *node);
+int	ftcheck11(t_node *node);
+int	ft_check(t_node *node);
+int	ft_get_equ(char *env);
+void	ft_conc(t_shell *shell, char *str, int y);
+void	bubble_sort_strings(char **strings, int num_strings);
 //wild
 int ft_stronly(const char *str, char c);
 int check_left(char *str, int i);
 int ft_middle(char *str, int index);
 char  *ft_one();
 void ft_input(char *new_str, t_node *node, int y);
- int flag1(char *entry, char *str);
+ int flag1(char *entry, char *str, int i);
 void ft_wild(t_node *node, int i, int y);
 char *new_str_1( char *str);
 int ft_max(t_node *node, int i);

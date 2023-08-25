@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 22:12:50 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/25 01:52:44 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,6 @@ void	ft_cd(t_node *node, t_shell *shell)
 	int	i;
 
 	i = 0;
-	// printf("Start node cmd[0]:%s\n", node->content.cmd[0]);
-	//  printf("Start node cmd[1]:%s\n", node->content.cmd[1]);
 	while (node->content.cmd[++i])
 		;
 	if (i == 1)
@@ -142,7 +140,5 @@ void	ft_cd(t_node *node, t_shell *shell)
 		updatecd(node, shell);
 		printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
 		return ;
-		// Aggiorna il percorso della directory corrente usata dalla tua Minishell
-		// Ad esempio, potresti usare una variabile globale per memorizzarla
 	}
 }
