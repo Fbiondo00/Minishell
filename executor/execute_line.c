@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 00:55:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 00:59:07 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -130,11 +130,9 @@ void	execute(t_shell *shell)
 
 	if (is_node_cmd(shell->tree))
 	{
-		printf("nodo op è assente...\n");
 		ft_single_cmd(shell->tree);
 		return ;
 	}
-	printf(" è presente almeno 1 nodo op...\n");
 	node = go_to_starter_node(shell->tree->left);
 	while (1)
 	{
@@ -145,20 +143,10 @@ void	execute(t_shell *shell)
 			break ;
 		}
 		if (node->back && node->back->content.op == PIPE)
-		{
-			printf("ft_do_pipe...\n");
 			next_node = ft_do_pipe(node);
-			printf("next_node:p%p\n", next_node);
-		}
 		else if (node->back && (node->back->content.op == AND
 					|| node->back->content.op == OR))
-		{
-			printf("ft_do_and_or...\n");
 			next_node = ft_do_and_or(node);
-			printf("next_node:p%p\n", next_node);
-		}
 		node = next_node;
 	}
 }
-
-// 5 func
