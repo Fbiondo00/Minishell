@@ -3,22 +3,28 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 12:12:48 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/18 19:05:40 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 00:48:16 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// utilizza read per leggere il file e salva in backup (grandezza BUFFER_SIZE)
-//legge buffer volte fino a che non troviamo non raggiunge \n o EOF
-//salvando il risultato in stack
+void	welcome(void)
+{
+	printf("\n-------------------------------------------------\n");
+	printf("\tWelcome to 42 Minishell  \n");
+	printf("\tPowered by : Rdolzi and Fbiondo (@42Roma)\n");
+	printf("-------------------------------------------------\n");
+	printf("\n\n");
+}
+
 char	*ft_read(int fd, char *stack)
 {
-	char			*buffer;
-	int				len;
+	char	*buffer;
+	int		len;
 
 	buffer = (char *)malloc(sizeof(char) * (BUFFER_SIZE + 1));
 	if (!buffer)
@@ -38,7 +44,7 @@ char	*ft_read(int fd, char *stack)
 	return (stack);
 }
 
-// extract_line estrae la linea dallo stack ( \n incluso, se presente ) 
+// extract_line estrae la linea dallo stack ( \n incluso, se presente )
 // e aggiunge il null byte
 // lo stack può presentarsi in due casi:
 // 1. contiene il char \n e forse   char successivi
@@ -75,10 +81,10 @@ char	*extract_line(char *stack)
 //rimuove la la prima linea(tutti gli elementi fino a \n)
 char	*ft_clean(char *stack)
 {
-	size_t		i;
-	size_t		k;
-	size_t		j;
-	char		*clean_stack;
+	size_t	i;
+	size_t	k;
+	size_t	j;
+	char	*clean_stack;
 
 	i = 0;
 	while (stack[i] != '\n' && stack[i])

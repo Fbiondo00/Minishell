@@ -3,89 +3,87 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/21 21:40:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/25 18:18:45 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 // stampa errore e ritorna exit status desiderato
-int write_error(char *str, int exit_status)
+int	write_error(char *str, int exit_status)
 {
-    write(1, str, ft_strlen(str));
-    return (exit_status);
+	write(1, str, ft_strlen(str));
+	return (exit_status);
 }
 
 // to_exit == 1 se bisogna fare anche exit
 // to_exit == 0 per fare solo clean
-void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
+void	ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 {
-    // shell->tree: navigazione nodi, poi free.
-    if (shell->quote_idx)
-        free(shell->quote_idx);
-    if (shell->rawline)
-        free(shell->rawline);
-    if (shell->str)
-        free(shell->str);
-    // friare tutto l albero ...
-    //---
-    if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
-    {
-        // shell->env free in to_exit?
-        // ft_reset_original_fd(); ??
-        close(shell->temp_input);
-        close(shell->temp_output);
-        close(shell->temp_error);
-        exit(write_error(str, exit_status));
-    }
+	// shell->tree: navigazione nodi, poi free.
+	if (shell->quote_idx)
+		free(shell->quote_idx);
+	if (shell->rawline)
+		free(shell->rawline);
+	if (shell->str)
+		free(shell->str);
+	if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
+	{
+		// shell->env free in to_exit?
+		// ft_reset_original_fd(); ??
+		close(shell->temp_input);
+		close(shell->temp_output);
+		close(shell->temp_error);
+		exit(write_error(str, exit_status));
+	}
 }
 
 // ritorna  1 in caso sia presente nelle double quotes "
 // ritorna -1 in caso sia presente nelle single quotes '
 // ritorna  0 se non in quotes
-int in_quotes(t_node *node, int index)
+int	in_quotes(t_node *node, int index)
 {
-    int i;
-    int d_quotes;
-    int s_quotes;
+	int	i;
+	int	d_quotes;
+	int	s_quotes;
 
-    i = -1;
-    d_quotes = 0;
-    s_quotes = 0;
-    while (++i < index)
-    {
-        if (node->quote_idx[i] == 34)
-            d_quotes++;
-        if (node->quote_idx[i] == 39)
-            s_quotes++;
-    }
-    if (s_quotes % 2 != 0)
-        return (-1);
-    if (d_quotes % 2 != 0)
-        return (1);
-    return (0);
+	i = -1;
+	d_quotes = 0;
+	s_quotes = 0;
+	while (++i < index)
+	{
+		if (node->quote_idx[i] == 34)
+			d_quotes++;
+		if (node->quote_idx[i] == 39)
+			s_quotes++;
+	}
+	if (s_quotes % 2 != 0)
+		return (-1);
+	if (d_quotes % 2 != 0)
+		return (1);
+	return (0);
 }
 
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
-    t_shell shell;
-    
-    shell_init(argc, argv, env, &shell);
-    while(1)
-    {
-        ft_read_line(&shell);
-        if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
-        {
-            set_tree(&shell);
-            set_components(&shell);
-            execute(&shell);
-            ft_clean_exit(&shell, NULL , 3, 0);
-        }
-       // ci entra ogni volta che fai invio senza scrivere nulla
-    }
+	t_shell	shell;
+
+	shell_init(argc, argv, env, &shell);
+	while (1)
+	{
+		ft_read_line(&shell);
+		if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
+		{
+			set_tree(&shell);
+			set_components(&shell);
+			execute(&shell);
+			ft_clean_exit(&shell, NULL, 3, 0);
+		}
+		// ci entra ogni volta che fai invio senza scrivere nulla
+	}
 }
 
 // 5 func
@@ -110,9 +108,9 @@ int main(int argc, char **argv, char **env)
 //    A2: aggiungere anche altre syntax error di sotto(anche op)
 
 // 2. executor & subshells
-// 3. ("echo')")  per errore elimina l apice singolo, gestito in set_cmd o in_quotes_str?
+// 3. ("echo')")  per errore elimina l apice singolo,gestito in set_cmd o in_quotes_str?
 // 4. se ft_read_line fallisce fare il free di quote_idx e del resto
-// 5. quando errore syntax non deve uscire dal terminale!, ma pulire solo le strutture
+// 5. quando errore syntax non deve uscire dal terminale!,ma pulire solo le strutture
 // ------------------- WIP -------------------
 // CASI DA GESTIRE REDIRECTION (set_token_redirection) :
 // 1.  echo a < (echo a >)(echo a >>)  [in syntax: to fix!]
@@ -147,8 +145,9 @@ int main(int argc, char **argv, char **env)
 
 //----------------------------TBD: ----------------------------------
 // 1. ft_read_line() LEAKS READLINE?
-// https: // stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak
-// ...and the history can be freed calling void rl_clear_history(void), add that function call in your program and redo a test
+// https:
+	// stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak
+// ...and the history can be freed calling void rl_clear_history(void),add that function call in your program and redo a test
 
 // 2. Se è builtin va fatto uguale il fork o si esegue dal main? [molto prob. no]
 
@@ -176,7 +175,7 @@ int main(int argc, char **argv, char **env)
 
 // ------------------- TESTER: OK/KO in base a risultati bash -------------------
 // --------------- WIP -------------------
-// echo ok || echo zi && echo ciao || << gg  
+// echo ok || echo zi && echo ciao || << gg
 // (echo ciao > a) > b     ..non deve dare essere. gli da fastidio lo spazio dopo > b
 // Gestire: echo 7>1>2     dovrebbe dare syntax error.
 //  soluzione: in fase di check syntax nella str spacchettare a partire da ultima redir
@@ -195,8 +194,8 @@ int main(int argc, char **argv, char **env)
 
 // 3. a|b>d<e ..? non dovrebbe dare errore..  solo se primo nodo ha solo 1 elemento
 
-// 4. "(echo a && (echo b && (echo c))) >p" | cat .. se inserisco apici il cmd splitta strano
-// 5. "echo a && echo b" OK 
+// 4. "(echo a && (echo b&& (echo c))) >p" | cat .. se inserisco apici il cmd splitta strano
+// 5. "echo a && echo b" OK
 // output: bash: echo a && echo b: command not found
 // --------------- FATTI ------------------
 // echo c|       KO bash apre here_doc per completare stringa ma trattato come sotto
@@ -228,7 +227,7 @@ int main(int argc, char **argv, char **env)
 // a >u>>og <<o"'  pp" p                     OK
 // (echo b || (echo a ) >u)                  OK non fa redir
 // (echo b || echo a >e)                     OK non fa redir
-// ((echo a && ls))         OK bash da err, noi trattiamo come caso successivo, non errore
+// ((echo a && ls))         OK bash da err, noi trattiamo come caso successivo,non errore
 // (echo a && ls)                            OK
 // (echo a && ls) |cat                       OK
 // (echo b || echo a >e)                     OK
@@ -250,12 +249,12 @@ int main(int argc, char **argv, char **env)
 // echo a > "/Desktop/e u"
 //  bash: /Desktop/e u: No such file or directory
 
-//  echo a > "Desktop/e u"  
+//  echo a > "Desktop/e u"
 //  bash: Desktop/e u: No such file or directory
 // ----
 //  echo a && echo b | (false && echo d | echo e)             OK > a
 //  echo a && echo b | echo c &&(  false && echo d | echo e ) OK > a c
-//  echo ok || echo zi && echo ciao || << gg                  OK se cè here_doc lo fa sempre per primo.
+//  echo ok || echo zi && echo ciao|| << gg                  OK se cè here_doc lo fa sempre per primo.
 //  echo a && echo b | echo c ( false && echo d | echo e )          KO
 //  echo a && echo b | echo c (&&  false && echo d | echo e )       KO
 // echo a && echo b | echo c |( false && echo d | echo e ) echo c   KO
@@ -326,10 +325,9 @@ int main(int argc, char **argv, char **env)
 // 3: PIPE
 
 // tuttavia l ordine in cui vanno settate è inverso, ovvero:
-// 1: setto PIPE output (vale per solo per ultimo cmd se subshell) 
+// 1: setto PIPE output (vale per solo per ultimo cmd se subshell)
 // 2: setto sub_level output
 // 3: setto cmd_level output
-
 
 // 1: bash-3.2$ echo a | (echo d &&  echo b) | cat
 // d
@@ -339,7 +337,7 @@ int main(int argc, char **argv, char **env)
 // b
 
 // bash-3.2$ echo a | (echo d >z &&  echo b) >u | cat  (z:d|u:b)
-// bash-3.2$ 
+// bash-3.2$
 
 // -------
 
@@ -363,11 +361,9 @@ int main(int argc, char **argv, char **env)
 // echop aa && cat <<u
 
 // se implicito non viene eseguito, ma è eseguito solo prima dell esecuzione cmd
-// echop aa && cat 
+// echop aa && cat
 
-// When the cat command does not contain any arguments, it waits for an input from your keyboard. If you try to run the cat command lacking any arguments, cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard, cat command will simply repeat any input and display it on the screen.
+// When the cat command does not contain any arguments,it waits for an input from your keyboard. If you try to run the cat command lacking any arguments,cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard,cat command will simply repeat any input and display it on the screen.
 
-
-// how to restore FD 
+// how to restore FD
 // https://stackoverflow.com/questions/55771495/what-are-the-rules-of-closing-file-descriptors-after-calling-dup-dup2
-
