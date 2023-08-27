@@ -3,21 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   read_line.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/26 19:36:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 16:28:40 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-
 // 1 presente 0 assente
-int redir_after(t_shell *shell, int idx)
+int	redir_after(t_shell *shell, int idx)
 {
-	char *op;
-	char *chars;
+	char	*op;
+	char	*chars;
 
 	op = "><";
 	chars = "|&";
@@ -25,7 +24,6 @@ int redir_after(t_shell *shell, int idx)
 	{
 		if (ft_strchr(chars, shell->str[idx]) && !in_quotes_str(shell, idx))
 			return (0);
-
 		if (ft_strchr(op, shell->str[idx]) && !in_quotes_str(shell, idx))
 			return (1);
 	}
@@ -33,20 +31,21 @@ int redir_after(t_shell *shell, int idx)
 }
 
 // 1 errore 0 ok
-int check_operators(t_shell *shell)
+int	check_operators(t_shell *shell)
 {
-	int i;
-	char *chars;
-	
+	int		i;
+	char	*chars;
+
 	i = -1;
 	chars = "|&";
-	if (ft_strchr(chars, shell->str[ft_strlen(shell->str)- 1]))
+	if (ft_strchr(chars, shell->str[ft_strlen(shell->str) - 1]))
 		return (1);
 	while (++i < ft_strlen(shell->str))
 	{
 		if (ft_strchr(chars, shell->str[i]) && !in_quotes_str(shell, i))
 		{
-			if (!char_before(shell, i) && (!ft_isalpha(shell->str[0]) && !ft_isdigit2(shell->str[0])))
+			if (!char_before(shell, i) && (!ft_isalpha(shell->str[0])
+					&& !ft_isdigit2(shell->str[0])))
 				return (1);
 			if (ft_strchr(chars, shell->str[i + 1]))
 				i++;
@@ -59,9 +58,9 @@ int check_operators(t_shell *shell)
 
 // ritorna 1 errore, ritorna 0 ok
 // idx: indice del primo char dopo | o &
-int check_other_stuff(t_shell *shell, int idx, int count)
+int	check_other_stuff(t_shell *shell, int idx, int count)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	if (shell->str[idx - 1] == '&')
@@ -75,10 +74,10 @@ int check_other_stuff(t_shell *shell, int idx, int count)
 // ritorna 1 errore, ritorna 0 ok
 // ok: è il char dell op da controllare
 // ko: è il set di chars che non devono essere presenti
-int check_op(t_shell *shell, char ok, char *ko)
+int	check_op(t_shell *shell, char ok, char *ko)
 {
-	int i;
-	int count;
+	int	i;
+	int	count;
 
 	i = -1;
 	count = 0;
@@ -103,8 +102,7 @@ int check_op(t_shell *shell, char ok, char *ko)
 	return (check_other_stuff(shell, i, count));
 }
 
-
-void ft_read_line(t_shell *shell)
+void	ft_read_line(t_shell *shell)
 {
 	shell->rawline = readline(PROMPT_MSG);
 	if (!shell->rawline)
@@ -115,13 +113,16 @@ void ft_read_line(t_shell *shell)
 		if (unclosed_quotes(shell))
 		{
 			ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 1, 0);
-			return;
+			return ;
 		}
 		shell->str = duplica(shell->rawline);
-		if (check_op(shell, '|', "&") || check_op(shell, '&', "|") || check_op(shell, '>', "&<|)(") || check_op(shell, '<', "&>|)(") || empty_redir(shell) || check_operators(shell) || check_parentheses(shell))
+		if (check_op(shell, '|', "&") || check_op(shell, '&', "|")
+			|| check_op(shell, '>', "&<|)(") || check_op(shell, '<', "&>|)(")
+			|| empty_redir(shell) || check_operators(shell)
+			|| check_parentheses(shell))
 		{
 			ft_clean_exit(shell, SYNTAX_ERROR, 1, 0);
-			return;
+			return ;
 		}
 	}
 }
