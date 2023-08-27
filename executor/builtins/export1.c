@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 18:59:32 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 03:58:33 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:00:05 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	ft_conc_2(t_shell *shell, char *str, int i)
 	shell->env = ft_realloc(shell->env, sizeof(char *) * (i + 2));
 	shell->env[i] = str1;
 	shell->env[i + 1] = 0;
-	// free(str1);
+	free(str1);
 }
 
 void	ft_conc(t_shell *shell, char *str, int y)

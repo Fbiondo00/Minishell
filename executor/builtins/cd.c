@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 02:56:17 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:04:19 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,7 +138,6 @@ void	ft_cd(t_node *node, t_shell *shell)
 	else
 	{
 		updatecd(node, shell);
-		printf("Directory corrente cambiata in: %s\n", node->content.cmd[1]);
 		return ;
 	}
 }

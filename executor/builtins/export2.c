@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 01:29:36 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 03:58:35 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:03:45 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,9 +51,9 @@ int	ft_check(t_node *node)
 				&& node->content.cmd[i][0] <= 'Z'))
 			++i;
 		else
-			return (write(1, "checkexpo\n", 11) - 10);
+			return (write(2, "checkexpo\n", 11) - 10);
 	}
 	if (ftcheck11(node) == 1)
-		return (write(1, "checkexpo1\n", 11) - 10);
+		return (write(2, "checkexpo1\n", 11) - 10);
 	return (0);
 }

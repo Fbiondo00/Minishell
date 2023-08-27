@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 03:23:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:03:26 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	ft_check12(t_node *node)
 		while (node->content.cmd[i][++y])
 		{
 			if ((node->content.cmd[i][y] >= '0'
-				&& node->content.cmd[i][y] <= '9')
+					&& node->content.cmd[i][y] <= '9')
 				|| (node->content.cmd[i][y] >= 'a'
 					&& node->content.cmd[i][y] <= 'z')
 				|| (node->content.cmd[i][y] >= 'A'
@@ -85,10 +85,10 @@ int	ft_check_unset(t_node *node)
 				&& node->content.cmd[i][0] <= 'Z'))
 			++i;
 		else
-			return (write(1, "checkexpo\n", 11) - 10);
+			return (write(2, "checkexpo\n", 11) - 10);
 	}
 	if (ft_check12(node) == 1)
-		return (write(1, "checkexpo\n", 11) - 10);
+		return (write(2, "checkexpo\n", 11) - 10);
 	return (0);
 }
 
