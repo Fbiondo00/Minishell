@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   recursive.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:02:35 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 16:50:07 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 17:30:56 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,5 +66,3 @@ int	recursive(t_shell *sh, int par, int left_p, int i)
 	}
 	return (0);
 }
-
-// 2 func

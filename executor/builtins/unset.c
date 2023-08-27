@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:06:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 17:34:22 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,10 +85,10 @@ int	ft_check_unset(t_node *node)
 				&& node->content.cmd[i][0] <= 'Z'))
 			++i;
 		else
-			return (write(2, "checkexpo\n", 11) - 10);
+			return (write(2, "not a valid identifier\n", 23) - 22);
 	}
 	if (ft_check12(node) == 1)
-		return (write(2, "checkexpo\n", 11) - 10);
+		return (write(2, "not a valid identifier\n", 23) - 22);
 	return (0);
 }
 

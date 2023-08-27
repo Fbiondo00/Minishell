@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/25 06:48:48 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:05:06 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -346,3 +346,35 @@ void set_cmd(t_node *node)
 }
 
 // 5 func
+
+// remove_quotes + ft_split.
+// split:
+// 0. choose 2 char
+// 1. convertire spazi in_quotes in 1 char scelto
+// 2. convertire quotes s/d !in_quotes in 2 char scelto
+// 2. fare la split
+// 3. ripristinare gli spazi dal char scelto
+// remove_quotes:
+// 4.per tutte le stringhe, se match il 2 char, fare il remove
+
+
+// cerca un char non utilizzato a fartire 
+// void ft_safe_char(t_node *node, char c)
+// {
+    
+// }
+
+// void ft_do_cmd(t_node *node)
+// {
+//     int i;
+//     char c;
+//     char d;
+
+//     i = -1;
+//     ft_safe_char(node, &c);
+//     convert_space(node, c);
+//     ft_safe_char(node, &d);
+//     convert_quotes(node, c);
+//     node->content.cmd = ft_split(node->raw_cmd, ' ');
+
+// }

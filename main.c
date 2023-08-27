@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 04:24:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 17:27:45 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,14 +127,6 @@ int main(int argc, char **argv, char **env)
 // io " echo a && echo ba" u
 // bash: io: command not found
 
-//remove_quotes + ft_split.
-// la soluzione prevede un discorso complessivo per entrambe.
-// soluzione semplice: fare prima lo split per gli spazi, ma solo se !in_quotes
-// successivamente rimuovere le quotes.
-
-// possibile fare conversione 34 e 39 non "ufficiali" in char temp
-//        a questo punto rimangono solo i 34 e 39 ufficiali.
-// fare il remove_internal_quotes
 
 // dubbi su norminette:
 // 1.SIGNAL:
