@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:18 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/24 18:52:24 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 03:23:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	ft_check12(t_node *node)
 		while (node->content.cmd[i][++y])
 		{
 			if ((node->content.cmd[i][y] >= '0'
-					&& node->content.cmd[i][y] <= '9')
+				&& node->content.cmd[i][y] <= '9')
 				|| (node->content.cmd[i][y] >= 'a'
 					&& node->content.cmd[i][y] <= 'z')
 				|| (node->content.cmd[i][y] >= 'A'

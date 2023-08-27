@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/19 22:13:33 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/25 04:01:08 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,14 +99,14 @@ void set_token_redirection(t_node *node, int idx, int num)
     while (node->raw_cmd[i] == ' ')
         i++;                      // i rappresenta il char dopo ' '
     len = get_len_value(node, i); // restituisce il num dei char inclusi.
-    // printf(" get_len_value(node, idx:%d):%d\n",i, len);
+    // printf(" get_len_value(node, idx(first char dopo space):%d):%d\n",i, len);
     str = malloc(len + 1);
     str[len] = '\0';
     j = -1;
     while (i < ft_strlen(node->raw_cmd))
     {
-        if (node->raw_cmd[i] == ' ' ||
-         (ft_strchr(chars, node->raw_cmd[i]) && !in_quotes(node, i)))
+        if ((node->raw_cmd[i] == ' ' && !in_quotes(node, i))  ||
+            (ft_strchr(chars, node->raw_cmd[i]) && !in_quotes(node, i)))
             break ;
         else if (node->raw_cmd[i] == 34 && !in_quotes(node, i))
         {
@@ -284,19 +284,3 @@ void set_redirection(t_node *node)
 }
 
 // 5 func
-
-// 1. fix + logic redir
-//    CASI:
-//    A: AGGIUNGERE SINTAX ERROR
-//    casi:(&>  <>  >& | ><   &< <&)dare errore!fare set chars per redir e dare errore if in
-//    A2: aggiungere anche altre syntax error di sotto(anche op)
-
-// --syntax error--
-// echo 7>1>2 è errore.
-//  soluzione: in fase di check syntax nella str spacchettare a partire da ultima redir
-// quindi l ultima redir si prende 1>2 e li setta a spazi.
-// poi il primo redir è 7> .. mancando la parte destra da syntax error!
-
-// --aggiungere FD--
-// avendo gestito il caso precedente in syntax error, possiamo correttamente lavorare
-// le redir in ordine crescente, sapendo che non ci possono essere fd che invalidano la raw

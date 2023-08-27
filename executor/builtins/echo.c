@@ -3,19 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:20:11 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/23 22:13:04 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 03:01:00 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
-
-// echo:
-
-// Per implementare il comando echo, devi semplicemente stampare
-//  l'output sulla console per ogni argomento passato al comando echo.
 
 int	is_valid(t_node *node)
 {

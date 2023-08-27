@@ -3,156 +3,168 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/25 18:18:45 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 04:24:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// stampa errore e ritorna exit status desiderato
-int	write_error(char *str, int exit_status)
-{
-	write(1, str, ft_strlen(str));
-	return (exit_status);
-}
-
 // to_exit == 1 se bisogna fare anche exit
 // to_exit == 0 per fare solo clean
-void	ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
+void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 {
-	// shell->tree: navigazione nodi, poi free.
-	if (shell->quote_idx)
-		free(shell->quote_idx);
-	if (shell->rawline)
-		free(shell->rawline);
-	if (shell->str)
-		free(shell->str);
-	if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
-	{
-		// shell->env free in to_exit?
-		// ft_reset_original_fd(); ??
-		close(shell->temp_input);
-		close(shell->temp_output);
-		close(shell->temp_error);
-		exit(write_error(str, exit_status));
-	}
+
+    if (shell->quote_idx)
+    {
+        printf("shell->quote_idx:%p\n", shell->quote_idx);
+        free(shell->quote_idx);
+        shell->quote_idx = NULL;
+    }
+    if (shell->rawline)
+    {
+        printf("shell->rawline:%p\n", shell->rawline);
+        free(shell->rawline);
+        shell->rawline = NULL;
+    }
+    if (shell->str)
+    {
+        printf("shell->str:%p\n", shell->rawline);
+        free(shell->str);
+        shell->str = NULL;
+    }
+    if (shell->tree)
+        ft_remove_heredoc(shell);
+    // if (shell->tree)
+        // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
+    if (str)
+        shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + exit_status;
+    printf("fine line: shell->exit_status:%d\n", shell->exit_status);
+    if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
+    {
+        free_envp(shell);
+        // ft_reset_original_fd(); ??
+        
+        close(shell->temp_input);
+        close(shell->temp_output);
+        close(shell->temp_error);
+        exit(exit_status);
+    }
 }
 
 // ritorna  1 in caso sia presente nelle double quotes "
 // ritorna -1 in caso sia presente nelle single quotes '
 // ritorna  0 se non in quotes
-int	in_quotes(t_node *node, int index)
+int in_quotes(t_node *node, int index)
 {
-	int	i;
-	int	d_quotes;
-	int	s_quotes;
+    int i;
+    int d_quotes;
+    int s_quotes;
 
-	i = -1;
-	d_quotes = 0;
-	s_quotes = 0;
-	while (++i < index)
-	{
-		if (node->quote_idx[i] == 34)
-			d_quotes++;
-		if (node->quote_idx[i] == 39)
-			s_quotes++;
-	}
-	if (s_quotes % 2 != 0)
-		return (-1);
-	if (d_quotes % 2 != 0)
-		return (1);
-	return (0);
+    i = -1;
+    d_quotes = 0;
+    s_quotes = 0;
+    while (++i < index)
+    {
+        if (node->quote_idx[i] == 34)
+            d_quotes++;
+        if (node->quote_idx[i] == 39)
+            s_quotes++;
+    }
+    if (s_quotes % 2 != 0)
+        return (-1);
+    if (d_quotes % 2 != 0)
+        return (1);
+    return (0);
 }
 
-int	main(int argc, char **argv, char **env)
+int main(int argc, char **argv, char **env)
 {
-	t_shell	shell;
-
-	shell_init(argc, argv, env, &shell);
-	while (1)
-	{
-		ft_read_line(&shell);
-		if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
-		{
-			set_tree(&shell);
-			set_components(&shell);
-			execute(&shell);
-			ft_clean_exit(&shell, NULL, 3, 0);
-		}
-		// ci entra ogni volta che fai invio senza scrivere nulla
-	}
+    t_shell shell;
+    if (argc != 1)
+        exit(write(2, "Error: invalid arguments\n", 25) - 24);
+    shell_init(argc, argv, env, &shell);
+    while(1)
+    {
+        ft_read_line(&shell);
+        if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
+        {
+            set_tree(&shell);
+            set_components(&shell);
+            execute(&shell);
+            ft_clean_exit(&shell, NULL , 3, 0);
+        }
+       // ci entra ogni volta che fai invio senza scrivere nulla
+    }
 }
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-9. $HOMEc  / u* bugga a volte, anche multipli u* u*
-// ==1 solo nei return, altri posti flag a 0
-//-8. $? is used to find the return value of the last executed command.
-//-7. protrebbero esserci dei buchi nei lvl, seg fault?
-//-6. BASH:(echo ciao > a) >b .. crea redir a) .. perche include )??
-//-5. Sostituire perror con write(2,,)?
-//-4. chiudere here_doc dopo utilizzo
-//-3. se >1 here_doc, generazione nome univoco. variabile array in node?
-//-2. creare fd.c & execve.c
-//    la logica dovrebbe essere semplice: per ogni ) prima della redir: lvl++; (parte da 0)
-//-1. seg fault if !exist $var
-// 0. fix new syntax errors
+// 0.MAIN
+// leaks
+// 1.PARSER:
+    // A.fix remove_quotes
+        //  rm "a" "b", non rimuove le seconde.. fare un reset
+    // B.fix ft_split (non deve splittare per spazi, se in_quotes)
+        // "echo a && echo b"
+        // output: bash: echo a && echo b: command not found
+        // "(echo a && (echo b && (echo c))) >p" | cat
+    // C.do $?
+        //   $? is used to find the return value of the last executed command.
+// 2.EXECUTOR
+    // A.fix ft_do_heredoc (loop se pipe dopo and_or)
+        // echo a || echo b | echo c | echo d && echo e ..
+        // echo a &&echo b | echo c   ... entra in loop
+        // echop a && echo b | echo c | echo d && echo e
+        // echop a && echo b | echo c | echo d || echo e .. problema set_components
+    // B.do subshell
+        //  protrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
 
-// 1. fix + logic redir
-//    CASI:
-//    A: AGGIUNGERE SINTAX ERROR
-//    casi:(&>  <>  >& | ><   &< <&)dare errore!fare set chars per redir e dare errore if in
-//    A2: aggiungere anche altre syntax error di sotto(anche op)
+// io" echo a && echo ba" u
+// bash: io echo a && echo ba: command not found
+// io " echo a && echo ba" u
+// bash: io: command not found
 
-// 2. executor & subshells
-// 3. ("echo')")  per errore elimina l apice singolo,gestito in set_cmd o in_quotes_str?
-// 4. se ft_read_line fallisce fare il free di quote_idx e del resto
-// 5. quando errore syntax non deve uscire dal terminale!,ma pulire solo le strutture
-// ------------------- WIP -------------------
-// CASI DA GESTIRE REDIRECTION (set_token_redirection) :
-// 1.  echo a < (echo a >)(echo a >>)  [in syntax: to fix!]
-//  bash: syntax error near unexpected token `newline'
-// file1 non esiste
-// 2. echo a <file1  [to do in executor...]
-//  bash: u: No such file or directory
-// 3. echo a >file1 (echo a >>file1)   -->crea il file con successo
+//remove_quotes + ft_split.
+// la soluzione prevede un discorso complessivo per entrambe.
+// soluzione semplice: fare prima lo split per gli spazi, ma solo se !in_quotes
+// successivamente rimuovere le quotes.
 
-// idx corrispondente all ultimo char dell operatore
-// gestione ""?  [DONE]
-//  <>?  [in redir: to fix!]
-// ----
-// in generale vengono sempre eseguite tutte le  redirections NECESSARIE prima del lancio dei
-// comandi.
-// echo a>b|echo b|echo c && pi zi ||   pippo <u z
-// Risultato:
-// > d (here_doc)
-// > u
-// c
-// bash: pi: command not found
-// bash: pippo: command not found
+// possibile fare conversione 34 e 39 non "ufficiali" in char temp
+//        a questo punto rimangono solo i 34 e 39 ufficiali.
+// fare il remove_internal_quotes
 
-// echo a>b|echo b|echo c && pi zi &&   pippo <u z
-// c
-// zsh: command not found: pi
-// non dice che u non esiste perche neanche la lancia. rientra nel ramo non lanciato.
-
-// come nel caso: // (echo b || echo a >e) non fa redir
+// dubbi su norminette:
+// 1.SIGNAL:
+//  a.  void	ft_reset_signal(void) perche?
+//  b.  shell->error se è da settare errore, come?
+// 2.UTILS:
+//  a. get_idx_eq_st2  da cancellare?
+// 3.BUILTINS
+//  a. cd.c  printf da valutare, se da stampare in std 1 o 2
+//  b. exit.c ...perchè non hai norminettato la versione corretta? da rifare...
+//  c. unset.c
+//    - cambiare checkexpo con messaggio corretto, e stampare su stderror...
+//  d. export.c
+//    - con(): la modifica --y sono abb sicuro non venga passato al resto della funzione,
+//             potrebbe sballare tutti gli utilizzi di y siccessivi. verificare
+//             eventualmente con un printf se la y viene passata 
+//             correttamente decrementata. in caso contrario basta semplicemente
+//             passare alla funzione un puntatore ad y.
+//    - ft_export1():  la y nella versione precedente veniva startata a 0, ora a -1,
+//                      sicuramente produce un altro risultato... da controllare
+//  e. ft_wildcard.c: unica copiata e non controllata, fare i test e togliere i printf
+// 4. fare le norme del lexer
+// 5. modifiche in main.c e le restanti in parser e executor non prese
+//----------------------------TBD: ----------------------------------
+// 1. ft_read_line() LEAKS READLINE?
+// https: // stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak
+// ...and the history can be freed calling void rl_clear_history(void), add that function call in your program and redo a test
 
 // https://www.cs.colostate.edu/~mcrob/toolbox/unix/redirection#:~:text=File%20redirection%20happens%20second%2C%20and,The%20file%20redirection%20always%20wins.)
 
-//----------------------------TBD: ----------------------------------
-// 1. ft_read_line() LEAKS READLINE?
-// https:
-	// stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak
-// ...and the history can be freed calling void rl_clear_history(void),add that function call in your program and redo a test
-
-// 2. Se è builtin va fatto uguale il fork o si esegue dal main? [molto prob. no]
-
-// 3.  ||| va all index not in quotes and if >2 err
-//     |& &||
 //----------------------------INFO VARIE: ---------------------------
 // 1. DEBUG
 // gdb -tui ./minishell > c > run
@@ -173,32 +185,28 @@ int	main(int argc, char **argv, char **env)
 
 // 4. https://www.shellcheck.net
 
+// in generale vengono sempre eseguite tutte le  redirections NECESSARIE prima del lancio dei
+// comandi.
+// echo a>b|echo b|echo c && pi zi ||   pippo <u z
+// Risultato:
+// > d (here_doc)
+// > u
+// c
+// bash: pi: command not found
+// bash: pippo: command not found
+
+// echo a>b|echo b|echo c && pi zi &&   pippo <u z
+// c
+// zsh: command not found: pi
+// non dice che u non esiste perche neanche la lancia. rientra nel ramo non lanciato.
+
+// come nel caso: // (echo b || echo a >e) non fa redir
+
 // ------------------- TESTER: OK/KO in base a risultati bash -------------------
 // --------------- WIP -------------------
-// echo ok || echo zi && echo ciao || << gg
-// (echo ciao > a) > b     ..non deve dare essere. gli da fastidio lo spazio dopo > b
-// Gestire: echo 7>1>2     dovrebbe dare syntax error.
-//  soluzione: in fase di check syntax nella str spacchettare a partire da ultima redir
-// quindi l ultima redir si prende 1>2 e li setta a spazi.
-// poi il primo redir è 7> .. mancando la parte destra da syntax error!
 
-// E' delle stessa famiglia di questi syntax error:
-// mettere in check syntax redir
-// echo a <      KO DEVONO DARE ERRORE!!!
-// (echo a >)    KO DEVONO DARE ERRORE!!!
-// (echo a >>)   KO DEVONO DARE ERRORE!!!
-
-// echo a || echo b | echo c | echo d && echo e ..
-// echo a &&echo b | echo c   ... entra in loop
-// 2. Gestire: |||    |&    &||      va all index not in quotes and if >2 err
-
-// 3. a|b>d<e ..? non dovrebbe dare errore..  solo se primo nodo ha solo 1 elemento
-
-// 4. "(echo a && (echo b&& (echo c))) >p" | cat .. se inserisco apici il cmd splitta strano
-// 5. "echo a && echo b" OK
-// output: bash: echo a && echo b: command not found
 // --------------- FATTI ------------------
-// echo c|       KO bash apre here_doc per completare stringa ma trattato come sotto
+// echo c|       KO
 // |echo c       KO
 // (|(echo c))   KO
 // ( |pwd)       KO
@@ -207,27 +215,33 @@ int	main(int argc, char **argv, char **env)
 // (echo c|)     KO
 // (())          KO
 // ((dispari)    KO
+// a | | echo b  KO
 // (ls) c        KO
 // <a (ls)       KO
-// ( ) | echo a  KO
 // echo a (echo b) KO
+// echo ||& echo a KO
+// a &&& b       KO
+// a |& b        KO
+// a>& b         KO
+// a &>b         KO
+// a <> b        KO
+// a |> b        OK
 // ((ls))        OK bash non da risultato ma trattato come sotto
 // ((ls) )       OK
 // (((ls)))      OK
 // ((ls) | (ls)) OK
 // (ls) <u       OK
 // echo a |(>uu) OK
-// (<<u)|echo a  OK
+// (<<u)|echo a  OK 
 // ("echo')")    OK
-// (<<u)|echo a  OK
-//  (ls) <u      OK
 // echo a>b      OK
+// a|b>d<e       OK
 // echo >a>b>cc<<ddd                         OK
 // echo a >"bb "c>y                          OK
 // a >u>>og <<o"'  pp" p                     OK
-// (echo b || (echo a ) >u)                  OK non fa redir
-// (echo b || echo a >e)                     OK non fa redir
-// ((echo a && ls))         OK bash da err, noi trattiamo come caso successivo,non errore
+// (echo b || (echo a ) >u)                  OK 
+// (echo b || echo a >e)                     OK 
+// ((echo a && ls))                          OK
 // (echo a && ls)                            OK
 // (echo a && ls) |cat                       OK
 // (echo b || echo a >e)                     OK
@@ -237,6 +251,7 @@ int	main(int argc, char **argv, char **env)
 // echo a <      KO
 // (echo a >)    KO
 // (echo a >>)   KO
+// echo a <<     KO
 // echo ciao >q "r" OK
 // echo ciao >q"r"  OK
 
@@ -249,12 +264,12 @@ int	main(int argc, char **argv, char **env)
 // echo a > "/Desktop/e u"
 //  bash: /Desktop/e u: No such file or directory
 
-//  echo a > "Desktop/e u"
+//  echo a > "Desktop/e u"  
 //  bash: Desktop/e u: No such file or directory
 // ----
 //  echo a && echo b | (false && echo d | echo e)             OK > a
 //  echo a && echo b | echo c &&(  false && echo d | echo e ) OK > a c
-//  echo ok || echo zi && echo ciao|| << gg                  OK se cè here_doc lo fa sempre per primo.
+//  echo ok || echo zi && echo ciao || << gg                  OK 
 //  echo a && echo b | echo c ( false && echo d | echo e )          KO
 //  echo a && echo b | echo c (&&  false && echo d | echo e )       KO
 // echo a && echo b | echo c |( false && echo d | echo e ) echo c   KO
@@ -325,9 +340,10 @@ int	main(int argc, char **argv, char **env)
 // 3: PIPE
 
 // tuttavia l ordine in cui vanno settate è inverso, ovvero:
-// 1: setto PIPE output (vale per solo per ultimo cmd se subshell)
+// 1: setto PIPE output (vale per solo per ultimo cmd se subshell) 
 // 2: setto sub_level output
 // 3: setto cmd_level output
+
 
 // 1: bash-3.2$ echo a | (echo d &&  echo b) | cat
 // d
@@ -337,7 +353,7 @@ int	main(int argc, char **argv, char **env)
 // b
 
 // bash-3.2$ echo a | (echo d >z &&  echo b) >u | cat  (z:d|u:b)
-// bash-3.2$
+// bash-3.2$ 
 
 // -------
 
@@ -361,9 +377,10 @@ int	main(int argc, char **argv, char **env)
 // echop aa && cat <<u
 
 // se implicito non viene eseguito, ma è eseguito solo prima dell esecuzione cmd
-// echop aa && cat
+// echop aa && cat 
 
-// When the cat command does not contain any arguments,it waits for an input from your keyboard. If you try to run the cat command lacking any arguments,cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard,cat command will simply repeat any input and display it on the screen.
+// When the cat command does not contain any arguments, it waits for an input from your keyboard. If you try to run the cat command lacking any arguments, cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard, cat command will simply repeat any input and display it on the screen.
 
-// how to restore FD
+
+// how to restore FD 
 // https://stackoverflow.com/questions/55771495/what-are-the-rules-of-closing-file-descriptors-after-calling-dup-dup2

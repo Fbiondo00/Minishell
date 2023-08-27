@@ -23,7 +23,7 @@ END		=	\033[0m
 RESET	= \033[0;0m
 
 SRC_COUNT     = 0
-SRC_COUNT_TOT = 30
+SRC_COUNT_TOT = 41
 SRC_PCT       = $(shell expr 100 \* $(SRC_COUNT) / $(SRC_COUNT_TOT))
 
 %.o : %.c

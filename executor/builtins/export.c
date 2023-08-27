@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/25 01:34:09 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 03:48:29 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 		ft_name_value(node, shell, ij, ++y);
 }
 
-void    ft_export1(t_shell *shell)
+void	ft_export1(t_shell *shell)
 {
 	int	i;
 	int	y;

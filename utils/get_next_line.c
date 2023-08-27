@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/02/08 12:12:48 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 00:48:16 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 02:05:03 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ char	*extract_line(char *stack)
 	return (line);
 }
 
-//rimuove la la prima linea(tutti gli elementi fino a \n)
+// rimuove la la prima linea(tutti gli elementi fino a \n)
 char	*ft_clean(char *stack)
 {
 	size_t	i;

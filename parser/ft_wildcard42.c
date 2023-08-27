@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_wildcard42.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 03:11:16 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/25 03:13:04 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 04:12:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,8 @@ int	flag1(char *entry, char *str, int i)
 						return (1);
 				}
 				else if (check_left(str, i) == 0)
-					if (entry[ft_strlen(entry) - (ft_strlen(str)
-							- i)] != str[i])
+					if (entry[ft_strlen(entry) - (ft_strlen(str) - i)]
+						!= str[i])
 						return (1);
 			}
 		}

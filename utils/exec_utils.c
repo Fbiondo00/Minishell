@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:56:05 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 00:43:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 01:56:34 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 // se 0, perche un cmd ha fatto exit_success
 // rischio perche non guardo se PIPE, ma il nodo dovrebbe essere
 // stato correttamente filtrato in execute()
-int	ok_status(t_node *node)
+int ok_status(t_node *node)
 {
 	if (node->shell->exit_status == -1 || node->shell->exit_status == 0)
 	{
@@ -30,7 +30,7 @@ int	ok_status(t_node *node)
 	return (0);
 }
 
-int	ft_dup2(int *fd, int arg)
+int ft_dup2(int *fd, int arg)
 {
 	if (dup2(*fd, arg) == -1)
 	{
@@ -41,9 +41,9 @@ int	ft_dup2(int *fd, int arg)
 	return (1);
 }
 
-void	execute_builtin(t_node *node, t_shell *shell)
+void execute_builtin(t_node *node, t_shell *shell)
 {
-	int	len;
+	int len;
 
 	len = ft_strlen(node->content.cmd[0]);
 	if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))
@@ -53,10 +53,7 @@ void	execute_builtin(t_node *node, t_shell *shell)
 	else if (!ft_strncmp(node->content.cmd[0], "env", len, 1))
 		ft_env(shell);
 	else if (!ft_strncmp(node->content.cmd[0], "export", len, 1))
-	{
-		printf("prima di ft_export..\n");
 		ft_export(shell, node);
-	}
 	else if (!ft_strncmp(node->content.cmd[0], "unset", len, 1))
 		ft_unset(node, shell);
 	else if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
@@ -67,9 +64,9 @@ void	execute_builtin(t_node *node, t_shell *shell)
 
 // ritorna 1 se è un comando builtin
 // ritorna 0 in caso contrario
-int	is_builtin(t_node *node)
+int is_builtin(t_node *node)
 {
-	int	len;
+	int len;
 
 	len = ft_strlen(node->content.cmd[0]);
 	if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 01:29:36 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/25 01:59:28 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 03:58:35 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	ftcheck11(t_node *node)
 		while (node->content.cmd[i][++y])
 		{
 			if ((node->content.cmd[i][y] >= '0'
-					&& node->content.cmd[i][y] <= '9')
+				&& node->content.cmd[i][y] <= '9')
 				|| (node->content.cmd[i][y] >= 'a'
 					&& node->content.cmd[i][y] <= 'z')
 				|| (node->content.cmd[i][y] >= 'A'
@@ -44,7 +44,6 @@ int	ft_check(t_node *node)
 	int	i;
 
 	i = 1;
-	printf("entra in ft_check...\n");
 	while (node->content.cmd[i])
 	{
 		if ((node->content.cmd[i][0] >= 'a' && node->content.cmd[i][0] <= 'z')

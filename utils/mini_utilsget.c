@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utilsget.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/27 00:38:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 00:47:10 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 02:22:05 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
