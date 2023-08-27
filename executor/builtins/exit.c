@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 16:56:32 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 17:06:18 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void	free_all2_0(t_shell *shell, char *str, int exit_status, int to_exit)
 {
 	ft_clean_exit(shell, str, exit_status, to_exit);
 }
+
 void	ft_exit_2(t_node *node, t_shell *shell, int i)
 {
 	int	y;
