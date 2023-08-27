@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:02:35 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 16:34:57 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 16:50:07 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,35 +39,29 @@ int	in_quotes_str(t_shell *shell, int index)
 	return (0);
 }
 
-int	recursive(t_shell *shell, int par, int left_p, int idx)
+int	recursive(t_shell *sh, int par, int left_p, int i)
 {
 	static int	flag;
 
-	while (++idx < ft_strlen(shell->str))
+	while (++i < ft_strlen(sh->str))
 	{
-		if (shell->str[idx] == '(' && !in_quotes_str(shell, idx))
+		if (sh->str[i] == '(' && !in_quotes_str(sh, i))
 		{
 			par++;
 			flag++;
-			if (recursive(shell, par, left_p, idx))
+			if (recursive(sh, par, left_p, i))
 				return (1);
-			if ((op_before(shell, idx) < char_before(shell, idx))
-				|| (op_before(shell, idx) && !char_before(shell,
-						op_before(shell, idx))))
+			if ((op_before(sh, i) < char_before(sh, i)) || (op_before(sh, i)
+					&& !char_before(sh, op_before(sh, i))))
 				return (1);
-			if (!op_before(shell, idx) && char_before(shell, idx))
-				return (1);
-			if (op_after(shell, idx) && !char_after(shell, op_after(shell, idx),
-					0, "><"))
-				return (1);
-			if (!op_after(shell, idx) && char_after(shell,
-					get_end_parentheses(shell, idx), 1, "><"))
-				return (1);
-			if (empty_parentheses(shell, idx) && (flag == 1 || (par > 1
-						&& left_p > 1)))
+			if ((!op_before(sh, i) && char_before(sh, i)) || (op_after(sh, i)
+					&& !char_after(sh, op_after(sh, i), 0, "><"))
+				|| (!op_after(sh, i) && char_after(sh, get_end_parentheses(sh,
+							i), 1, "><")) || (empty_parentheses(sh, i)
+					&& (flag == 1 || (par > 1 && left_p > 1))))
 				return (1);
 			if (par > 1 && par <= left_p)
-				remove_par(shell, idx);
+				remove_par(sh, i);
 		}
 	}
 	return (0);

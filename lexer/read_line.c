@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 16:28:40 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/27 16:40:31 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,9 +60,6 @@ int	check_operators(t_shell *shell)
 // idx: indice del primo char dopo | o &
 int	check_other_stuff(t_shell *shell, int idx, int count)
 {
-	int	i;
-
-	i = -1;
 	if (shell->str[idx - 1] == '&')
 	{
 		if (count == 1 && (shell->str[idx] == '>' || shell->str[idx] == '<'))
