@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:05:06 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:14:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,82 @@ char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c)
     }
     return (new_st);
 }
+
+char *modify_raw_and_quote3(t_node *node, int idx, char *str, char c)
+{
+    int i;
+    int j;
+    int y;
+    int tot_len;
+    char *new_st;
+
+    y = idx + 2;
+    // printf("POST:Y:%d\n", y);
+    // TOT_LEN = idx($) +  ft_strlen(str) + strlen-idx(fine$) + 1;
+    if (str)
+        tot_len = idx + ft_strlen(str) + ft_strlen(node->raw_cmd) - y; // LEN SE VAR EXISTE
+    if (!str)
+        tot_len = ft_strlen(node->raw_cmd);
+    //  tot_len = ft_strlen(node->raw_cmd) - (y - idx); // LEN SE VAR NON EXISTE
+    // printf("ft_strlen(node->raw_cmd):%d|y:%d|idx:%d\n", ft_strlen(node->raw_cmd), y, idx);
+    printf("TOT_LEN:%d\n", tot_len);
+    // printf("ft_strlen(node->raw_cmd) - y:%d|y:%d\n", ft_strlen(node->raw_cmd) - y, y);
+    new_st = malloc(tot_len + 1);
+    new_st[tot_len] = '\0';
+    i = -1;
+    j = -1;
+    if (c == 32) // ovvero SPACE, raw_cmd
+    {
+        // printf("MODIFICO RAW_CMD\n");
+        while (++i < tot_len)
+        {
+            // printf("i:%d|IDX:%d\n", i, idx);
+            if (i < idx)
+            {
+                // printf("A\n");
+                new_st[i] = node->raw_cmd[i];
+            }
+            else if (!str && (i >= idx && i < y))
+            {
+                new_st[i] = ' ';
+                // c$HOMEc$HOME
+            }
+            else if (!str && !(i >= idx && i < y))
+            {
+                new_st[i] = node->raw_cmd[y++];
+            }
+            else if (str && ++j < ft_strlen(str))
+            {
+                // printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
+                new_st[i] = str[j];
+            }
+            else if (str && j >= ft_strlen(str))
+            {
+                // printf("C\n");
+                new_st[i] = node->raw_cmd[y++];
+                j++;
+            }
+            // printf("D\n");
+        }
+    }
+    else if (c == 48) // ovvero SPACE, quote_idx
+    {
+        // printf("MODIFICO QUOTE_IDX\n");
+        // printf("VALORE ATTUALE:%s\n", node->quote_idx);
+
+        while (++i < tot_len)
+        {
+            if (node->raw_cmd[i] == 34)
+                new_st[i] = 34;
+            else if (node->raw_cmd[i] == 39)
+                new_st[i] = 39;
+            else
+                new_st[i] = 48;
+        }
+    }
+    return (new_st);
+}
+
 
 // idx of $
 char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
@@ -248,7 +324,7 @@ char *find_var(t_node *node, int idx)
     return (var_expand(node, str));
 }
 
-// fa le espansioni.
+// espande le variabili.
 // se in single quote non espande
 // se in double quote espande
 // piccolo problema: se fai espansione poi non coincide quote_idx con idx del raw_cmd
@@ -269,24 +345,13 @@ void ft_do_expand(t_node *node)
     {
         if (node->raw_cmd[i] == '$' && in_quotes(node, i) != -1)
         {
-            printf("IN node->raw_cmd[i:%d] == '$' \n", i);
-            printf("in_quotes(node, i):%d\n", in_quotes(node, i));
-            // ritorna il valore della variabile
             str = find_var(node, i);
-            printf("find_var(),str:%s\n", str);
-            // if (str)
-            // {
-                printf(">>i:%d\n", i);
-                raw = modify_raw_and_quote(node, i, str, 32);
-                // free(node->raw_cmd);
-                node->raw_cmd = raw;
-                quote = modify_raw_and_quote(node, i, str, 48);
-                // free(node->quote_idx);
-                node->quote_idx = quote;
-                free(str);
-                // printf("NEW RAW_CMD|%s|strlen:%d\n", node->raw_cmd, ft_strlen(node->raw_cmd));
-                // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
-            // }
+            raw = modify_raw_and_quote(node, i, str, 32);
+            // free(node->raw_cmd);
+            node->raw_cmd = raw;
+            quote = modify_raw_and_quote(node, i, str, 48);
+            // free(node->quote_idx);
+            node->quote_idx = quote;
         }
     }
 }
@@ -318,63 +383,69 @@ void ft_do_asterisk(t_node *node)
     }
 }
 
-// elabora la stringa e produce l array di stringhe
-// da dare in pasto all EXECVE
-// tuttavia deve ignorare le redirection che potrebbero essere d intralcio
-// in quanto possono capitare in mezzo al comando.
-// probabile questo problema debba esser risolto in set_redirection
-// che rielabora nuovamente la raw_cmd andando a fare il trim dei char che
-// ha usato per la redirection
-// NUOVO: ho aggiunto attributo shell al nodo
+void	ft_input1(char *new_str, t_node *node, int y)
+{
+	char	*raw;
+	char	*quote;
+
+	if (new_str)
+	{
+		raw = modify_raw_and_quote3(node, y, new_str, 32);
+		// free(node->raw_cmd);
+		node->raw_cmd = raw;
+		quote = modify_raw_and_quote3(node, y, new_str, 48);
+		//    free(node->quote_idx);
+		node->quote_idx = quote;
+	}
+}
+
+void ft_question(t_node *node, int i)
+{
+    char *buff;
+    
+    buff = NULL;
+    buff =ft_itoa(node->shell->exit_status);
+    ft_input1(buff, node, i);
+}
+
+void ft_do_question(t_node *node)
+{
+    int i;
+
+    i = -1;
+    while (++i < ft_strlen(node->raw_cmd))
+    {
+        if ((node->raw_cmd[i] == '$' && node->raw_cmd[i + 1] == '?') && in_quotes(node, i) != -1)
+        {
+            
+                printf("questijn:RAW_CMD|%s|strlen:%d\n", node->raw_cmd, ft_strlen(node->raw_cmd));
+                printf("IN node->raw_cmd[i:%d] = \n", i);
+                printf("in_quotes(node, i):%d\n", in_quotes(node, i));
+                ft_question(node, i);
+        }
+    }
+}
+
 void set_cmd(t_node *node)
 {
     ft_do_asterisk(node);
-    printf("\nesce da ft_expand\n");
-    printf("--- AFTER ASTERISK ---\n");
-    printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
-    printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
+    // printf("\nesce da ft_expand\n");
+    // printf("--- AFTER ASTERISK ---\n");
+    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
+    ft_do_question(node);
+    //  printf("--- AFTER QUESTION ---\n");
+    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
     ft_do_expand(node);
-    printf("--- AFTER EXPAND ---\n");
-    printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
-    printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
-    remove_quotes(node);
-    printf("--- AFTER REMOVE_QUOTES ---\n");
-    printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
-    printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
-    node->content.cmd = ft_split(node->raw_cmd, ' ');
+    // printf("--- AFTER EXPAND ---\n");
+    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
+    ft_do_cmd(node);
+    // printf("--- AFTER REMOVE_QUOTES && SPLIT ---\n");
+    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
+    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
     ft_lowercase_cmd(node); // solo cmd[0]
 }
 
 // 5 func
-
-// remove_quotes + ft_split.
-// split:
-// 0. choose 2 char
-// 1. convertire spazi in_quotes in 1 char scelto
-// 2. convertire quotes s/d !in_quotes in 2 char scelto
-// 2. fare la split
-// 3. ripristinare gli spazi dal char scelto
-// remove_quotes:
-// 4.per tutte le stringhe, se match il 2 char, fare il remove
-
-
-// cerca un char non utilizzato a fartire 
-// void ft_safe_char(t_node *node, char c)
-// {
-    
-// }
-
-// void ft_do_cmd(t_node *node)
-// {
-//     int i;
-//     char c;
-//     char d;
-
-//     i = -1;
-//     ft_safe_char(node, &c);
-//     convert_space(node, c);
-//     ft_safe_char(node, &d);
-//     convert_quotes(node, c);
-//     node->content.cmd = ft_split(node->raw_cmd, ' ');
-
-// }

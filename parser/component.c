@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/23 23:33:46 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 20:56:31 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,43 +24,6 @@ void ft_lowercase_cmd(t_node *node)
     }
 }
 
-// echo"a"b
-// bash: echoab: command not found
-// non mette gli spazi ma appiccica tutti i char togheter
-void remove_quotes(t_node *node)
-{
-    int i;
-    int j;
-    int k;
-    char flag;
-    char *str;
-
-    i = -1;
-    flag = 64;
-    while (node->raw_cmd[++i])
-    {
-        if (flag == node->raw_cmd[i] || ((node->raw_cmd[i] == 34 && !in_quotes(node, i)) || (node->raw_cmd[i] == 39 && !in_quotes(node, i))))
-        {
-            if (flag == 64)
-                flag = node->raw_cmd[i];
-            else
-                flag = 64;
-            j = -1;
-            k = 0;
-            str = malloc(ft_strlen(node->raw_cmd));
-            str[ft_strlen(node->raw_cmd)] = '\0';
-            while (++j < ft_strlen(node->raw_cmd))
-            {
-                if (j == i)
-                    k++;
-                str[j] = node->raw_cmd[k++];
-            }
-            free(node->raw_cmd);
-            node->raw_cmd = str;
-            i--;
-        }
-    }
-}
 
 // ritorna un int contenente la differenza tra parentesi "(" e quelle ")"
 // sostituisce le parentesi con gli spazi

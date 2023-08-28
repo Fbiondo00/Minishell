@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 23:20:29 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 02:47:38 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,31 +88,114 @@ t_node *next_cmd(t_shell *shell, t_node *node)
 // V2: torna il generico next_cmd
 // torna null se non trova nulla
 // entra che è sempre un node_cmd, esce sempre node_cmd
+// t_node *next_cmd2(t_shell *shell, t_node *node)
+// {
+//     if (shell->tree == node || (!is_left_branch(node) && node->back == shell->tree))
+//     {
+//         printf("next_cmd2:return NULL\n");
+//         return (NULL);
+//     }
+//     if (is_left_branch(node)) // siamo in un nodo sinistro, ma sempre check if node_op a destra
+//     {
+//         printf("entriamo in nodo in un nodo SINISTRO, valutazione...\n");
+//         if (is_node_cmd(node->back->right))
+//         {
+//             printf("si tratta di un node_cmd...\n");
+//             printf("node_cmd2,return: node->back->right\n");
+//             return (node->back->right);
+//         } 
+//         else
+//         {
+//             printf("NON si tratta di un node_cmd, ma di NODE_OP...\n");
+//             // si tratta di nodo_op, quindi vado a cercare il next_cmd
+//             return (go_to_starter_node(node->back->right));
+//         }
+//     }
+//     else
+//     {
+//         printf("entriamo in nodo in un nodo DESTRO, valutazione...\n");
+//         if (is_node_cmd(node->back->back->right))
+//         {
+//             printf("si tratta di un node_cmd...\n");
+//             printf("node_cmd2,return: node->back->right\n");
+//             return (node->back->back->right);
+//         }
+//         else
+//         {
+//             printf("ELSE,RETURN:go_to_starter_node(node->back->back->right))\n");
+//             return (go_to_starter_node(node->back->back->right));
+//         }
+            
+//     }
+// }
+
+// entra che è sempre un node_cmd, esce sempre node_cmd
 t_node *next_cmd2(t_shell *shell, t_node *node)
 {
-    if (shell->tree == node || (!is_left_branch(node) && node->back == shell->tree))
+    t_node* to_check;
+    if (shell->tree == node)// || (!is_left_branch(node) && node->back == shell->tree))
     {
-        // printf("next_cmd2:non ci sono altri cmd...\n");
-        return NULL;
+        // printf("next_cmd2:return NULL(shell->tree == node)\n");
+        return (NULL);
     }
     if (is_left_branch(node)) // siamo in un nodo sinistro, ma sempre check if node_op a destra
     {
+        // printf("nodo SINISTRO, valuto cosa tornare...\n");
         if (is_node_cmd(node->back->right))
+        {
+            // printf("right node è node_cmd...\n");
+            // printf("node_cmd2,return: node->back->right\n");
             return (node->back->right);
+        }
         else
         {
+            // printf("NON si tratta di un node_cmd,torno l origine ...\n");
             // si tratta di nodo_op, quindi vado a cercare il next_cmd
             return (go_to_starter_node(node->back->right));
         }
     }
-    else
-    { // siamo in un nodo destro
-
-        if (is_node_cmd(node->back->back->right))
-            return (node->back->back->right);
-        else
-            return (go_to_starter_node(node->back->back->right));
+    else // siamo in un nodo destro, sicuramente è nodo_cmd.
+    { // torno 
+        // printf("entriamo in nodo in un nodo DESTRO, valutazione...\n");
+        if (node->back->back)
+        {
+            // printf("E' presente node->back->back...\n");
+            if (!node->back->back->back) //a&&b|c
+            {
+                // printf("RETURN NULL:(!node->back->back->back)...\n");
+                return (NULL);
+            }
+            // check del bivio particolare...
+            if (node->back->back->right == node->back)
+            {
+                // printf("to_check = node->back->back->back->right;\n");
+                to_check = node->back->back->back->right;
+            }
+                
+            else
+            {
+                // printf("to_check = to_check = node->back->back->right;\n");
+                to_check = node->back->back->right;
+            }
+            // printf("controllo se to_check è nodo_cmd...\n");
+            if (is_node_cmd(to_check))
+            {
+                // printf("si tratta di un node_cmd...\n");
+                // printf("node_cmd2,return: to_check\n");
+                return (to_check);
+            }
+            else
+            {
+                // printf("ELSE,RETURN:go_to_starter_node(to_check))\n");
+                return (go_to_starter_node(to_check));
+            }
+        }
+        else // dovrebbe essere il caso in cui il node_back è shell->tree(la root)
+        {
+            // printf("next_cmd2:return NULL( ELSE )\n");
+            return (NULL);
+        }
+           
     }
 }
-
 // 5 func

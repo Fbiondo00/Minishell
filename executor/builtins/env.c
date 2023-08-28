@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:00 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:32:30 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:23:08 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	ft_env(t_shell *shell)
 	i = -1;
 	while (shell->env[++i])
 		printf("%s\n", shell->env[i]);
+	shell->exit_status = 0;
 }
 
 void	mall_env(t_shell *shell, char **env)

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:27:45 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 02:43:31 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,9 +36,15 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
         shell->str = NULL;
     }
     if (shell->tree)
-        ft_remove_heredoc(shell);
+    {
+        if (is_node_cmd(shell->tree))
+            ft_remove_heredoc(shell->tree);
+        else
+            ft_remove_heredoc(go_to_starter_node(shell->tree->left));
+    }
     // if (shell->tree)
         // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
+    // mi perdo l exit status se free, salvare in var locale?
     if (str)
         shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + exit_status;
     printf("fine line: shell->exit_status:%d\n", shell->exit_status);
@@ -105,13 +111,7 @@ int main(int argc, char **argv, char **env)
 // 0.MAIN
 // leaks
 // 1.PARSER:
-    // A.fix remove_quotes
-        //  rm "a" "b", non rimuove le seconde.. fare un reset
-    // B.fix ft_split (non deve splittare per spazi, se in_quotes)
-        // "echo a && echo b"
-        // output: bash: echo a && echo b: command not found
-        // "(echo a && (echo b && (echo c))) >p" | cat
-    // C.do $?
+    // A.do $?
         //   $? is used to find the return value of the last executed command.
 // 2.EXECUTOR
     // A.fix ft_do_heredoc (loop se pipe dopo and_or)
@@ -120,12 +120,13 @@ int main(int argc, char **argv, char **env)
         // echop a && echo b | echo c | echo d && echo e
         // echop a && echo b | echo c | echo d || echo e .. problema set_components
     // B.do subshell
-        //  protrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
+        //  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
 
 // io" echo a && echo ba" u
 // bash: io echo a && echo ba: command not found
 // io " echo a && echo ba" u
 // bash: io: command not found
+
 
 
 // dubbi su norminette:
@@ -135,21 +136,7 @@ int main(int argc, char **argv, char **env)
 // 2.UTILS:
 //  a. get_idx_eq_st2  da cancellare?
 // 3.BUILTINS
-//  a. cd.c  printf da valutare, se da stampare in std 1 o 2
-//  b. exit.c ...perchè non hai norminettato la versione corretta? da rifare...
-//  c. unset.c
-//    - cambiare checkexpo con messaggio corretto, e stampare su stderror...
-//  d. export.c
-//    - con(): la modifica --y sono abb sicuro non venga passato al resto della funzione,
-//             potrebbe sballare tutti gli utilizzi di y siccessivi. verificare
-//             eventualmente con un printf se la y viene passata 
-//             correttamente decrementata. in caso contrario basta semplicemente
-//             passare alla funzione un puntatore ad y.
-//    - ft_export1():  la y nella versione precedente veniva startata a 0, ora a -1,
-//                      sicuramente produce un altro risultato... da controllare
-//  e. ft_wildcard.c: unica copiata e non controllata, fare i test e togliere i printf
-// 4. fare le norme del lexer
-// 5. modifiche in main.c e le restanti in parser e executor non prese
+//  a. unset.c  , setta exit status in clean exit?
 //----------------------------TBD: ----------------------------------
 // 1. ft_read_line() LEAKS READLINE?
 // https: // stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak

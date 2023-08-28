@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:20:11 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 17:32:28 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:20:40 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,4 +51,5 @@ void	ft_echo(t_node *node)
 	}
 	if (flot == 0)
 		printf("\n");
+	node->shell->exit_status = 0;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 17:32:37 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:25:31 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,10 +112,15 @@ void	ft_export(t_shell *shell, t_node *node)
 	if (ij >= 2)
 	{
 		if (ft_check(node) == 1)
+		{
+			node->shell->exit_status = 1;
 			return ;
+		}
 		ft_name_value(node, shell, ij, 1);
+		node->shell->exit_status = 0;
 		return ;
 	}
 	else
 		ft_export1(shell);
+	node->shell->exit_status = 0;
 }

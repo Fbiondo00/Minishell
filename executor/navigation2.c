@@ -6,31 +6,28 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/23 14:38:06 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 02:50:24 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
 // e elimina tutti gli here_doc creati nell' albero
-void ft_remove_heredoc(t_shell *shell)
+void ft_remove_heredoc(t_node *node)
 {
     int i;
     char *path;
     t_node *temp;
     t_node *next_node;
 
-    if (!shell->tree->left)
-        temp = shell->tree;
-    else
-        temp = go_to_starter_node(shell->tree->left);
+    printf("IN ft_do_heredoc\n");
+    temp = node;
     next_node = NULL;
     while (1)
     {
         i = -1;
         while (++i < temp->content.kv_size)
         {
-            // printf("RA\n");
             if (temp->content.redir[i].key == R_INPUT_HERE_DOC)
             {
                 path = ft_strjoin("./", temp->content.redir[i].value);
@@ -41,10 +38,9 @@ void ft_remove_heredoc(t_shell *shell)
 
             }
         }
-        // printf("RB\n");
         next_node = next_cmd2(temp->shell, temp);
-        // printf("RC\n");
-        if (!next_node || temp == next_node)
+        printf("REMOVE_HERE_DOC|next_node:%p\n", next_node);
+        if (!next_node)
             return;
         else
             temp = next_node;
@@ -72,22 +68,9 @@ t_node *next_cmd_same_lvl(t_node *node)
             return (NULL);
         else
             temp = next_node;
-        // next_node->done_lock = 1;
-        // -- print --
-        // printf("printing next node ......\n");
-        // printf("shell->lvl_subshell:%d|node->lvl_subshell:%d\n", next_node->shell->lvl_subshell, node->lvl_subshell);
-        // if (!next_node)
-        //     printf("next_node: (null)\n");
-        // if (next_node)
-        // {
-        //     printf("next_node:%p\n", next_node);
-        //     printf("check se questo nodo è corretto....\n");
-        //     // print_node(node->shell, next_node);
-        // }
-        // -----------
         if (!next_node)
             break;
-        if (next_node && next_node->shell->lvl_subshell == node->lvl_subshell)
+        if (next_node->shell->lvl_subshell == node->lvl_subshell)
         {
             printf("trovato primo nodo stesso lvl.address:%p\n", next_node);
             return (next_node);
@@ -116,7 +99,7 @@ t_node *go_next_cmd_and_or(t_node *node)
             break;
         if (next_node->content.op != PIPE)
         {
-            printf("trovato primo nodo stesso lvl.address:%p\n", next_node);
+            // printf("trovato primo nodo stesso lvl.address:%p\n", next_node);
             return (next_node);
         }
     }

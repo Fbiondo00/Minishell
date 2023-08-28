@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 04:18:22 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:41:10 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,7 +162,6 @@ void set_raw_cmd_and_quote_idx(t_node *node, int start, int finish);
 int get_len_value(t_node *node, int idx);
 void set_components(t_shell *shell);
 void set_cmd(t_node *node);
-void remove_quotes(t_node *node);
 void ft_lowercase_cmd(t_node *node);
 char *var_expand(t_node *node, char *str);
 char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c);
@@ -174,6 +173,10 @@ char	*new_str_1(char *str, char *new_str, int flag);
 int	flag1(char *entry, char *str, int i);
 int	ft_middle(char *str, int index);
 int	check_left(char *str, int i);
+void ft_do_cmd(t_node *node);
+void	ft_input(char *new_str, t_node *node, int y);
+char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
+int	ft_get_len_env(t_shell *shell);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
@@ -221,7 +224,7 @@ void ft_reset_original_fd(t_node *node);
 // open_file
 int ft_open_file(t_node *node, int i);
 void ft_do_heredoc(t_node *node);
-void ft_remove_heredoc(t_shell *shell);
+void ft_remove_heredoc(t_node *node);
 
 // UTILS
 int ft_strlen(char *s);
@@ -243,6 +246,7 @@ int ft_atoi(const char *str);
 int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
+char	*ft_itoa(int n);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);

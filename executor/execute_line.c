@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/23 14:51:00 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 22:19:09 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -483,13 +483,13 @@ void execute(t_shell *shell)
                     node->shell->exit_status = 0;
                 next_node = next_cmd_same_lvl(node);
             }
-            printf("next_node:p%p\n", next_node);
+            printf("PIPE|next_node:p%p\n", next_node);
         }
         else if (node->back && (node->back->content.op == AND || node->back->content.op == OR))
         {
             printf("ft_do_and_or...\n");
             next_node = ft_do_and_or(node);
-            printf("next_node:p%p\n", next_node);
+            printf("AND_OR|next_node:p%p\n", next_node);
         }
         node = next_node;
     }

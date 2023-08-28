@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 17:32:25 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:41:29 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,9 +92,8 @@ void	updatecd(t_node *node, t_shell *shell)
 		free(oldpat);
 		free(pat);
 		shell->error = 1;
-		shell->exit_builtin = 1;
 		shell->exit_status = 1;
-		printf("No such file or directory\n");
+		write(2, "No such file or directory\n", 26);
 	}
 }
 
@@ -110,7 +109,6 @@ void	ft_home(t_shell *shell)
 		shell->exit_builtin = 1;
 		shell->exit_status = 1;
 		write(2, "not access env\n", 16);
-		printf("not access env\n");
 	}
 	while (shell->env[i])
 	{
@@ -118,6 +116,8 @@ void	ft_home(t_shell *shell)
 			break ;
 		i++;
 	}
+	if (i > ft_get_len_env(shell))
+		return ;
 	home = ft_strchr(shell->env[i], '/');
 	chdir(home);
 }
@@ -138,6 +138,7 @@ void	ft_cd(t_node *node, t_shell *shell)
 	else
 	{
 		updatecd(node, shell);
+		node->shell->exit_status = 0;
 		return ;
 	}
 }

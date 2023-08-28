@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 02:07:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 22:40:42 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,16 @@ int	ft_get_len_mat(t_node *node)
 
 	ij = 0;
 	while (node->content.cmd[++ij])
+		;
+	return (ij);
+}
+
+int	ft_get_len_env(t_shell *shell)
+{
+	int	ij;
+
+	ij = 0;
+	while (shell->env[++ij])
 		;
 	return (ij);
 }
