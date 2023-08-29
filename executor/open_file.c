@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 02:33:47 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 04:55:42 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,12 +145,50 @@ char *create_signature(t_node *node, int i, int k)
     char *str;
     char *alf;
 
-    alf="ABCDEFGHILMNOPQRSTUVZ123456789";
+    alf="ABCDEFGHILMNOPQRSTUVZabcdefghilmnopqrstuvz123456789";
     printf("vale of k: %d\n", k);
     str = ft_strjoin(node->content.redir[i].value, alf + ft_strlen(alf) - 1 - k);
     printf("create_signature:%s|len:%d\n", str, ft_strlen(str));
     return (str);
 }
+// PRE(next_cmd2):HERE_DOC|temp:0x7fbf02f09cf0
+// POST(next_cmd2):HERE_DOC|next_node:0x7fbf02f09d60
+// PRE(next_cmd2):HERE_DOC|temp:0x7fbf02f09d60
+// POST(next_cmd2):HERE_DOC|next_node:0x0
+
+
+// IN ft_do_heredoc
+// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f99bd104320
+// nodo SINISTRO, valuto cosa tornare...
+// right node è node_cmd...
+// node_cmd2,return: node->back->right
+// POST(next_cmd2):HERE_DOC|next_node:0x7f99bd104390
+// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f99bd104390
+// entriamo in nodo in un nodo DESTRO, valutazione...
+// E' presente node->back->back...
+// RETURN NULL:(!node->back->back->back)...
+// POST(next_cmd2):HERE_DOC|next_node:0x0
+
+
+// IN ft_do_heredoc
+// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04320
+// nodo SINISTRO, valuto cosa tornare...
+// right node è node_cmd...
+// node_cmd2,return: node->back->right
+// POST(next_cmd2):HERE_DOC|next_node:0x7f9f65a04390
+// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04390
+// entriamo in nodo in un nodo DESTRO, valutazione...
+// E' presente node->back->back...
+// node->back->back:0x7f9f65a04150
+// to_check = to_check = node->back->back->right;
+// controllo se to_check è nodo_cmd...
+// si tratta di un node_cmd...
+// node_cmd2,return: to_check
+// POST(next_cmd2):HERE_DOC|next_node:0x7f9f65a04250
+// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04250
+// entriamo in nodo in un nodo DESTRO, valutazione...
+// next_cmd2:return NULL( ELSE )
+// POST(next_cmd2):HERE_DOC|next_node:0x0
 
 // si scorre tutto l albero ed esegue tutti gli here_doc settati, poi li richiude.
 // verranno in seguito aperti da fd_do_redir. 
@@ -169,6 +207,7 @@ void ft_do_heredoc(t_node *node)
     next_node = NULL;
     while (1)
     {
+        printf("PRE(next_cmd2),LAVORATO:HERE_DOC|temp:%p\n", temp);
         i = -1;
         while (++i < temp->content.kv_size)
         {
@@ -180,7 +219,7 @@ void ft_do_heredoc(t_node *node)
             }
         }
         next_node = next_cmd2(temp->shell, temp);
-        printf("HERE_DOC|next_node:%p\n", next_node);
+        printf("POST(next_cmd2):HERE_DOC|next_node:%p\n", next_node);
         if (!next_node)
             return ;
         else

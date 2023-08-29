@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 22:40:42 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/29 01:58:04 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	shell_init(int argc, char **argv, char **env, t_shell *shell)
 	(void)argv;
 	shell->error = 0;
 	shell->exit_builtin = 0;
-	shell->exit_status = -1;
+	shell->exit_status = 0;
 	shell->lvl_subshell = 0;
 	shell->temp_input = dup(STDIN_FILENO);
 	shell->temp_output = dup(STDOUT_FILENO);
@@ -71,9 +71,9 @@ int	ft_get_len_mat(t_node *node)
 	return (ij);
 }
 
-int	ft_get_len_env(t_shell *shell)
+int ft_get_len_env(t_shell *shell)
 {
-	int	ij;
+	int ij;
 
 	ij = 0;
 	while (shell->env[++ij])

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 02:43:31 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 03:12:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,9 +38,15 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
     if (shell->tree)
     {
         if (is_node_cmd(shell->tree))
+        {
+            printf("ft_remove_heredoc(shell->tree);\n");
             ft_remove_heredoc(shell->tree);
+        }
         else
+        {
+            printf("ft_remove_heredoc(go_to_starter_node(shell->tree->left));\n");
             ft_remove_heredoc(go_to_starter_node(shell->tree->left));
+        }
     }
     // if (shell->tree)
         // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
@@ -108,6 +114,7 @@ int main(int argc, char **argv, char **env)
 
 // 5 func
 //----------------------------TODO: ----------------------------------
+//-1. fix split, space
 // 0.MAIN
 // leaks
 // 1.PARSER:
@@ -127,7 +134,9 @@ int main(int argc, char **argv, char **env)
 // io " echo a && echo ba" u
 // bash: io: command not found
 
-
+// bash-3.2$ unset HOME
+// bash-3.2$ cd
+// bash: cd: HOME not set
 
 // dubbi su norminette:
 // 1.SIGNAL:
@@ -211,21 +220,22 @@ int main(int argc, char **argv, char **env)
 // ((ls) | (ls)) OK
 // (ls) <u       OK
 // echo a |(>uu) OK
-// (<<u)|echo a  OK 
+// (<<u)|echo a  OK
 // ("echo')")    OK
 // echo a>b      OK
 // a|b>d<e       OK
 // echo >a>b>cc<<ddd                         OK
 // echo a >"bb "c>y                          OK
 // a >u>>og <<o"'  pp" p                     OK
-// (echo b || (echo a ) >u)                  OK 
-// (echo b || echo a >e)                     OK 
+// (echo b || (echo a ) >u)                  OK
+// (echo b || echo a >e)                     OK
 // ((echo a && ls))                          OK
 // (echo a && ls)                            OK
 // (echo a && ls) |cat                       OK
 // (echo b || echo a >e)                     OK
 // (echo a && (echo b && (echo c <z))) >p| cat  OK
 // (echo a && (echo b && (echo c <u))>p) | cat  OK
+//  echo a || echo b | cat <<2
 
 // echo a <      KO
 // (echo a >)    KO

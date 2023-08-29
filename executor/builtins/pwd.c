@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:17:51 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/28 22:21:34 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/29 01:57:20 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-void	ft_pwd(void)
+void ft_pwd(t_node *node)
 {
 	char	buff[4096];
 
@@ -20,5 +20,5 @@ void	ft_pwd(void)
 		printf("%s\n", buff);
 	else
 		perror("errore pwd");
-		
+	node->shell->exit_status = 0;
 }

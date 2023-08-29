@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:30:44 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/28 20:08:44 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	ft_read_line(t_shell *shell)
 {
 	shell->rawline = readline(PROMPT_MSG);
 	if (!shell->rawline)
-		exit(101);
+		ft_clean_exit(shell, NULL, 130, 1);
 	if (shell->rawline && shell->rawline[0])
 	{
 		add_history(shell->rawline);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:56:05 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 22:22:29 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/29 07:35:40 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,18 +41,15 @@ int ft_dup2(int *fd, int arg)
 	return (1);
 }
 
-void execute_builtin(t_node *node, t_shell *shell)
+int execute_builtin(t_node *node, t_shell *shell)
 {
 	int len;
 
 	len = ft_strlen(node->content.cmd[0]);
 	if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))
 		ft_echo(node);
-	else if (!ft_strncmp(node->content.cmd[0], "pwd", len, 1))
-	{
-		node->shell->exit_status = 0;
-		ft_pwd();
-	}	
+	if (!ft_strncmp(node->content.cmd[0], "pwd", len, 1))
+		ft_pwd(node);
 	else if (!ft_strncmp(node->content.cmd[0], "env", len, 1))
 		ft_env(shell);
 	else if (!ft_strncmp(node->content.cmd[0], "export", len, 1))
@@ -63,7 +60,7 @@ void execute_builtin(t_node *node, t_shell *shell)
 		ft_exit(node, shell);
 	else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
 		ft_cd(node, shell);
-	
+	return (node->shell->exit_status);
 }
 
 // ritorna 1 se è un comando builtin

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 02:47:38 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 04:16:00 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -160,18 +160,19 @@ t_node *next_cmd2(t_shell *shell, t_node *node)
         if (node->back->back)
         {
             // printf("E' presente node->back->back...\n");
-            if (!node->back->back->back) //a&&b|c
+            // printf("node->back->back:%p\n", node->back->back);
+            if (!node->back->back->back || !node->back->back->right) // a&&b|c
             {
-                // printf("RETURN NULL:(!node->back->back->back)...\n");
+                // printf("RETURN NULL:(!node->back->back->back && !node->back->back->right...\n");
                 return (NULL);
             }
             // check del bivio particolare...
             if (node->back->back->right == node->back)
             {
+
                 // printf("to_check = node->back->back->back->right;\n");
                 to_check = node->back->back->back->right;
             }
-                
             else
             {
                 // printf("to_check = to_check = node->back->back->right;\n");

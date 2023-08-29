@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 22:14:55 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/28 02:14:54 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,82 +100,6 @@ char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c)
     }
     return (new_st);
 }
-
-char *modify_raw_and_quote3(t_node *node, int idx, char *str, char c)
-{
-    int i;
-    int j;
-    int y;
-    int tot_len;
-    char *new_st;
-
-    y = idx + 2;
-    // printf("POST:Y:%d\n", y);
-    // TOT_LEN = idx($) +  ft_strlen(str) + strlen-idx(fine$) + 1;
-    if (str)
-        tot_len = idx + ft_strlen(str) + ft_strlen(node->raw_cmd) - y; // LEN SE VAR EXISTE
-    if (!str)
-        tot_len = ft_strlen(node->raw_cmd);
-    //  tot_len = ft_strlen(node->raw_cmd) - (y - idx); // LEN SE VAR NON EXISTE
-    // printf("ft_strlen(node->raw_cmd):%d|y:%d|idx:%d\n", ft_strlen(node->raw_cmd), y, idx);
-    printf("TOT_LEN:%d\n", tot_len);
-    // printf("ft_strlen(node->raw_cmd) - y:%d|y:%d\n", ft_strlen(node->raw_cmd) - y, y);
-    new_st = malloc(tot_len + 1);
-    new_st[tot_len] = '\0';
-    i = -1;
-    j = -1;
-    if (c == 32) // ovvero SPACE, raw_cmd
-    {
-        // printf("MODIFICO RAW_CMD\n");
-        while (++i < tot_len)
-        {
-            // printf("i:%d|IDX:%d\n", i, idx);
-            if (i < idx)
-            {
-                // printf("A\n");
-                new_st[i] = node->raw_cmd[i];
-            }
-            else if (!str && (i >= idx && i < y))
-            {
-                new_st[i] = ' ';
-                // c$HOMEc$HOME
-            }
-            else if (!str && !(i >= idx && i < y))
-            {
-                new_st[i] = node->raw_cmd[y++];
-            }
-            else if (str && ++j < ft_strlen(str))
-            {
-                // printf("B|j:%d|ft_strlen(str):%d\n", j, ft_strlen(str));
-                new_st[i] = str[j];
-            }
-            else if (str && j >= ft_strlen(str))
-            {
-                // printf("C\n");
-                new_st[i] = node->raw_cmd[y++];
-                j++;
-            }
-            // printf("D\n");
-        }
-    }
-    else if (c == 48) // ovvero SPACE, quote_idx
-    {
-        // printf("MODIFICO QUOTE_IDX\n");
-        // printf("VALORE ATTUALE:%s\n", node->quote_idx);
-
-        while (++i < tot_len)
-        {
-            if (node->raw_cmd[i] == 34)
-                new_st[i] = 34;
-            else if (node->raw_cmd[i] == 39)
-                new_st[i] = 39;
-            else
-                new_st[i] = 48;
-        }
-    }
-    return (new_st);
-}
-
 
 // idx of $
 char *modify_raw_and_quote(t_node *node, int idx, char *str, char c)
@@ -383,58 +307,12 @@ void ft_do_asterisk(t_node *node)
     }
 }
 
-void	ft_input1(char *new_str, t_node *node, int y)
-{
-	char	*raw;
-	char	*quote;
-
-	if (new_str)
-	{
-		raw = modify_raw_and_quote3(node, y, new_str, 32);
-		// free(node->raw_cmd);
-		node->raw_cmd = raw;
-		quote = modify_raw_and_quote3(node, y, new_str, 48);
-		//    free(node->quote_idx);
-		node->quote_idx = quote;
-	}
-}
-
-void ft_question(t_node *node, int i)
-{
-    char *buff;
-    
-    buff = NULL;
-    buff =ft_itoa(node->shell->exit_status);
-    ft_input1(buff, node, i);
-}
-
-void ft_do_question(t_node *node)
-{
-    int i;
-
-    i = -1;
-    while (++i < ft_strlen(node->raw_cmd))
-    {
-        if ((node->raw_cmd[i] == '$' && node->raw_cmd[i + 1] == '?') && in_quotes(node, i) != -1)
-        {
-            
-                printf("questijn:RAW_CMD|%s|strlen:%d\n", node->raw_cmd, ft_strlen(node->raw_cmd));
-                printf("IN node->raw_cmd[i:%d] = \n", i);
-                printf("in_quotes(node, i):%d\n", in_quotes(node, i));
-                ft_question(node, i);
-        }
-    }
-}
 
 void set_cmd(t_node *node)
 {
     ft_do_asterisk(node);
     // printf("\nesce da ft_expand\n");
     // printf("--- AFTER ASTERISK ---\n");
-    // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
-    // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
-    ft_do_question(node);
-    //  printf("--- AFTER QUESTION ---\n");
     // printf("NEW RAW_CMD|%s|strlen:%d    ", node->raw_cmd, ft_strlen(node->raw_cmd));
     // printf("NEW QUOTE_IDX|%s|strlen:%d\n", node->quote_idx, ft_strlen(node->quote_idx));
     ft_do_expand(node);

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 02:50:24 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 03:16:32 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,11 +20,12 @@ void ft_remove_heredoc(t_node *node)
     t_node *temp;
     t_node *next_node;
 
-    printf("IN ft_do_heredoc\n");
+    printf("IN ft_remove_heredoc\n");
     temp = node;
     next_node = NULL;
     while (1)
     {
+        // printf("PRE(next_cmd2),LAVORATO:REMOVE_HERE_DOC|temp:%p\n", temp);
         i = -1;
         while (++i < temp->content.kv_size)
         {
@@ -39,7 +40,7 @@ void ft_remove_heredoc(t_node *node)
             }
         }
         next_node = next_cmd2(temp->shell, temp);
-        printf("REMOVE_HERE_DOC|next_node:%p\n", next_node);
+        // printf("REMOVE_HERE_DOC|next_node:%p\n", next_node);
         if (!next_node)
             return;
         else
@@ -60,20 +61,20 @@ t_node *next_cmd_same_lvl(t_node *node)
     temp = node;
     temp->done_lock = 1;
     next_node = NULL;
-    // printf("-----------!CERCO: ..next_cmd_same_lvl...--------------\n\n");
     while (1)
     {
         next_node = next_cmd2(node->shell, temp);
-        if (temp == next_node)
+        if (!next_node || next_node->done_lock == 1)
             return (NULL);
-        else
-            temp = next_node;
-        if (!next_node)
-            break;
-        if (next_node->shell->lvl_subshell == node->lvl_subshell)
+        // if (temp == next_node)
+        //     return (NULL);
+        // else
+        temp = next_node;
+        if (temp->lvl_subshell == node->lvl_subshell)
         {
-            printf("trovato primo nodo stesso lvl.address:%p\n", next_node);
-            return (next_node);
+            // printf("trovato nodo stesso lvl...\n");
+            // print_node(temp->shell, temp);
+            return (temp);
         }
     }
     return (NULL);

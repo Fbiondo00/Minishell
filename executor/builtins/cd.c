@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/28 22:41:29 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/29 02:19:15 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,12 +97,13 @@ void	updatecd(t_node *node, t_shell *shell)
 	}
 }
 
-void	ft_home(t_shell *shell)
+int	ft_home(t_shell *shell)
 {
 	int		i;
-	char	*home;
+	int		flag;
 
-	i = 0;
+	i = -1;
+	flag = 0;
 	if (!shell->env)
 	{
 		shell->error = 1;
@@ -110,16 +111,18 @@ void	ft_home(t_shell *shell)
 		shell->exit_status = 1;
 		write(2, "not access env\n", 16);
 	}
-	while (shell->env[i])
+	while (shell->env[++i])
 	{
 		if (!ft_strncmp("HOME=", shell->env[i], 5, 0))
-			break ;
-		i++;
+		{
+			flag++;
+			break;
+		}
 	}
-	if (i > ft_get_len_env(shell))
-		return ;
-	home = ft_strchr(shell->env[i], '/');
-	chdir(home);
+	if (!flag)
+		return (0);
+	chdir(ft_strchr(shell->env[i], '/'));
+	return (1);
 }
 
 void	ft_cd(t_node *node, t_shell *shell)
@@ -132,7 +135,12 @@ void	ft_cd(t_node *node, t_shell *shell)
 	if (i == 1)
 	{
 		updateoldpath(shell);
-		ft_home(shell);
+		if(ft_home(shell) == 0)
+		{
+			node->shell->exit_status = 1;
+			write(2, "HOME not set\n", 13);
+			return ;
+		}
 		updatepath(shell);
 	}
 	else

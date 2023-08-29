@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 22:19:09 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 08:02:23 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -310,25 +310,6 @@ void ft_single_cmd(t_node *node)
     // printf("POST: ft_reset_original_fd|pid:%d\n",getpid());
 }
 
-void ft_do_subshell(t_node *node)
-{
-    (void) node;
-    // 1. crea file fittizio in append (se non esiste già), se esistono i file fa
-    // ft_fd_sub_level del livello in oggetto
-    // 2. fork()
-    // 3. set std_out ad ogni cmd finchè lvl_subshell (next_cmd) è >0
-    //    se invece è <= 0 non settare. break.
-    // 4. fare --lvl_subshell a tutti i nodi_cmd che rispettano la condizione
-    //    uguale alla precendente. una funzione puo fare entrambe le cose insieme.
-    // ft_minus_lvl_subshell(node) ??
-
-    // questa funzione non esegue il cmd, ma prepara solo l environment.
-
-    // variabile pid come attributo a shell??
-    // if(node->shell->pid == 0)
-        // sono nella shell padre... si forka dalla figlia però?
-}
-
 
 // singola funzione che gestisce sia l or che l and
 // all interno una funzione
@@ -336,7 +317,6 @@ t_node *ft_do_and_or(t_node* node)
 {
     // 1. check status
     // prima di poter eseguire un nodo and o or bisogna controllare exit_status precedente.
-    
     if (is_left_branch(node) || ((node->back->content.op == AND && ok_status(node) == 1) ||
         (node->back->content.op == OR && ok_status(node) == 0)))
     {
@@ -344,7 +324,6 @@ t_node *ft_do_and_or(t_node* node)
         // printf("cmd eseguito, cerco next cmd\n");
         return (next_cmd_same_lvl(node));
     }
-    // printf("go_next_cmd_and_or(node)\n");
     // qualora l exit status non permetta l esecuzione del cmd, tale cmd (talvolta insieme ad alcuni altri in caso si tratti delle pipe) vengono skippati.
     // pertanto ritorno il prossimo nodo utile per l esecuzione.
     node->done_lock = 1;
@@ -352,14 +331,21 @@ t_node *ft_do_and_or(t_node* node)
     return (go_next_cmd_and_or(node));
 }
 
-// 1. pipe
-// 2. fork
-// 3. check posizione in ipotetica sequenza di pipe.
-// n.b: pipe vince su finto append
+// ritorna 1 se è ultimo  node della pipe-chain
+int is_last_pipe(t_node *node)
+{
+    if (next_cmd_same_lvl(node) && next_cmd_same_lvl(node)->back->content.op == PIPE)
+        return (0);
+    return (1);
+}
+
+
+// n.b1: pipe vince su finto append
+// n.b2:refactor simple_cmd  per utilizzarlo 
+// ....solo la parte dell !is_builtin vareso variabile
 t_node *ft_do_pipe(t_node* node)
 {
-    // refactor simple_cmd  per utilizzarlo ....solo la parte dell !is_builtin va
-    // reso variabile
+    
     pid_t pid;
     int status;
     int len;
@@ -369,19 +355,17 @@ t_node *ft_do_pipe(t_node* node)
     if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
     { // fork in tutti i casi tranne exit.
         printf("eseguo exit...\n");
-        if (!ft_do_redir(node))
+        if (ft_do_redir(node) == 0)
         {
-            printf("perche qui!\n");
-            node->shell->exit_status = 1;
+            printf("errore durante redir!\n");
             return (next_cmd_same_lvl(node));
         }
-        execute_builtin(node, node->shell);
+        execute_builtin(node, node->shell); // poi va a return next_cmd_same_lvl
     }
     else
     {
-        // se è ultimo elemento sequenza pipe, ristabilire stdout
-        // e non fare pipe()
-        if (next_cmd_same_lvl(node) && next_cmd_same_lvl(node)->back->content.op == PIPE)
+        // se è ultimo elemento sequenza pipe, ristabilire stdout e non fare pipe()
+        if (!is_last_pipe(node))
         {
             if (pipe(fd) == -1)
                 perror("pipe");
@@ -389,28 +373,23 @@ t_node *ft_do_pipe(t_node* node)
         pid = fork();
         if (pid == 0)
         {
-            if (next_cmd_same_lvl(node) && next_cmd_same_lvl(node)->back->content.op == PIPE && next_cmd_same_lvl(node)->done_lock != 1)
+            if (!is_last_pipe(node))// && next_cmd_same_lvl(node)->done_lock != 1)
             {
-                printf("FINISCE QUI!\n");
-                // print_node(node->shell, node);
                 close(fd[0]);
                 ft_dup2(&fd[1], STDOUT_FILENO);
             }
             else
                 dup2(node->shell->temp_output, STDOUT_FILENO);
-            if (!ft_do_redir(node))
+            if (ft_do_redir(node) == 0)
                 exit(33);
             if (is_builtin(node))
-            {
-                execute_builtin(node, node->shell);
-                exit(0);
-            }
+                exit(execute_builtin(node, node->shell));
             else
                 ft_execve(node);
         }
         else
         {
-            if (next_cmd_same_lvl(node) &&  next_cmd_same_lvl(node)->back->content.op == PIPE)
+            if (!is_last_pipe(node))
             {
                 close(fd[1]);
                 ft_dup2(&fd[0], STDIN_FILENO);
@@ -432,9 +411,72 @@ t_node *ft_do_pipe(t_node* node)
 // non viene neanche eseguito. però si va in subshell, in quanto il cmd prima va eseguito.
 // quindi: la logica di priorità dei fd non è influenzata dalla logica delle parentesi
 // ma segue la logica degli operatori
-
 // a livello operativo corrisponde a fare la redir solo prima dell esecuzione del suo cmd
 // e non in blocco insieme alle redir di altri cmd
+
+
+ // cercando sempre tra tutti i nodi tra tutti i nodi fino a che 
+ // ce ne possono essere piu di una
+// int count_redir_sub_err(node)
+// {
+//     // cerca in tutte le redir se è presente una di err, del livello giusto
+// }
+
+// int init_shell_redir(t_node *node, char ***shell_redir)
+// {
+//     int count;
+
+//     count = 0; // conta di default su_out, che deve sempre esserci 
+//     count += count_redir_sub_err(node);
+//     count += count_redir_sub_in(node);
+//     if (count_redir_sub_out(node) == 0)
+//         count++;
+//     else
+//         count += count_redir_sub_out(node);
+//     *shell_redir = malloc (count);
+//     settare null byte...
+//     return (count);
+// }
+
+// va eseguita qua ft_fd_sub_level, perche non vale solo per il singolo cmd
+// ma per tutto il suo "gruppo"
+
+// nuovo elemento in shell, struct t_kv che contiene tutte le redir >1, o in alternativa
+// un array di stringhe contenente solo i nomi dei file, dovremo poi eliminarli tutti,
+// uno per uno
+
+// questa funzione non esegue il cmd, ma prepara solo l environment.
+void ft_do_subshell(t_node *node)
+{
+    // int count;
+    // char **shell_redir;
+    
+    // malloca la matr con il numero esatto di redir da fare
+    // count = init_shell_redir(shell_redir);
+    // cercando sempre tra tutti i nodi tra tutti i nodi fino a che 
+    // node->back->lvl_subshell è > 0, oppure si puo dire finche è > di lvl_subshell
+    // della shell
+
+    //count =count_redir_sub_err(node)
+    // while (count > 0)
+
+    
+    (void)node;
+    // 1. crea file fittizio in append (se non esiste già), se esistono i file fa
+    // ft_fd_sub_level del livello in oggetto
+    // 2. fork()
+    // 3. set std_out ad ogni cmd finchè lvl_subshell (next_cmd) è >0
+    //    se invece è <= 0 non settare. break.
+    // 4. fare --lvl_subshell a tutti i nodi_cmd che rispettano la condizione
+    //    uguale alla precendente. una funzione puo fare entrambe le cose insieme.
+    // ft_minus_lvl_subshell(node) ??
+
+    // questa funzione non esegue il cmd, ma prepara solo l environment.
+
+    // variabile pid come attributo a shell??
+    // if(node->shell->pid == 0)
+    // sono nella shell padre... si forka dalla figlia però?
+}
 
 void execute(t_shell *shell)
 {
@@ -442,8 +484,6 @@ void execute(t_shell *shell)
     t_node *next_node;
 
     printf("------------------|FASE: EXECUTOR|------------------\n");
-    //  fa tutti gli open degli here_doc settati in s_kv, non fa il dup2
-    //  echo a || echo b | cat <<2
     if (is_node_cmd(shell->tree))
     {
         printf("nodo op è assente...\n");
@@ -453,54 +493,44 @@ void execute(t_shell *shell)
     }
     printf(" è presente almeno 1 nodo op...\n");
     node = go_to_starter_node(shell->tree->left);
-    ft_do_heredoc(node); // loop
-    // V1: multi_cmd_without parantheses
-    // tutti i nodi sullo stesso livello.
+    ft_do_heredoc(node);
     while (1)
     {
+        if (node->back->lvl_subshell > 0)
+            ft_do_subshell(node);
         if (!node || node->done_lock == 1)
         {
-            if (!node)
-                ft_reset_original_fd(shell->tree);
-            if (node && node->done_lock == 1)
-                ft_reset_original_fd(node);
-            break;
+            if (node)
+                printf("node->done_lock:%d|esce da execute...\n", node->done_lock);
+            ft_reset_original_fd(shell->tree);
+            return ;
         }
-        if (node->back && node->back->content.op == PIPE)
+        else if (!node->content.cmd && !node->content.cmd[0])
+        {
+            printf("NODE_CMD WITH ONLY REDIR...\n");
+            ft_do_redir(node);
+            // printf("PRE:JUST_REDIR|node:p%p\n", node);
+            next_node = next_cmd_same_lvl(node);
+            // printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
+        }
+         if (node->back->content.op == PIPE)
         {
             printf("ft_do_pipe...\n");
-            if (node->content.cmd && node->content.cmd[0])
-                next_node = ft_do_pipe(node);
-            else
-            {
-                printf("PIPE && ONLY REDIR\n");
-                if (!ft_do_redir(node))
-                {
-                    node->shell->exit_status = 1;
-                    ft_reset_original_fd(node); 
-                }
-                else
-                    node->shell->exit_status = 0;
-                next_node = next_cmd_same_lvl(node);
-            }
-            printf("PIPE|next_node:p%p\n", next_node);
+            next_node = ft_do_pipe(node);
+            // printf("PRE:PIPE|node:p%p\n", node);
+            next_node = next_cmd_same_lvl(node);
+            // printf("POST:PIPE|next_node:p%p\n", next_node);
         }
-        else if (node->back && (node->back->content.op == AND || node->back->content.op == OR))
+        else if (node->back->content.op == AND || node->back->content.op == OR)
         {
             printf("ft_do_and_or...\n");
+            // printf("PRE:AND_OR|node:p%p\n", node);
             next_node = ft_do_and_or(node);
-            printf("AND_OR|next_node:p%p\n", next_node);
+            // printf("AFTER:AND_OR|next_node:p%p\n", next_node);
         }
         node = next_node;
     }
-    // in generale per l ultimo cmd, se non op dopo? come esco da subshell ?
-        // // questa funzione non esegue il cmd, ma prepara solo l environment.
-        // if (node->back && node->back->lvl_subshell > 0)
-        //     ft_do_subshell(node);    
 }
 
 // 5 func
-
-
 // subshell + hidden here_doc
-// syntax error

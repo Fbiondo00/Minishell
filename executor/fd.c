@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:47:03 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/22 23:17:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 00:54:33 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ int ft_fd_sub_level(t_node *node, int lvl, int is_first)
         if (node->content.redir[i].lvl == lvl && (is_first == 0 && (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)))
         {
             // printf("lvl:%d|ft_fd_sub_level: FAft_open_file!\n", lvl);
-            if (!ft_open_file(node, i))
+            if (ft_open_file(node, i) == 0)
                 return (0);
         }
     }
@@ -67,6 +67,22 @@ int ft_fd_cmd_level(t_node *node)
     return (1);
 }
 
+// 0 errore, 1 ok
+int norm_exit_status(t_node *node, int i)
+{
+    if (i == 1)
+    {
+        node->shell->exit_status = 0;
+        return (1);
+    }
+    else
+    {
+        node->shell->exit_status = 1;
+        ft_reset_original_fd(node);
+        return (0);
+    }
+}
+
 // esegue in ordine:
 // 1. ft_fd_sub_level
 // 2. ft_fd_cmd_level
@@ -78,7 +94,6 @@ int ft_do_redir(t_node *node)
     int max_lvl;
 
     flag = 0;
-    // printf("in ft_single_cmd...\n");
     if (node->content.redir)
         max_lvl = node->content.redir[node->content.kv_size - 1].lvl;
     else
@@ -88,11 +103,11 @@ int ft_do_redir(t_node *node)
     while (max_lvl > 0)
     {
         // printf("max_lvl:%d\n", max_lvl);
-        if (!ft_fd_sub_level(node, max_lvl--, flag))
+        if (ft_fd_sub_level(node, max_lvl--, flag) == 0)
         {
             printf("esce in ft_fd_sub_level...\n");
             ft_reset_original_fd(node);
-            return (0);
+            return (norm_exit_status(node, 0));
         }
         flag++;
     }
@@ -100,9 +115,9 @@ int ft_do_redir(t_node *node)
     if (!ft_fd_cmd_level(node))
     {
         ft_reset_original_fd(node);
-        return (0);
+        return (norm_exit_status(node, 0));
     }
-    return (1);
+    return (norm_exit_status(node, 1));
 }
 
 // 4 func

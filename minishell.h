@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 22:41:10 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/29 02:02:54 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,9 +174,7 @@ int	flag1(char *entry, char *str, int i);
 int	ft_middle(char *str, int index);
 int	check_left(char *str, int i);
 void ft_do_cmd(t_node *node);
-void	ft_input(char *new_str, t_node *node, int y);
-char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
-int	ft_get_len_env(t_shell *shell);
+int ft_get_len_env(t_shell *shell);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
@@ -197,8 +195,7 @@ int is_node_cmd(t_node *node);
 t_node *next_cmd(t_shell *shell, t_node *node);
 t_node *next_cmd2(t_shell *shell, t_node *node);
 t_node *next_cmd_same_lvl(t_node *node);
-// bultin
-void ft_pwd(void);
+// bultins
 void ft_echo(t_node *node);
 void ft_cd(t_node *node, t_shell *shell);
 void ft_env(t_shell *shell);
@@ -215,6 +212,7 @@ void	ft_conc(t_shell *shell, char *str, int y);
 void	bubble_sort_strings(char **strings, int num_strings);
 int	ft_get_equ(char *env);
 int	ft_check(t_node *node);
+void ft_pwd(t_node *node);
 // execve
 void ft_execve(t_node *node);
 void free_matrix(char **matrix);
@@ -246,14 +244,13 @@ int ft_atoi(const char *str);
 int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
-char	*ft_itoa(int n);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);
 t_node *next_cmd_same_lvl(t_node *node);
 int is_builtin(t_node *node);
 t_node *go_next_cmd_and_or(t_node *node);
-void execute_builtin(t_node *node, t_shell *shell);
+int execute_builtin(t_node *node, t_shell *shell);
 
 // test
 void print_node(t_shell *shell, t_node *node);
