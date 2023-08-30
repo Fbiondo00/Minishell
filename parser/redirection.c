@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 23:55:21 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/31 00:07:17 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,19 @@ char	*modify_str(t_node *node, char *str)
 	return (new_str);
 }
 
+char  *ft_wwew(t_node *node, char *str, int idx, int *i)
+{
+    int len;
+    
+    *i = idx + 1;
+	while (node->raw_cmd[*i] == ' ')
+		(*i)++;
+	len = get_len_value(node, *i);
+	str = malloc(len + 1);
+	str[len] = '\0';
+    return(str);
+}
+
 
 // verifica per ogni redirection ( > >> < <<)
 // se è presente e se non sta nelle quotes
@@ -58,21 +71,14 @@ void	set_token_redirection(t_node *node, int idx, int num)
 {
 	int		i;
 	int		j;
-	int		len;
 	char	*chars;
 	char	*str;
 	char	*new_str;
     
-    // str = NULL;
+    str = NULL;
 	new_str = NULL;
 	chars = "><()";
-    // str = ft_wwew(node, str, idx, &i);
-	i = idx + 1;
-	while (node->raw_cmd[i] == ' ')
-		i++;
-	len = get_len_value(node, i);
-	str = malloc(len + 1);
-	str[len] = '\0';
+    str = ft_wwew(node, str, idx, &i);
 	j = -1;
 	while (i < ft_strlen(node->raw_cmd))
 	{
