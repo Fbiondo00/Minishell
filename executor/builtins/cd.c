@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:18:34 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/29 02:19:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 16:42:39 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,8 +99,8 @@ void	updatecd(t_node *node, t_shell *shell)
 
 int	ft_home(t_shell *shell)
 {
-	int		i;
-	int		flag;
+	int	i;
+	int	flag;
 
 	i = -1;
 	flag = 0;
@@ -116,7 +116,7 @@ int	ft_home(t_shell *shell)
 		if (!ft_strncmp("HOME=", shell->env[i], 5, 0))
 		{
 			flag++;
-			break;
+			break ;
 		}
 	}
 	if (!flag)
@@ -135,7 +135,7 @@ void	ft_cd(t_node *node, t_shell *shell)
 	if (i == 1)
 	{
 		updateoldpath(shell);
-		if(ft_home(shell) == 0)
+		if (ft_home(shell) == 0)
 		{
 			node->shell->exit_status = 1;
 			write(2, "HOME not set\n", 13);

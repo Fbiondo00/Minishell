@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 05:23:20 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 17:14:15 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,6 +175,10 @@ int	ft_middle(char *str, int index);
 int	check_left(char *str, int i);
 void ft_do_cmd(t_node *node);
 int ft_get_len_env(t_shell *shell);
+void convert_space(t_node *node, char c);
+int	is_fd_valid(t_node *node, int idx);
+void	set_fd(t_node *node, int idx, int num);
+void	set_redir_op(t_node *node, int idx, int num);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);

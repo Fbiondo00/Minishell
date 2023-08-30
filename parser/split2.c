@@ -1,24 +1,24 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   split2.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/07/21 16:17:51 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/30 16:42:28 by flaviobiond      ###   ########.fr       */
+/*   Created: 2023/08/30 17:05:04 by flaviobiond       #+#    #+#             */
+/*   Updated: 2023/08/30 17:06:14 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../minishell.h"
+#include "../minishell.h"
 
-void	ft_pwd(t_node *node)
+// converte gli spazi dentro le quotes in c
+void	convert_space(t_node *node, char c)
 {
-	char	buff[4096];
+	int	i;
 
-	if (getcwd(buff, sizeof(buff)) != 0)
-		printf("%s\n", buff);
-	else
-		perror("errore pwd");
-	node->shell->exit_status = 0;
+	i = -1;
+	while (++i < ft_strlen(node->raw_cmd))
+		if (node->raw_cmd[i] == ' ' && in_quotes(node, i))
+			node->raw_cmd[i] = c;
 }

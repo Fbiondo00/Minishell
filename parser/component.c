@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   component.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 05:31:01 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 16:59:23 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ void ft_lowercase_cmd(t_node *node)
 // fa anche il set_cmd
 int calculate_lvl_diff(t_node *node)
 {
-    // if in quotes rimuovi e count++, poi fai il set_cmd
-    // in set_cmd conservare il print dei cmd, cosi possiamo stampare tutto l albero
     int i;
     int count;
 
