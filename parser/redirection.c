@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/25 04:01:08 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:31:47 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -220,8 +220,6 @@ void set_fd(t_node *node, int idx, int num)
     }
     else
         node->content.redir[num].fd = -1;
-    // valore per testare. da creare poi func set_lvl
-    // node->content.redir[num].lvl = 0;
 }
 
 // i: indice del primo operatore (anche in caso di << >>)

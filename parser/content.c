@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 02:38:05 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:30:19 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,4 @@ void set_content(t_node *node)
     set_redirection(node);
 }
 
-// 5 func
+// 3 func

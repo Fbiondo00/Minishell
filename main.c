@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 03:12:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:22:18 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
     // if (shell->tree)
         // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
     // mi perdo l exit status se free, salvare in var locale?
-    if (str)
+    if (str) //cazzata exit_status??
         shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + exit_status;
     printf("fine line: shell->exit_status:%d\n", shell->exit_status);
     if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
@@ -114,25 +114,17 @@ int main(int argc, char **argv, char **env)
 
 // 5 func
 //----------------------------TODO: ----------------------------------
-//-1. fix split, space
+//-3 norme: modify con flag 1,2,3 ... if 1, do_check1
+//-2. exe. single_cmd subredirs
+//-1. 
 // 0.MAIN
 // leaks
-// 1.PARSER:
-    // A.do $?
-        //   $? is used to find the return value of the last executed command.
-// 2.EXECUTOR
-    // A.fix ft_do_heredoc (loop se pipe dopo and_or)
-        // echo a || echo b | echo c | echo d && echo e ..
-        // echo a &&echo b | echo c   ... entra in loop
-        // echop a && echo b | echo c | echo d && echo e
-        // echop a && echo b | echo c | echo d || echo e .. problema set_components
-    // B.do subshell
+// 1.EXECUTOR
+    // A.do subshell
         //  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
+        //  echo a && echo b
 
-// io" echo a && echo ba" u
-// bash: io echo a && echo ba: command not found
-// io " echo a && echo ba" u
-// bash: io: command not found
+
 
 // bash-3.2$ unset HOME
 // bash-3.2$ cd
@@ -224,19 +216,37 @@ int main(int argc, char **argv, char **env)
 // ("echo')")    OK
 // echo a>b      OK
 // a|b>d<e       OK
-// echo >a>b>cc<<ddd                         OK
-// echo a >"bb "c>y                          OK
-// a >u>>og <<o"'  pp" p                     OK
-// (echo b || (echo a ) >u)                  OK
-// (echo b || echo a >e)                     OK
-// ((echo a && ls))                          OK
-// (echo a && ls)                            OK
-// (echo a && ls) |cat                       OK
-// (echo b || echo a >e)                     OK
-// (echo a && (echo b && (echo c <z))) >p| cat  OK
-// (echo a && (echo b && (echo c <u))>p) | cat  OK
-//  echo a || echo b | cat <<2
+// echo >a>b>cc<<ddd                               OK
+// echo a >"bb "c>y                                OK
+// a >u>>og <<o"'  pp" p                           OK
+// (echo b || (echo a ) >u)                        OK
+// (echo b || echo a >e)                           OK
+// ((echo a && ls))                                OK
+// (echo a && ls)                                  OK
+// (echo a && ls) |cat                             OK
+// (echo b || echo a >e)                           OK
+// (echo a && (echo b && (echo c <z))) >p| cat     OK
+// (echo a && (echo b && (echo c <u))>p) | cat     OK
+//  echo a || echo b | cat <<2                     OK
+// ---
+// echo a || echo b | echo c | echo d && echo e    OK
+// echo a &&echo b | echo c                        OK
+// echop a && echo b | echo c | echo d && echo e   OK
+// echop a && echo b | echo c | echo d || echo e   OK
+// io" echo a && echo ba" u
+// bash: io echo a && echo ba: command not found
+// io " echo a && echo ba" u
+// bash: io: command not found
+// --
+// ((ls) >zy | echo a && echo c) | cat
+// (cat | cat | cat  >zi ) <du  && echo d
+// (cat <zu | cat | cat  >zi ) <du  && echo d
+// echo a >b || echo b >c (ma anche >>c)  => non crea c, perche non esegue il comando
+// echo a >b || echo b <<c   solo nel caso dell here_doc lo esegue comunque
+// echo a >b || (echo b >c && echo d >e) => non crea c & e perche non esegue il cmd
+// echo a>1|(echo b>2||echo c  >3) |out:  |1:a |2:b  // il file 3 non viene creato
 
+// --
 // echo a <      KO
 // (echo a >)    KO
 // (echo a >>)   KO

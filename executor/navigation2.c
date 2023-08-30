@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 03:16:32 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 18:28:48 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,9 +98,11 @@ t_node *go_next_cmd_and_or(t_node *node)
         temp = next_node;
         if (!next_node)
             break;
-        if (next_node->content.op != PIPE)
+        if (next_node->back->content.op != PIPE && node->back != next_node->back)
         {
-            // printf("trovato primo nodo stesso lvl.address:%p\n", next_node);
+            printf("next_node->back->content.op:%d\n", next_node->back->content.op);
+            printf("node->back:%p|next_node->back:%p\n", node->back, next_node->back);
+            printf("ritorno next_node:%p\n", next_node);
             return (next_node);
         }
     }

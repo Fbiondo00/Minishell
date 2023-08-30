@@ -6,11 +6,13 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 08:02:23 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:20:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void execute_recursive(t_node *node);
 
 // ---------- EXECUTOR: PARENTHESES & SUBSHELLS ----------
 // concettualmente è come se l output dei comandi in subshell viene redirectato
@@ -123,9 +125,6 @@
 // bash: pi: command not found
 // bash: pippo: command not found
 
-// https://www.cs.colostate.edu/~mcrob/toolbox/unix/redirection#:~:text=File%20redirection%20happens%20second%2C%20and,The%20file%20redirection%20always%20wins.)
-
-
 
 
 //  (echo b && (echo a >o && (echo d))) >p | echo c    --->
@@ -229,11 +228,6 @@
 // echo a >b || echo b <<c   solo nel caso dell here_doc lo esegue comunque
 // echo a >b || (echo b >c && echo d >e) => non crea c & e perche non esegue il cmd
 
-// do_redir(t_node *node)
-// 1. vado start node.
-// 2. mi giro tutti i nodi ed eseguo tutti gli here_doc (forse anche i cat senza input)
-// 3. ritorno allo start node.
-// relativamente al singolo nodo fa le seguenti valutazioni:
 
 // PREMESSA:
 // 1. echo a >b | (echo b >c && echo d >e) => CREA B C E
@@ -260,12 +254,6 @@
 
 // --------------------------------------------------------------------------
 // --------------------------------------------------------------------------
-// 2. executor & subshells
-
-//    B.  PER EXECUTOR lvl_subshell: se termina senza operatore fuori dalle tonde,
-//        effettivamente non esiste un nodo_op con lvl 0. quindi si puo
-//        considerare il raggiungimento dell ultimo nodo come se ci fosse lo zero
-//        esempio creazione is_last_cmd() se necessario
 
 // esegue il singolo cmd, ovvero:
 // fa le redir (tranne here_doc che è gia fatta)
@@ -311,18 +299,36 @@ void ft_single_cmd(t_node *node)
 }
 
 
+int norm_check(t_node *node)
+{
+    if ((node->back->content.op == AND && ok_status(node) == 1) ||
+        (node->back->content.op == OR && ok_status(node) == 0))
+        return (1);
+    else
+        return (0);
+}
+
 // singola funzione che gestisce sia l or che l and
 // all interno una funzione
-t_node *ft_do_and_or(t_node* node)
+t_node *ft_do_and_or(t_node* node, t_node *prev_node)
 {
     // 1. check status
     // prima di poter eseguire un nodo and o or bisogna controllare exit_status precedente.
-    if (is_left_branch(node) || ((node->back->content.op == AND && ok_status(node) == 1) ||
-        (node->back->content.op == OR && ok_status(node) == 0)))
+    printf("norm_check(node):%d\n", norm_check(node));
+    if (!prev_node  || (prev_node && norm_check(node)))
     {
         ft_single_cmd(node);
-        // printf("cmd eseguito, cerco next cmd\n");
-        return (next_cmd_same_lvl(node));
+        printf("cmd and_or eseguito....\n");
+        if (norm_check(node) && next_cmd_same_lvl(node) && next_cmd_same_lvl(node)->back->content.op == PIPE)
+        {
+            printf("HERE!\n");
+            return (next_cmd_same_lvl(node));
+        }  
+        else
+        {
+            printf("return:go_next_cmd_and_or(node)...\n");
+            return (go_next_cmd_and_or(node)); // se non devo entrare nella sequenza non ci entro
+        }
     }
     // qualora l exit status non permetta l esecuzione del cmd, tale cmd (talvolta insieme ad alcuni altri in caso si tratti delle pipe) vengono skippati.
     // pertanto ritorno il prossimo nodo utile per l esecuzione.
@@ -415,6 +421,8 @@ t_node *ft_do_pipe(t_node* node)
 // e non in blocco insieme alle redir di altri cmd
 
 
+
+
  // cercando sempre tra tutti i nodi tra tutti i nodi fino a che 
  // ce ne possono essere piu di una
 // int count_redir_sub_err(node)
@@ -478,11 +486,114 @@ void ft_do_subshell(t_node *node)
     // sono nella shell padre... si forka dalla figlia però?
 }
 
+
+// ritorna l ultimo cmd appartenente allo stesso lvl
+t_node *last_cmd_same_lvl(t_node *node)
+{
+    (void) node;
+    return (NULL);
+}
+
+void set_shell_env(t_node *node, int lvl_subshell, char **arredir)
+{
+    (void)node;
+    (void)lvl_subshell;
+    (void)arredir;
+}
+
+// fa il close ed il free, set a NULL.. simile a ft_remove_heredoc
+void ft_free_hidden_redir(char **arredir)
+{
+    (void)arredir;
+}
+
+t_node *fork_execute(t_node *node, char **arredir)
+{
+    pid_t pid;
+    int status;
+
+    pid = fork();
+    if (pid == 0)
+    {
+        // setta tutte le sub_redir
+        // se arredir !NULL, la setta come input
+        // se deve creare un hidden redir la salva nella stringa salva nella new_arredir
+        // fa shell->lvl_subshell++
+        set_shell_env(node, node->lvl_subshell, arredir);
+        execute_recursive(node);
+    }
+    else
+    {
+        // siamo nel padre
+        waitpid(pid, &status, 0);
+        node->shell->exit_status = WSTOPSIG(status);
+        if (arredir) // fa il close ed il free, set a NULL.. simile a ft_remove_heredoc
+            ft_free_hidden_redir(arredir);
+    }
+    return (next_cmd2(node->shell, last_cmd_same_lvl(node)));
+}
+
+
+// coincide con la parte del multi_cmd dell attuale execute
+// esegue tutta la sequenza di nodi_cmd del suo stesso lvl
+// si blocca se finisce la riga
+t_node *just_execute(t_node *node)
+{
+    (void)node;
+    return (NULL);
+}
+
+void execute_recursive(t_node *node)
+{
+    char *arredir;
+    t_node *next_node;
+
+    while (1)
+    {   // questo è il caso in cui è finita la stringa
+        // se !node, puo essere anche che non abbiamo ancora chiuso le subshell..
+        // quindi check se si è ancora in subshell.. controllando se lvl_subshell > 0
+        if (!node || node->done_lock == 1) // done_lock ??
+            return (ft_reset_original_fd(node->shell->tree));
+        if (node->back->lvl_subshell == node->shell->lvl_subshell)
+            next_node = just_execute(node);
+        else if (node->back->lvl_subshell > node->shell->lvl_subshell)
+            next_node = fork_execute(node, &arredir);
+        else if (node->back->lvl_subshell < node->shell->lvl_subshell)
+        {
+            //caso in cui è finita subshell
+            ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+        }
+        node = next_node;
+    }
+}
+
+// coincide con la parte iniziale dell attuale execute
+void execute_single_cmd(t_node *node)
+{
+    (void)node;
+}
+
+// main
+//  execute(ft_starter(shell));
+// riceve lo starter node
+// node = ft_starter(shell);
+void execute2(t_shell *shell)
+{
+    // simile a quello attuale solo che fa anche le redir_sub_lvl
+    // nell ordine corretto
+    if(is_node_cmd(shell->tree))
+        execute_single_cmd(shell->tree);
+    else
+        execute_recursive(go_to_starter_node(shell->tree->left));
+}
+
 void execute(t_shell *shell)
 {
     t_node *node;
     t_node *next_node;
+    t_node *prev_node; //backlog and_or logic
 
+    prev_node = NULL;
     printf("------------------|FASE: EXECUTOR|------------------\n");
     if (is_node_cmd(shell->tree))
     {
@@ -496,8 +607,8 @@ void execute(t_shell *shell)
     ft_do_heredoc(node);
     while (1)
     {
-        if (node->back->lvl_subshell > 0)
-            ft_do_subshell(node);
+        // if (node->back->lvl_subshell > 0) // non va messo come primo: seg fault
+        //     ft_do_subshell(node);
         if (!node || node->done_lock == 1)
         {
             if (node)
@@ -509,24 +620,33 @@ void execute(t_shell *shell)
         {
             printf("NODE_CMD WITH ONLY REDIR...\n");
             ft_do_redir(node);
-            // printf("PRE:JUST_REDIR|node:p%p\n", node);
+            printf("PRE:JUST_REDIR|node:p%p\n", node);
+            printf("PRE:JUST_REDIR|prev_node:p%p\n", prev_node);
+            prev_node = node;
             next_node = next_cmd_same_lvl(node);
-            // printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
+            printf("POST:JUST_REDIR|prev_node:p%p\n", prev_node);
+            printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
         }
          if (node->back->content.op == PIPE)
         {
             printf("ft_do_pipe...\n");
+            printf("PRE:PIPE|prev_node:p%p\n", prev_node);
             next_node = ft_do_pipe(node);
-            // printf("PRE:PIPE|node:p%p\n", node);
-            next_node = next_cmd_same_lvl(node);
-            // printf("POST:PIPE|next_node:p%p\n", next_node);
+            prev_node = node;
+            printf("PRE:PIPE|node:p%p\n", node);
+            // next_node = next_cmd_same_lvl(node);
+            printf("POST:PIPE|next_node:p%p\n", next_node);
+            printf("POST:PIPE|prev_node:p%p\n", prev_node);
         }
         else if (node->back->content.op == AND || node->back->content.op == OR)
         {
             printf("ft_do_and_or...\n");
-            // printf("PRE:AND_OR|node:p%p\n", node);
-            next_node = ft_do_and_or(node);
-            // printf("AFTER:AND_OR|next_node:p%p\n", next_node);
+            printf("PRE:AND_OR|node:p%p\n", node);
+            printf("PRE:AND_OR|prev_node:p%p\n", prev_node);
+            next_node = ft_do_and_or(node, prev_node);
+            prev_node = node;
+            printf("AFTER:AND_OR|next_node:p%p\n", next_node);
+            printf("POST:AND_OR|prev_node:p%p\n", prev_node);
         }
         node = next_node;
     }
@@ -534,3 +654,5 @@ void execute(t_shell *shell)
 
 // 5 func
 // subshell + hidden here_doc
+
+

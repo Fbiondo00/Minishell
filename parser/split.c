@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/27 20:51:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 20:54:09 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 02:02:34 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,7 @@ void ft_do_cmd(t_node *node)
     int i;
     char c;
     char d;
-
-    i = -1;
+    
     ft_safe_char(node, &c);
     convert_space(node, c);
     ft_safe_char(node, &d);
@@ -112,8 +111,12 @@ void ft_do_cmd(t_node *node)
     node->content.cmd = ft_split(node->raw_cmd, ' ');
     if (!node->content.cmd || !node->content.cmd[0])
         return;
-    while (node->content.cmd[++i])
-        reset_space(node, i, c);
+    if (c != d)
+    {
+        i = -1;
+        while (node->content.cmd[++i])
+            reset_space(node, i, c);
+    }
     i = -1;
     while (node->content.cmd[++i])
         ft_remove_quotes(node, i, d);

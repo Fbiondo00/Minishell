@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 20:56:31 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:31:01 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,108 +54,6 @@ int calculate_lvl_diff(t_node *node)
     return (count);
 }
 
-// naviga l albero e:
-// se trova nodo_cmd setta exp e fa le varie rimozioni e setta lvl sui corretti nodi op
-// se trova nodo_op continua a navigare l albero
-void set_components(t_shell *shell)
-{
-    t_node *node;
-    int lvl_diff;
-
-    printf("------------------|FASE: SET COMPONENTS ALBERO|------------------\n");
-    // CASO BASE: ASSENZA DI NODO_OP
-    // in questo caso ignora il valore di ritorno di calculate_lvl_diff
-    // perche essendo un solo comando non si esegue la subshell
-    if (is_node_cmd(shell->tree))
-    {
-        printf("ESCE:is_node_cmd(shell->tree)\n");
-        calculate_lvl_diff(shell->tree);
-        // ......PRINT ............
-        print_node(shell, shell->tree);
-        return;
-    }
-    // CASO : PRESENZA ALMENO 1 NODO_OP
-    // IL PRIMO STARTER NODE VIENE DAL LEFT-BRANCH
-    node = go_to_starter_node(shell->tree->left);
-    // ci sono DUE LOOP, il primo gestisce tutti i branch e sub-branch
-    // del LEFT, il secondo gestisce quelli del RIGHT
-    // CARATTERISTICHE PRIMO LOOP:
-    // esce quando non esiste piu il back node
-    // se diff>0 in right branch cè sempre il back del back node
-    while (1) // old: !is_node_cmd(node) && node->back
-    {
-        printf("PRIMO LOOP...\n");
-        lvl_diff = calculate_lvl_diff(node);
-        if (is_left_branch(node))
-        {
-            node->back->lvl_lock = 1;
-            node->back->lvl_subshell += lvl_diff;
-        }
-        if (!is_left_branch(node) && !node->back->back->lvl_lock)
-        {
-            // printf("PRIMO LOOP:NON LEFT BRANCH && !LOCK\n");
-            node->back->back->lvl_lock = 1;
-            node->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
-        }
-        else if (!is_left_branch(node) && node->back->back->lvl_lock)
-        {
-            // printf("PRIMO LOOP:NON LEFT BRANCH && LOCK\n");
-            node->back->back->lvl_lock = 1;
-            node->back->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
-        }
-        // ......PRINT LVL............
-        printf("calculate_lvl_diff(node):%d\n", lvl_diff);
-        print_node(shell, node);
-        // ...........................
-        node = next_cmd(shell, node);
-        if (!node) // è NULL se è stato navigato tutto il left branch
-            break;
-    }
-    printf("FUORI PRIMO LOOP\n");
-    // il primo loop alla fine lascia il valore di lvl_subshell che
-    // continuerà ad essere utilizzato dal secondo loop
-    printf("shell->tree->right:%p\n", shell->tree->right);
-    node = go_to_starter_node(shell->tree->right);
-    printf("shell->tree:%p\n", shell->tree);
-    printf("POST GOTO:node:%p\n", node);
-    printf(" node->back:%p\n\n", node->back);
-    // se right side ha solo un node_cmd, questa operazione setta
-    // il valore sullo stesso nodo_op (ovvero quello di root)
-    node->back->lvl_subshell = shell->tree->lvl_subshell;
-    while (1)
-    {
-        printf("SECONDO LOOP...\n");
-        lvl_diff = calculate_lvl_diff(node);
-        if (is_left_branch(node))
-        {
-            // printf("SECONDO LOOP:is_left_branch(node)\n");
-            // printf("node:%p\n", node);
-            // printf(" node->back:%p\n", node->back);
-            // printf("node->back->lvl_subshell:%d\n", node->back->lvl_subshell);
-            node->back->lvl_lock = 1;
-            node->back->lvl_subshell += lvl_diff;
-        }
-        if (!is_left_branch(node) && shell->tree != node->back->back && shell->tree != node->back && !node->back->back->lvl_lock)
-        {
-            // printf("SECONDO LOOP:NON LEFT BRANCH && !LOCK\n");
-            node->back->back->lvl_lock = 1;
-            node->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
-        }
-        else if (!is_left_branch(node) && shell->tree != node->back && shell->tree != node->back->back && node->back->back->lvl_lock)
-        {
-            // printf("SECONDO LOOP:NON LEFT BRANCH && LOCK\n");
-            node->back->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
-        }
-        // ......PRINT LVL............
-        printf("calculate_lvl_diff(node):%d\n", lvl_diff);
-        print_node(shell, node);
-        // ...........................
-        node = next_cmd(shell, node);
-        if (!node) // è NULL se è stato navigato tutto il left branch
-            break;
-    }
-    printf("SECONDO LOOP:FINE\n");
-}
 
 void print_node(t_shell *shell, t_node *node)
 {
@@ -170,7 +68,7 @@ void print_node(t_shell *shell, t_node *node)
     printf("----------|NODO|-----------\n");
     printf(">node:%p\n", node);
     while (node->content.cmd[++i])
-        printf("cmd[%d]:%s ", i, node->content.cmd[i]);
+        printf("cmd[%d]:|%s|len:%d ", i, node->content.cmd[i], ft_strlen(node->content.cmd[i]));
     printf("\n");
     printf("-----|REDIRECTION|-----\n");
     if (node->content.redir)
@@ -230,4 +128,68 @@ void print_node(t_shell *shell, t_node *node)
     printf("---------------------------\n");
 }
 
-// 4 func
+// V2 con next_cmd2
+//  naviga l albero e:
+//  se trova nodo_cmd setta exp e fa le varie rimozioni e setta lvl sui corretti nodi op
+//  se trova nodo_op continua a navigare l albero
+void set_components(t_shell *shell)
+{
+    t_node *node;
+    int lvl_diff;
+
+    printf("------------------|FASE: SET COMPONENTS ALBERO|------------------\n");
+    // CASO BASE: ASSENZA DI NODO_OP
+    // in questo caso ignora il valore di ritorno di calculate_lvl_diff
+    // perche essendo un solo comando non si esegue la subshell
+    if (is_node_cmd(shell->tree))
+    {
+        printf("ESCE:is_node_cmd(shell->tree)\n");
+        calculate_lvl_diff(shell->tree);
+        // ......PRINT ............
+        print_node(shell, shell->tree);
+        return;
+    }
+    // CASO : PRESENZA ALMENO 1 NODO_OP
+    // IL PRIMO STARTER NODE VIENE DAL LEFT-BRANCH
+    node = go_to_starter_node(shell->tree->left);
+    // ci sono DUE LOOP, il primo gestisce tutti i branch e sub-branch
+    // del LEFT, il secondo gestisce quelli del RIGHT
+    // CARATTERISTICHE PRIMO LOOP:
+    // esce quando non esiste piu il back node
+    // se diff>0 in right branch cè sempre il back del back node
+    printf("INIZIO LOOP...\n");
+    while (1)
+    {
+        // printf("PRE:calculate_lvl_diff(node)\n");
+        lvl_diff = calculate_lvl_diff(node);
+        // printf("POST:calculate_lvl_diff(node)\n");
+        if (is_left_branch(node))
+        {
+            // printf("is_left_branch(node)\n");
+            node->back->lvl_lock = 1;
+            node->back->lvl_subshell += lvl_diff;
+        }
+        if (next_cmd2(shell, node) && !is_left_branch(node) && !node->back->back->lvl_lock)
+        {
+            // printf("!is_left_branch(node) && !node->back->back->lvl_lock\n");
+            // printf("PRIMO LOOP:NON LEFT BRANCH && !LOCK\n");
+            node->back->back->lvl_lock = 1;
+            node->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
+        }
+        else if (next_cmd2(shell, node) && !is_left_branch(node) && node->back->back->lvl_lock)
+        {
+            // printf("!is_left_branch(node) && node->back->back->lvl_lock\n");
+            // printf("PRIMO LOOP:NON LEFT BRANCH && LOCK\n");
+            node->back->back->lvl_lock = 1;
+            node->back->back->back->lvl_subshell += (lvl_diff + node->back->lvl_subshell);
+        }
+        // ......PRINT LVL............
+        // printf("calculate_lvl_diff(node):%d\n", lvl_diff);
+        print_node(shell, node);
+        // ...........................
+        node = next_cmd2(shell, node);
+        if (!node) // è NULL se è stato navigato tutto il left branch
+            break;
+    }
+    printf("FINE LOOP\n");
+}

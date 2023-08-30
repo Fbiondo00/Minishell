@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 02:02:54 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 05:23:20 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,7 +192,6 @@ t_node *get_starter_node(t_shell *shell);
 t_node *go_to_starter_node(t_node *node);
 int is_left_branch(t_node *node);
 int is_node_cmd(t_node *node);
-t_node *next_cmd(t_shell *shell, t_node *node);
 t_node *next_cmd2(t_shell *shell, t_node *node);
 t_node *next_cmd_same_lvl(t_node *node);
 // bultins

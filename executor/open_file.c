@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 04:55:42 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/29 17:17:22 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -207,19 +207,19 @@ void ft_do_heredoc(t_node *node)
     next_node = NULL;
     while (1)
     {
-        printf("PRE(next_cmd2),LAVORATO:HERE_DOC|temp:%p\n", temp);
+        // printf("PRE(next_cmd2),LAVORATO:HERE_DOC|temp:%p\n", temp);
         i = -1;
         while (++i < temp->content.kv_size)
         {
             if (temp->content.redir[i].key == R_INPUT_HERE_DOC)
             {
                 ft_here_doc(temp, i, create_signature(temp, i, k++));
-                printf("redir modificata [i:%d]..\n", i);
-                print_node(temp->shell, temp);
+                // printf("redir modificata [i:%d]..\n", i);
+                // print_node(temp->shell, temp);
             }
         }
         next_node = next_cmd2(temp->shell, temp);
-        printf("POST(next_cmd2):HERE_DOC|next_node:%p\n", next_node);
+        // printf("POST(next_cmd2):HERE_DOC|next_node:%p\n", next_node);
         if (!next_node)
             return ;
         else
