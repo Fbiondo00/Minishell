@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 17:14:15 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/30 23:02:05 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,7 +164,9 @@ void set_components(t_shell *shell);
 void set_cmd(t_node *node);
 void ft_lowercase_cmd(t_node *node);
 char *var_expand(t_node *node, char *str);
+char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
 char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c);
+char *modify_raw_and_quote3(t_node *node, int idx, char *str, char c);
 int	ft_max(t_node *node, int i);
 int	ft_min(t_node *node, int i);
 int	ft_stronly(const char *str, char c);
@@ -179,6 +181,7 @@ void convert_space(t_node *node, char c);
 int	is_fd_valid(t_node *node, int idx);
 void	set_fd(t_node *node, int idx, int num);
 void	set_redir_op(t_node *node, int idx, int num);
+void ft_do_question(t_node *node);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
@@ -247,6 +250,7 @@ int ft_atoi(const char *str);
 int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
+char	*ft_itoa(int n);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);

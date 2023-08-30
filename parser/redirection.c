@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 17:15:37 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/30 23:55:21 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,7 @@ char	*modify_str(t_node *node, char *str)
 	return (new_str);
 }
 
+
 // verifica per ogni redirection ( > >> < <<)
 // se è presente e se non sta nelle quotes
 // num  è 0_based: è l index dell array delle redir
@@ -61,9 +62,11 @@ void	set_token_redirection(t_node *node, int idx, int num)
 	char	*chars;
 	char	*str;
 	char	*new_str;
-
+    
+    // str = NULL;
 	new_str = NULL;
 	chars = "><()";
+    // str = ft_wwew(node, str, idx, &i);
 	i = idx + 1;
 	while (node->raw_cmd[i] == ' ')
 		i++;

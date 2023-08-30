@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 17:17:12 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/30 22:13:48 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,7 @@
 // se trova " va avanti anche se ci sono gli spazi
 // altrimenti si ferma se trova uno spazio o se trova un char di redirection
 // echo ciao >q "q"
-// echo ciao >q"q"
-
+// echo ciao >q"q
 // echo a >b>c smette di contare quando incotra un redir
 // echo a >c"bb "c>y
 // idx: char dopo spazio, se esiste.
