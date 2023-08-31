@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 23:05:58 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/31 21:25:54 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -166,7 +166,6 @@ void	set_components(t_shell *shell)
 	if (is_node_cmd(shell->tree))
 	{
 		calculate_lvl_diff(shell->tree);
-		// print_node(shell, shell->tree);
 		return ;
 	}
 	node = go_to_starter_node(shell->tree->left);

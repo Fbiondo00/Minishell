@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 23:02:05 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/31 22:51:59 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -182,6 +182,11 @@ int	is_fd_valid(t_node *node, int idx);
 void	set_fd(t_node *node, int idx, int num);
 void	set_redir_op(t_node *node, int idx, int num);
 void ft_do_question(t_node *node);
+int tot_len_1(t_node *node, char *str, int idx, int y);
+void	set_lvl(t_node *node, int i, int num);
+void	set_token_redirection(t_node *node, int idx, int num);
+int	get_rd_size(t_node *node);
+char	*mody_str(char *str, int *k);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);

@@ -6,11 +6,40 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 22:13:48 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/08/31 22:34:26 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	get_len_value2(t_node *node, char *c, int i, int *flag)
+{
+	while (++i < ft_strlen(node->raw_cmd))
+	{
+		if (node->raw_cmd[i] == ' ' || (ft_strchr(c, node->raw_cmd[i])
+				&& !in_quotes(node, i)))
+			break ;
+		else if (node->raw_cmd[i] == 34 && (*flag)++)
+		{
+			while (++i < ft_strlen(node->raw_cmd))
+			{
+				if (node->raw_cmd[i] == 34)
+					break ;
+			}
+			if (node->raw_cmd[i - 1] == 34)
+				i--;
+		}
+		else if (node->raw_cmd[i] == 39 && (*flag)++)
+		{
+			while (++i < ft_strlen(node->raw_cmd))
+				if (node->raw_cmd[i] == 39)
+					break ;
+			if (node->raw_cmd[i - 1] == 39)
+				i--;
+		}
+	}
+	return (i);
+}
 
 // restituisce il num dei char da mallocare
 // se trova " va avanti anche se ci sono gli spazi
@@ -26,38 +55,10 @@ int	get_len_value(t_node *node, int idx)
 	int		flag;
 	char	*chars;
 
-	i = idx;
+	i = idx - 1;
 	flag = 0;
 	chars = "><";
-	while (i < ft_strlen(node->raw_cmd))
-	{
-		if (node->raw_cmd[i] == ' ' || (ft_strchr(chars, node->raw_cmd[i])
-				&& !in_quotes(node, i)))
-			break ;
-		else if (node->raw_cmd[i] == 34)
-		{
-			flag++;
-			while (++i < ft_strlen(node->raw_cmd))
-			{
-				if (node->raw_cmd[i] == 34)
-					break ;
-			}
-			if (node->raw_cmd[i - 1] == 34)
-				i--;
-		}
-		else if (node->raw_cmd[i] == 39)
-		{
-			flag++;
-			while (++i < ft_strlen(node->raw_cmd))
-			{
-				if (node->raw_cmd[i] == 39)
-					break ;
-			}
-			if (node->raw_cmd[i - 1] == 39)
-				i--;
-		}
-		i++;
-	}
+	i = get_len_value2(node, chars, i, &flag);
 	if (flag > 0)
 		return (i - idx - 2);
 	else
