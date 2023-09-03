@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 01:51:35 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:02:22 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ int	ft_exit(t_node *node, t_shell *shell)
 	i = -1;
 	while (node->content.cmd[++i])
 		;
-	printf("exit:i:%d\n", i);
 	if (i == 1)
 		free_all2_0(shell, "exit\n", 0, 1);
 	else

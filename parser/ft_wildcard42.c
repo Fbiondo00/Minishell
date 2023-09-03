@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 03:11:16 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 04:12:28 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:36:38 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ int	ft_stronly(const char *str, char c)
 {
 	while (*str)
 	{
-		printf("\nstr:control asterisk:%c\n", *str);
 		if (*str != c)
 			return (0);
 		str++;

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 17:17:22 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/02 04:53:50 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,32 +14,6 @@
 
 // esegue here_doc e poi chiude il file, verrà riaperto in ft_open
 // inoltre sostituisce il nome della value redir, con il nome del nuovo file
-// int ft_here_doc(int *fd, char *limiter)
-// {
-//     char *str;
-
-//     str = NULL;
-//     *fd = open("temp.txt", O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR);
-//     if (*fd == -1)
-//         return (0);
-//     while ((ft_strncmp(str, limiter, ft_strlen(str) - 1, 0)) || (ft_strlen(str) - 1) != ft_strlen(limiter))
-//     {
-//         write(1, &">", 1);
-//         str = get_next_line(0);
-//         if ((ft_strncmp(str, limiter, ft_strlen(str) - 1, 0)) && write(*fd, str, ft_strlen(str)) == -1)
-//             perror("Write error");
-//         if (!str)
-//         {
-//             if (unlink("./temp.txt") != 0)
-//                 perror("unlink error");
-//         }
-//         free(str);
-//     }
-//     close(*fd);
-//     *fd = open("temp.txt", O_RDONLY, 0777);
-//     return (1);
-// }
-
 int ft_here_doc(t_node *node, int i, char *new_value)
 {
     int fd;
@@ -48,7 +22,7 @@ int ft_here_doc(t_node *node, int i, char *new_value)
 
     printf("ENTRA IN FT_HERE_DOC\n");
     str = "123abc";
-    fd = open(new_value, O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR);
+    fd = open(new_value, O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR | O_CLOEXEC);
     if (fd == -1)
         return (0);
     printf("limiter:%s\n", node->content.redir[i].value);
@@ -76,6 +50,7 @@ int ft_here_doc(t_node *node, int i, char *new_value)
 }
 
 
+// ritorna 0 errore, 1 ok
 int ft_open(int *fd, char *str, int key)
 {
     if (key == R_OUTPUT_APPEND)
@@ -94,8 +69,11 @@ int ft_open(int *fd, char *str, int key)
         *fd = open(str, O_RDONLY | O_CLOEXEC, 0777);
     }
     if (*fd == -1)
+    {
+        perror("Open error");
         return (0);
-    printf("ft_open: FILE APERTO!\n");
+    }
+    // printf("ft_open: FILE APERTO!\n");
     return (1);
 }
 
@@ -109,18 +87,12 @@ int ft_open_file(t_node *node, int i)
 {
     int fd;
 
-    // if (node->content.redir[i].key == R_INPUT_HERE_DOC)
-    //     ft_here_doc(&fd, node->content.redir[i].value);
-    // else
-        ft_open(&fd, node->content.redir[i].value, node->content.redir[i].key);
+    ft_open(&fd, node->content.redir[i].value, node->content.redir[i].key);
     if (fd == -1)
-    {
-        perror("Open error");
         return (0);
-    }
     if (node->content.redir[i].fd != -1 && (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND))
     {
-        // printf("node->content.redir[i].fd != -1 && KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND");
+        printf("node->content.redir[i].fd != -1 && KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND\n");
         // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, node->content.redir[i].fd);
         ft_dup2(&fd, node->content.redir[i].fd);
     }
@@ -132,7 +104,7 @@ int ft_open_file(t_node *node, int i)
     }
     else if (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND)
     {
-        // printf("KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND");
+        // printf("KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND\n");
         // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, STDOUT_FILENO);
         ft_dup2(&fd, 1);
     }
@@ -146,49 +118,12 @@ char *create_signature(t_node *node, int i, int k)
     char *alf;
 
     alf="ABCDEFGHILMNOPQRSTUVZabcdefghilmnopqrstuvz123456789";
-    printf("vale of k: %d\n", k);
+    // printf("value of k: %d\n", k);
     str = ft_strjoin(node->content.redir[i].value, alf + ft_strlen(alf) - 1 - k);
     printf("create_signature:%s|len:%d\n", str, ft_strlen(str));
     return (str);
 }
-// PRE(next_cmd2):HERE_DOC|temp:0x7fbf02f09cf0
-// POST(next_cmd2):HERE_DOC|next_node:0x7fbf02f09d60
-// PRE(next_cmd2):HERE_DOC|temp:0x7fbf02f09d60
-// POST(next_cmd2):HERE_DOC|next_node:0x0
-
-
-// IN ft_do_heredoc
-// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f99bd104320
-// nodo SINISTRO, valuto cosa tornare...
-// right node è node_cmd...
-// node_cmd2,return: node->back->right
-// POST(next_cmd2):HERE_DOC|next_node:0x7f99bd104390
-// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f99bd104390
-// entriamo in nodo in un nodo DESTRO, valutazione...
-// E' presente node->back->back...
-// RETURN NULL:(!node->back->back->back)...
-// POST(next_cmd2):HERE_DOC|next_node:0x0
-
-
-// IN ft_do_heredoc
-// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04320
-// nodo SINISTRO, valuto cosa tornare...
-// right node è node_cmd...
-// node_cmd2,return: node->back->right
-// POST(next_cmd2):HERE_DOC|next_node:0x7f9f65a04390
-// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04390
-// entriamo in nodo in un nodo DESTRO, valutazione...
-// E' presente node->back->back...
-// node->back->back:0x7f9f65a04150
-// to_check = to_check = node->back->back->right;
-// controllo se to_check è nodo_cmd...
-// si tratta di un node_cmd...
-// node_cmd2,return: to_check
-// POST(next_cmd2):HERE_DOC|next_node:0x7f9f65a04250
-// PRE(next_cmd2),LAVORATO:HERE_DOC|temp:0x7f9f65a04250
-// entriamo in nodo in un nodo DESTRO, valutazione...
-// next_cmd2:return NULL( ELSE )
-// POST(next_cmd2):HERE_DOC|next_node:0x0
+// 
 
 // si scorre tutto l albero ed esegue tutti gli here_doc settati, poi li richiude.
 // verranno in seguito aperti da fd_do_redir. 

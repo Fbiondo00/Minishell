@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:12:38 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/27 17:30:37 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:21:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ int	empty_redir(t_shell *shell)
 	int		i;
 	char	*tmp;
 
-	tmp = duplica(shell->rawline);
+	tmp = ft_strdup(shell->rawline);
 	i = ft_strlen(tmp);
 	while (--i >= 0)
 	{

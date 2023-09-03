@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 21:55:45 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/30 21:56:02 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 01:33:03 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*init_str(int n)
 	nlen = n_len(n);
 	str = (char *)malloc(sizeof(char) * (nlen + 1));
 	if (!str)
-		 return (NULL);
+		return (NULL);
 	if (n < 0)
 	{
 		str[0] = '-';

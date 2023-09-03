@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:40:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/28 20:08:44 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:22:08 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	ft_read_line(t_shell *shell)
 			ft_clean_exit(shell, UNCLOSED_QUOTES_ERROR, 1, 0);
 			return ;
 		}
-		shell->str = duplica(shell->rawline);
+		shell->str = ft_strdup(shell->rawline);
 		if (check_op(shell, '|', "&") || check_op(shell, '&', "|")
 			|| check_op(shell, '>', "&<|)(") || check_op(shell, '<', "&>|)(")
 			|| empty_redir(shell) || check_operators(shell)
@@ -122,6 +122,8 @@ void	ft_read_line(t_shell *shell)
 			return ;
 		}
 	}
+	if (!shell->rawline[0])
+		ft_free_str(&shell->rawline);
 }
 
 // 5 func

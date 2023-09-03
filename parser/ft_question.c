@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_question.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 22:16:47 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/30 22:24:47 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:11:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@ void	ft_input1(char *new_str, t_node *node, int y)
 	if (new_str)
 	{
 		raw = modify_raw_and_quote3(node, y, new_str, 32);
-		// free(node->raw_cmd);
+		ft_free_str(&node->raw_cmd);
 		node->raw_cmd = raw;
 		quote = modify_raw_and_quote3(node, y, new_str, 48);
-		//    free(node->quote_idx);
+		ft_free_str(&node->quote_idx);
 		node->quote_idx = quote;
 	}
 }

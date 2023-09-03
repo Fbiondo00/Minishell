@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:56:05 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 07:35:40 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:07:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@
 // se 0, perche un cmd ha fatto exit_success
 // rischio perche non guardo se PIPE, ma il nodo dovrebbe essere
 // stato correttamente filtrato in execute()
-int ok_status(t_node *node)
+int	ok_status(t_node *node)
 {
 	if (node->shell->exit_status == -1 || node->shell->exit_status == 0)
 	{
@@ -30,20 +30,20 @@ int ok_status(t_node *node)
 	return (0);
 }
 
-int ft_dup2(int *fd, int arg)
+int	ft_dup2(int *fd, int arg)
 {
 	if (dup2(*fd, arg) == -1)
 	{
-		write(2, "Dup2 error", 10);
+		write(2, "Dup2 error\n", 11);
 		return (0);
 	}
 	close(*fd);
 	return (1);
 }
 
-int execute_builtin(t_node *node, t_shell *shell)
+int	execute_builtin(t_node *node, t_shell *shell)
 {
-	int len;
+	int	len;
 
 	len = ft_strlen(node->content.cmd[0]);
 	if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))
@@ -65,9 +65,9 @@ int execute_builtin(t_node *node, t_shell *shell)
 
 // ritorna 1 se è un comando builtin
 // ritorna 0 in caso contrario
-int is_builtin(t_node *node)
+int	is_builtin(t_node *node)
 {
-	int len;
+	int	len;
 
 	len = ft_strlen(node->content.cmd[0]);
 	if (!ft_strncmp(node->content.cmd[0], "echo", len, 1))

@@ -6,65 +6,13 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 05:22:18 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:34:15 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// to_exit == 1 se bisogna fare anche exit
-// to_exit == 0 per fare solo clean
-void ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
-{
 
-    if (shell->quote_idx)
-    {
-        printf("shell->quote_idx:%p\n", shell->quote_idx);
-        free(shell->quote_idx);
-        shell->quote_idx = NULL;
-    }
-    if (shell->rawline)
-    {
-        printf("shell->rawline:%p\n", shell->rawline);
-        free(shell->rawline);
-        shell->rawline = NULL;
-    }
-    if (shell->str)
-    {
-        printf("shell->str:%p\n", shell->rawline);
-        free(shell->str);
-        shell->str = NULL;
-    }
-    if (shell->tree)
-    {
-        if (is_node_cmd(shell->tree))
-        {
-            printf("ft_remove_heredoc(shell->tree);\n");
-            ft_remove_heredoc(shell->tree);
-        }
-        else
-        {
-            printf("ft_remove_heredoc(go_to_starter_node(shell->tree->left));\n");
-            ft_remove_heredoc(go_to_starter_node(shell->tree->left));
-        }
-    }
-    // if (shell->tree)
-        // free_tree(shell);  friare tutto l albero navigazione nodi, poi free.
-    // mi perdo l exit status se free, salvare in var locale?
-    if (str) //cazzata exit_status??
-        shell->exit_status = write(2, str, ft_strlen(str)) - ft_strlen(str) + exit_status;
-    printf("fine line: shell->exit_status:%d\n", shell->exit_status);
-    if (to_exit) // dovrebbe essere chiamata solo da builtin exit..
-    {
-        free_envp(shell);
-        // ft_reset_original_fd(); ??
-        
-        close(shell->temp_input);
-        close(shell->temp_output);
-        close(shell->temp_error);
-        exit(exit_status);
-    }
-}
 
 // ritorna  1 in caso sia presente nelle double quotes "
 // ritorna -1 in caso sia presente nelle single quotes '
@@ -92,6 +40,16 @@ int in_quotes(t_node *node, int index)
     return (0);
 }
 
+void addr_matr(char **str, char *msg)
+{
+    printf("msg:%s|MATR:%p\n", msg, str);
+}
+
+void addr_str(char *str, char *msg)
+{
+    printf("msg:%s|STR:%p\n", msg, str);
+}
+
 int main(int argc, char **argv, char **env)
 {
     t_shell shell;
@@ -105,26 +63,35 @@ int main(int argc, char **argv, char **env)
         {
             set_tree(&shell);
             set_components(&shell);
-            execute(&shell);
+            // executeOLD(&shell);
+            executeV2(&shell);
             ft_clean_exit(&shell, NULL , 3, 0);
         }
-       // ci entra ogni volta che fai invio senza scrivere nulla
+        // ci entra ogni volta che fai invio senza scrivere nulla
     }
 }
 
-// 5 func
+// 5 func 
 //----------------------------TODO: ----------------------------------
-//-3 norme: modify con flag 1,2,3 ... if 1, do_check1
-//-2. exe. single_cmd subredirs
-//-1. 
+// leaks:
+// in wildcard> strjoin2
+// 	new_str = ft_strjoin2(new_str, tem); non dovrebbe esse friato new_str
+// https://stackoverflow.com/questions/75125258/why-does-the-command-leaks-atexit-hang-forever-c-program-with-child-process
+// exit seg.fault
+
+
+// (cat <1 && cat <1) >2, in questo caso funziona
+// FIXED!
+// (echo a >1 | echo b) >3
+// (echo a | echo b) >3
+// (cat <1 >7 | cat <1) >3 .. OK!
 // 0.MAIN
 // leaks
+// ls * >leaks
 // 1.EXECUTOR
-    // A.do subshell
-        //  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
-        //  echo a && echo b
-
-
+// A.do subshell
+//  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
+//  echo a && echo b
 
 // bash-3.2$ unset HOME
 // bash-3.2$ cd
@@ -134,16 +101,8 @@ int main(int argc, char **argv, char **env)
 // 1.SIGNAL:
 //  a.  void	ft_reset_signal(void) perche?
 //  b.  shell->error se è da settare errore, come?
-// 2.UTILS:
-//  a. get_idx_eq_st2  da cancellare?
-// 3.BUILTINS
-//  a. unset.c  , setta exit status in clean exit?
-//----------------------------TBD: ----------------------------------
-// 1. ft_read_line() LEAKS READLINE?
-// https: // stackoverflow.com/questions/55196451/gnu-readline-enormous-memory-leak
-// ...and the history can be freed calling void rl_clear_history(void), add that function call in your program and redo a test
 
-// https://www.cs.colostate.edu/~mcrob/toolbox/unix/redirection#:~:text=File%20redirection%20happens%20second%2C%20and,The%20file%20redirection%20always%20wins.)
+
 
 //----------------------------INFO VARIE: ---------------------------
 // 1. DEBUG
@@ -182,9 +141,16 @@ int main(int argc, char **argv, char **env)
 
 // come nel caso: // (echo b || echo a >e) non fa redir
 
-// ------------------- TESTER: OK/KO in base a risultati bash -------------------
-// --------------- WIP -------------------
+// pass func as argument
 
+// https://stackoverflow.com/questions/59987314/pass-a-function-or-pass-a-function-pointer-in-c
+
+// ------------------- TESTER: OK/KO in base a risultati bash -------------------
+// ------ WIP ------
+// a |> b        DUP2 ERR?
+// (ls) <g  deve dare errore, invece lo tratta come fosse un output
+// (<<u)|echo a non esegue echo a
+// (echo a && echo b)| cat  seg
 // --------------- FATTI ------------------
 // echo c|       KO
 // |echo c       KO
@@ -206,26 +172,24 @@ int main(int argc, char **argv, char **env)
 // a &>b         KO
 // a <> b        KO
 // a |> b        OK
-// ((ls))        OK bash non da risultato ma trattato come sotto
-// ((ls) )       OK
-// (((ls)))      OK
-// ((ls) | (ls)) OK
-// (ls) <u       OK
-// echo a |(>uu) OK
-// (<<u)|echo a  OK
-// ("echo')")    OK
-// echo a>b      OK
-// a|b>d<e       OK
-// echo >a>b>cc<<ddd                               OK
-// echo a >"bb "c>y                                OK
-// a >u>>og <<o"'  pp" p                           OK
-// (echo b || (echo a ) >u)                        OK
-// (echo b || echo a >e)                           OK
-// ((echo a && ls))                                OK
-// (echo a && ls)                                  OK
-// (echo a && ls) |cat                             OK
-// (echo b || echo a >e)                           OK
-// (echo a && (echo b && (echo c <z))) >p| cat     OK
+// ((ls))        OK ok
+// ((ls) )       OK ok
+// (((ls)))      OK ok
+// ((ls) | (ls)) OK , ok out, ma non sembra uscire dai fork
+// (ls) <u       OK, errore redir, pensa sia out
+// echo a |(>uu) OK ok
+// (<<u)|echo a  OK, errore non stampa a
+// ("echo')")    OK ok
+// echo a>b      OK ok
+// echo a|echo b>d<e           OK, ok crea solo d e da redir error
+// echo >a>b>cc<<ddd           OK, ok
+// echo a >"bb "c>y            OK, ok crea i 2 file e mette out in y
+// echo a >u>>og <<o"'  pp" p       OK
+// (echo a || (echo b ) >u)    OK, errore, crea b(e non deve) e c mette out + segfault
+// (echo b || echo a >e)       OK, ok b in out, ma seg fault
+// ((echo a && ls))            OK, ok
+// (echo a && ls) |cat         OK, errore, gli out non li mette in file + segfault
+// (echo a && (echo b && (echo c <z))) >p| cat     OK, non crea p, errore in generale
 // (echo a && (echo b && (echo c <u))>p) | cat     OK
 //  echo a || echo b | cat <<2                     OK
 // ---
@@ -251,8 +215,9 @@ int main(int argc, char **argv, char **env)
 // (echo a >)    KO
 // (echo a >>)   KO
 // echo a <<     KO
-// echo ciao >q "r" OK
-// echo ciao >q"r"  OK
+// echo ciao >q "r"  OK
+// echo ciao >q"r"   OK
+// ((echo a>b) >c)<e OK
 
 // se fallisce calcolo redir input, non viene eseguito il cmd
 // EX. echo a <1

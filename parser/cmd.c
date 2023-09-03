@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:55:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 22:21:26 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:10:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,10 +91,10 @@ void	ft_do_expand(t_node *node)
 		{
 			str = find_var(node, i);
 			raw = modify_raw_and_quote(node, i, str, 32);
-			// free(node->raw_cmd);
+			ft_free_str(&node->raw_cmd);
 			node->raw_cmd = raw;
 			quote = modify_raw_and_quote(node, i, str, 48);
-			// free(node->quote_idx);
+			ft_free_str(&node->quote_idx);
 			node->quote_idx = quote;
 		}
 	}

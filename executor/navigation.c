@@ -6,13 +6,12 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 05:26:49 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/01 04:54:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// dovrebbe essere simile a get_starter_node
 // solo che prende un nodo come input
 t_node *go_to_starter_node(t_node *node)
 {
@@ -50,7 +49,8 @@ int is_node_cmd(t_node *node)
 t_node *next_cmd2(t_shell *shell, t_node *node)
 {
     t_node* to_check;
-    if (shell->tree == node)// || (!is_left_branch(node) && node->back == shell->tree))
+    // printf("in next_cmd2\n");
+    if (!node || shell->tree == node)// || (!is_left_branch(node) && node->back == shell->tree))
     {
         // printf("next_cmd2:return NULL(shell->tree == node)\n");
         return (NULL);
@@ -78,7 +78,7 @@ t_node *next_cmd2(t_shell *shell, t_node *node)
         {
             // printf("E' presente node->back->back...\n");
             // printf("node->back->back:%p\n", node->back->back);
-            if (!node->back->back->back || !node->back->back->right) // a&&b|c
+            if (!node->back->back->back && !is_node_cmd(node->back->back->right)) // a&&b|c
             {
                 // printf("RETURN NULL:(!node->back->back->back && !node->back->back->right...\n");
                 return (NULL);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/31 22:51:59 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:01:29 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -164,9 +164,7 @@ void set_components(t_shell *shell);
 void set_cmd(t_node *node);
 void ft_lowercase_cmd(t_node *node);
 char *var_expand(t_node *node, char *str);
-char *modify_raw_and_quote(t_node *node, int idx, char *str, char c);
 char *modify_raw_and_quote2(t_node *node, int idx, char *str, char c);
-char *modify_raw_and_quote3(t_node *node, int idx, char *str, char c);
 int	ft_max(t_node *node, int i);
 int	ft_min(t_node *node, int i);
 int	ft_stronly(const char *str, char c);
@@ -177,16 +175,17 @@ int	ft_middle(char *str, int index);
 int	check_left(char *str, int i);
 void ft_do_cmd(t_node *node);
 int ft_get_len_env(t_shell *shell);
-void convert_space(t_node *node, char c);
-int	is_fd_valid(t_node *node, int idx);
-void	set_fd(t_node *node, int idx, int num);
+char	*modify_raw_and_quote(t_node *node, int idx, char *str, char c);
+void	ft_do_question(t_node *node);
+int	tot_len_1(t_node *node, char *str, int idx, int y);
+char	*modify_raw_and_quote3(t_node *node, int idx, char *str, char c);
+char	*mody_str(char *str, int *k);
 void	set_redir_op(t_node *node, int idx, int num);
-void ft_do_question(t_node *node);
-int tot_len_1(t_node *node, char *str, int idx, int y);
-void	set_lvl(t_node *node, int i, int num);
+void	set_fd(t_node *node, int idx, int num);
 void	set_token_redirection(t_node *node, int idx, int num);
 int	get_rd_size(t_node *node);
-char	*mody_str(char *str, int *k);
+void	set_lvl(t_node *node, int i, int num);
+void	convert_space(t_node *node, char c);
 
 // init
 void shell_init(int argc, char **argv, char **env, t_shell *shell);
@@ -199,7 +198,8 @@ void ft_head(int sign); //?
 
 // EXECUTOR
 void execute(t_shell *shell);
-t_node *get_starter_node(t_shell *shell);
+void executeV2(t_shell *shell);
+t_node *fd_storage(t_node* node);
 // navigation
 t_node *go_to_starter_node(t_node *node);
 int is_left_branch(t_node *node);
@@ -216,7 +216,6 @@ int ft_exit(t_node *node, t_shell *shell);
 void swap_(char **str1, char **str2);
 void mall_env(t_shell *shell, char **env);
 void free_envp(t_shell *shell);
-t_node *next_cmd_same_lvl(t_node *node);
 void ft_reset_original_fd(t_node *node);
 void ft_wild(t_node *node, int i, int y);
 void	ft_conc(t_shell *shell, char *str, int y);
@@ -229,11 +228,31 @@ void ft_execve(t_node *node);
 void free_matrix(char **matrix);
 // fd
 int ft_do_redir(t_node *node);
+int ft_do_redir2(t_node *node, char **arredir);
+int ft_do_redir2_pipe(t_node *node, char **arredir);
+int ft_do_redir3(t_node *node, char **ignore);
 void ft_reset_original_fd(t_node *node);
+int ft_fd_sub_level(t_node *node, int lvl, int is_first);
+int norm_exit_status(t_node *node, int i);
+int ft_fd_sub_level2(t_node *node, int lvl, int *is_first);
+int ft_fd_cmd_level(t_node *node);
 // open_file
 int ft_open_file(t_node *node, int i);
 void ft_do_heredoc(t_node *node);
 void ft_remove_heredoc(t_node *node);
+int ft_open(int *fd, char *str, int key);
+// execute_utils.c
+int norm_check(t_node *node);
+int is_last_pipe(t_node *node);
+char *sign_str(t_node *node, int lvl);
+t_node *last_cmd_same_lvl(t_node *node);
+int is_redir_out(t_node *node, int lvl);
+// execute_utils2.c
+t_node *fd_storage(t_node *node);
+void ft_free_hidden_redir(char **arredir);
+t_node *ft_do_pipe(t_node *node, char **arredir);
+t_node *ft_do_and_or(t_node *node, t_node *prev_node, char **arredir);
+void	ft_single_cmd2(t_node *node, char **arredir, int (*f)(t_node *, char **));
 
 // UTILS
 int ft_strlen(char *s);
@@ -259,7 +278,6 @@ char	*ft_itoa(int n);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);
-t_node *next_cmd_same_lvl(t_node *node);
 int is_builtin(t_node *node);
 t_node *go_next_cmd_and_or(t_node *node);
 int execute_builtin(t_node *node, t_shell *shell);
@@ -274,5 +292,11 @@ int ft_strchr_gnl(char *s1, char c);
 size_t ft_strlen_gnl(char *str);
 void *ft_free(char *s1, char *s2);
 size_t ft_is_newline(char c);
+// clean_exit.c
+void ft_free_str(char **str);
 
+//TEST_OLD
+void executeOLD(t_shell *shell);
+void addr_str(char *str, char *msg);
+void addr_matr(char **str, char *msg);
 #endif

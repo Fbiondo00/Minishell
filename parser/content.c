@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   content.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 20:00:20 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/31 22:34:26 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:35:10 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,7 +90,6 @@ void	set_raw_cmd_and_quote_idx(t_node *node, int start, int finish)
 
 void	set_content(t_node *node)
 {
-	printf("set_redirection..\n");
 	set_redirection(node);
 }
 

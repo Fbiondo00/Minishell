@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:00 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 01:51:32 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:08:16 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,4 +44,5 @@ void	free_envp(t_shell *shell)
 	while (shell->env[++i])
 		free(shell->env[i]);
 	free(shell->env);
+	shell->env = NULL;
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tree.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:51:56 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 17:04:10 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:34:57 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,8 +47,6 @@ void	set_node_cmd(t_node *node, t_node *back_node)
 {
 	node->back = back_node;
 	node->content.idx_op = -1;
-	printf("--- set_node_cmd ---\n");
-	printf("set_content..\n");
 	set_content(node);
 }
 
@@ -102,8 +100,8 @@ void	set_tree(t_shell *shell)
 
 	node = malloc(sizeof(*node));
 	node_init(node);
-	node->raw_cmd = duplica(shell->rawline);
-	node->quote_idx = duplica(shell->quote_idx);
+	node->raw_cmd = ft_strdup(shell->rawline);
+	node->quote_idx = ft_strdup(shell->quote_idx);
 	node->shell = shell;
 	shell->tree = node;
 	idx_start = check_op_logic_than_pipe(node);

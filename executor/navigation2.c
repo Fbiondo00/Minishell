@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 18:28:48 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/01 04:13:15 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,20 +59,26 @@ t_node *next_cmd_same_lvl(t_node *node)
     t_node *next_node;
 
     temp = node;
-    temp->done_lock = 1;
+    // temp->done_lock = 1;
     next_node = NULL;
     while (1)
     {
         next_node = next_cmd2(node->shell, temp);
+        // printf("next_cmd2(node->shell, temp):%p\n", next_cmd2(node->shell, temp));
         if (!next_node || next_node->done_lock == 1)
+        {
+            if (next_node)
+                printf("next_node->done_lock:%d\n", next_node->done_lock);
             return (NULL);
+        }
+            
         // if (temp == next_node)
         //     return (NULL);
         // else
         temp = next_node;
         if (temp->lvl_subshell == node->lvl_subshell)
         {
-            // printf("trovato nodo stesso lvl...\n");
+            // printf("trovato nodo stesso lvl:%p\n",temp);
             // print_node(temp->shell, temp);
             return (temp);
         }
@@ -94,6 +100,7 @@ t_node *go_next_cmd_and_or(t_node *node)
     // printf("-----------!CERCO: ..go_next_cmd_and_or...--------------\n\n");
     while (1)
     {
+        temp->done_lock = 1;
         next_node = next_cmd_same_lvl(temp);
         temp = next_node;
         if (!next_node)

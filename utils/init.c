@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/29 01:58:04 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 01:34:21 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,9 +71,9 @@ int	ft_get_len_mat(t_node *node)
 	return (ij);
 }
 
-int ft_get_len_env(t_shell *shell)
+int	ft_get_len_env(t_shell *shell)
 {
-	int ij;
+	int	ij;
 
 	ij = 0;
 	while (shell->env[++ij])
