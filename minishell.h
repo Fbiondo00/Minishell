@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 02:37:25 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 16:44:31 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -275,6 +275,9 @@ int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
 char	*ft_itoa(int n);
+void	ft_free_str(char **str);
+void	norm_remove_heredoc(t_shell *shell);
+void	remove_node(t_node *node);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);

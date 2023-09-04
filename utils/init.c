@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 01:34:21 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 20:51:20 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,33 +79,4 @@ int	ft_get_len_env(t_shell *shell)
 	while (shell->env[++ij])
 		;
 	return (ij);
-}
-
-int	ft_atoi(const char *str)
-{
-	int	i;
-	int	j;
-	int	segn;
-	int	check;
-
-	check = 0;
-	i = 0;
-	j = 0;
-	segn = 1;
-	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
-		i++;
-	while (str[i] == '-' || str[i] == '+')
-	{
-		if (str[i++] == '-')
-			segn = -1;
-		check++;
-	}
-	if (check > 1)
-		return (j);
-	while (str[i] >= '0' && str[i] <= '9')
-	{
-		j = j * 10 + (str[i] - '0');
-		i++;
-	}
-	return (j * segn);
 }
