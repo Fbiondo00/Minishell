@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:47:03 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/02 23:43:52 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 03:07:10 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,27 +36,31 @@ int ft_fd_sub_level2(t_node *node, int lvl, int *is_first)
     {
         if ( lvl > 0 && node->content.redir[i].lvl == lvl)
         {
+            printf("A\n");
             if ((*is_first == 0 && (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)) || (node->content.redir[i].key == R_OUTPUT_APPEND || node->content.redir[i].key == R_OUTPUT_TRUNC))
-            if (node->content.redir[i].key == R_OUTPUT_TRUNC)
             {
+                printf("B\n");
+                if (node->content.redir[i].key == R_OUTPUT_TRUNC)
+                {
+                    printf("C\n");
+                    if (ft_open_file(node, i) == 0)
+                    {
+                        printf("ERRORE>ft_open_file\n");
+                        return (0);
+                    }
+                    node->content.redir[i].key = R_OUTPUT_APPEND;
+                    if (ft_open_file(node, i) == 0)
+                    {
+                        printf("ERRORE>ft_open_file\n");
+                        return (0);
+                    }
+                }
+                printf("lvl:%d|ft_fd_sub_level2: FAft_open_file!\n", lvl);
                 if (ft_open_file(node, i) == 0)
                 {
                     printf("ERRORE>ft_open_file\n");
                     return (0);
                 }
-                node->content.redir[i].key = R_OUTPUT_APPEND;
-                if (ft_open_file(node, i) == 0)
-                {
-                    printf("ERRORE>ft_open_file\n");
-                    return (0);
-                }
-            }
-                node->content.redir[i].key = R_OUTPUT_APPEND;
-            printf("lvl:%d|ft_fd_sub_level2: FAft_open_file!\n", lvl);
-            if (ft_open_file(node, i) == 0)
-            {
-                printf("ERRORE>ft_open_file\n");
-                return (0);
             }
         }
         if (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)
@@ -118,18 +122,34 @@ int ft_fd_cmd_level(t_node *node)
 }
 
 // 0 errore, 1 ok
+// int norm_exit_status(t_node *node, int i)
+// {
+//     if (i == 1)
+//     {
+//         node->shell->exit_status = 0;
+//         return (1);
+//     }
+//     else 
+//     {
+//         node->shell->exit_status = 1;
+//         ft_reset_original_fd(node);
+//         return (0);
+//     }
+// }
+
+// ritorna 0 se ok, ritorna !0 se errore
 int norm_exit_status(t_node *node, int i)
 {
-    if (i == 1)
+    if (i == 0)
     {
         node->shell->exit_status = 0;
-        return (1);
+        return (0);
     }
     else
     {
         node->shell->exit_status = 1;
         ft_reset_original_fd(node);
-        return (0);
+        return (i);
     }
 }
 
@@ -178,9 +198,11 @@ int ft_do_redir(t_node *node)
 // 3. ft_fd_cmd_level
 // se ok setta tali valori in std_...
 // se ko fa il reset dei valori originali std_..
-int ft_do_redir2(t_node *node, char **arredir)
+// return 2 se ko sub_lvl
+// return 1 se ko cmd_lvl
+// return 0 se tutto ok
+int ft_do_redir2(t_node *node)
 {
-    int fd;
     int flag;
 
     t_node *storage;
@@ -193,33 +215,25 @@ int ft_do_redir2(t_node *node, char **arredir)
     // questo clean exit solo se fallisce una redir in input, invalida
     // tutta la subshell.. se invece accade a cmd_lvl, invalida solo il cmd
     // ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
-    printf("PRE arredir:%p\n", *arredir);
-    if (*arredir != NULL)
-    {
-        printf("arredir: not null\n");
-        if (ft_open(&fd, *arredir, R_OUTPUT_APPEND) == 0)
-            return (norm_exit_status(node, 0));
-        printf("arredir aperto\n");
-    }
+  
     printf("PRE: ft_fd_sub_level...\n");
     if (storage->content.redir && ft_fd_sub_level2(storage, node->back->lvl_subshell, &flag) == 0)
     {
         printf("esce in ft_fd_sub_level...\n");
         ft_reset_original_fd(node);
-        return (norm_exit_status(node, 0));
+        return (norm_exit_status(node, 2));
     }
     printf("PRE: ft_fd_cmd_level...\n");
     if (!ft_fd_cmd_level(node))
     {
         ft_reset_original_fd(node);
-        return (norm_exit_status(node, 0));
+        return (norm_exit_status(node, 1));
     }
-    return (norm_exit_status(node, 1));
+    return (norm_exit_status(node, 0));
 }
 
-int ft_do_redir2_pipe(t_node *node, char **arredir)
+int ft_do_redir2_pipe(t_node *node)
 {
-    int fd;
     int flag;
 
     t_node *storage;
@@ -232,33 +246,25 @@ int ft_do_redir2_pipe(t_node *node, char **arredir)
     // questo clean exit solo se fallisce una redir in input, invalida
     // tutta la subshell.. se invece accade a cmd_lvl, invalida solo il cmd
     // ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
-    printf("PRE arredir:%p\n", *arredir);
-    if (*arredir != NULL)
-    {
-        printf("arredir: not null\n");
-        if (ft_open(&fd, *arredir, R_OUTPUT_APPEND) == 0)
-            return (norm_exit_status(node, 0));
-        printf("arredir aperto\n");
-    }
+   
     printf("PRE: ft_fd_sub_level...\n");
     if (storage->content.redir && ft_fd_sub_level2(storage, node->back->lvl_subshell, &flag) == 0)
     {
-        printf("esce in ft_fd_sub_level...\n");
+        printf("errore, redir subshell:pipe...\n");
         ft_reset_original_fd(node);
-        return (norm_exit_status(node, 0));
+        return (norm_exit_status(node, 1));
     }
     printf("PRE: ft_fd_cmd_level...\n");
-    return (norm_exit_status(node, 1));
+    return (norm_exit_status(node, 0));
 }
 
 // V2 versione per single_cmd
-int ft_do_redir3(t_node *node, char **ignore)
+int ft_do_redir3(t_node *node)
 {
     int flag;
     int max_lvl;
-    (void)ignore;
-    flag = 0;
     
+    flag = 0;
     if (node->content.redir)
         max_lvl = node->content.redir[node->content.kv_size - 1].lvl;
     else
@@ -272,7 +278,7 @@ int ft_do_redir3(t_node *node, char **ignore)
         {
             printf("ERRORE: esce in ft_fd_sub_level...\n");
             ft_reset_original_fd(node);
-            return (norm_exit_status(node, 0));
+            return (norm_exit_status(node, 2));
         }
     }
     printf("PRE: ft_fd_cmd_level(node)\n");
@@ -280,9 +286,9 @@ int ft_do_redir3(t_node *node, char **ignore)
     {
         printf("ERRORE: esce in ft_fd_cmd_level...\n");
         ft_reset_original_fd(node);
-        return (norm_exit_status(node, 0));
+        return (norm_exit_status(node, 1));
     }
-    return (norm_exit_status(node, 1));
+    return (norm_exit_status(node, 0));
 }
 
 // 4 func

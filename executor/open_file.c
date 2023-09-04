@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/02 04:53:50 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 03:02:25 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -136,7 +136,7 @@ void ft_do_heredoc(t_node *node)
     t_node *temp;
     t_node *next_node;
 
-    printf("IN ft_do_heredoc\n");
+    // printf("IN ft_do_heredoc\n");
     k = 0;
     temp = node;
     next_node = NULL;

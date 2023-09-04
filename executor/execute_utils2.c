@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 23:40:11 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/01 06:22:09 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 03:45:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,11 @@ t_node *fd_storage(t_node *node)
         while (1)
         {
             nxt = last_cmd_same_lvl(temp);
+            printf("last_cmd_same_lvl(temp):%p\n", last_cmd_same_lvl(temp));
             temp->done_lock = 0;
             if (!next_cmd2(nxt->shell, nxt))
                 return (nxt);
-            if (next_cmd2(nxt->shell, nxt)->lvl_subshell < nxt->shell->lvl_subshell)
+            if (next_cmd2(nxt->shell, nxt)->back->lvl_subshell < nxt->shell->lvl_subshell)
                 return (nxt);
             temp = next_cmd2(nxt->shell, nxt);
         }
@@ -58,7 +59,7 @@ void ft_free_hidden_redir(char **arredir)
 // n.b2:refactor simple_cmd  per utilizzarlo
 // ....solo la parte dell !is_builtin vareso variabile
 // fare v2 che accetta redir2 come input
-t_node *ft_do_pipe(t_node *node, char **arredir)
+t_node *ft_do_pipe(t_node *node)
 {
 
     pid_t pid;
@@ -70,10 +71,15 @@ t_node *ft_do_pipe(t_node *node, char **arredir)
     if (!ft_strncmp(node->content.cmd[0], "exit", len, 1))
     { // fork in tutti i casi tranne exit.
         printf("eseguo exit...\n");
-        if (ft_do_redir2(node, arredir) == 0)
+        if (ft_do_redir2(node) == 1)
         {
-            printf("errore durante redir!\n");
+            printf("errore redir CMD_LVL!\n");
             return (next_cmd_same_lvl(node));
+        }
+        if (ft_do_redir2(node) == 2)
+        {
+            printf("errore redir SUB_LVL!\n");
+            return (next_cmd2(node->shell, last_cmd_same_lvl(node)));
         }
         execute_builtin(node, node->shell); // poi va a return next_cmd_same_lvl
     }
@@ -92,6 +98,8 @@ t_node *ft_do_pipe(t_node *node, char **arredir)
             // 1 sub_lvl
             // 2 pipe
             // 3 cmd_lvl
+            if (ft_do_redir2_pipe(node) != 0)
+                exit(34);
             if (!is_last_pipe(node)) // && next_cmd_same_lvl(node)->done_lock != 1)
             {
                 close(fd[0]);
@@ -100,12 +108,15 @@ t_node *ft_do_pipe(t_node *node, char **arredir)
             else
             {
                 dup2(node->shell->temp_output, STDOUT_FILENO);
-                if (ft_do_redir2_pipe(node, arredir) == 0)
-                    exit(34);
+                // if (ft_do_redir2_pipe(node) == 0)
+                //     exit(34);
             }
-                
-            if (ft_do_redir2(node, arredir) == 0)
+            if (!ft_fd_cmd_level(node))
+            {
+                ft_reset_original_fd(node);
+                norm_exit_status(node, 1);
                 exit(33);
+            }
             if (is_builtin(node))
                 exit(execute_builtin(node, node->shell));
             else
@@ -130,17 +141,31 @@ t_node *ft_do_pipe(t_node *node, char **arredir)
 
 // singola funzione che gestisce sia l or che l and
 // all interno una funzione
-t_node *ft_do_and_or(t_node *node, t_node *prev_node, char **arredir)
+t_node *ft_do_and_or(t_node *node, t_node *prev_node)
 {
+    int res;
     // 1. check status
     // prima di poter eseguire un nodo and o or bisogna controllare exit_status precedente.
-    printf("norm_check(node):%d\n", norm_check(node));
-    if (!prev_node || (prev_node && norm_check(node)))
+    printf("PRE:norm_check(node):%d\n", norm_check(node));
+    if ((!prev_node && node == go_to_starter_node(node->shell->tree->left)) || (prev_node && norm_check(node)) || (!prev_node && node != go_to_starter_node(node->shell->tree->left) && norm_check(node)))
     {
+        if (!prev_node)
+            printf("!prev_node\n");
         printf("start esecuzione comando....\n");
-        ft_single_cmd2(node, arredir, ft_do_redir2);
+        res = ft_single_cmd2(node, ft_do_redir2);
+        if (res == 1)
+        {
+            printf("errore redir CMD_LVL!\n");
+            return (next_cmd_same_lvl(node));
+        }
+        if (res == 2)
+        {
+            printf("errore redir SUB_LVL!\n");
+            node->done_lock = 1;
+            return (node);
+        }
         printf("cmd and_or eseguito....\n");
-        printf("norm_check(node):%d\n", norm_check(node));
+        printf("AFTER:norm_check(node):%d\n", norm_check(node));
         if (norm_check(node))
         {
             printf("HERE!\n");

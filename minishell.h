@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:01:29 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 02:37:25 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -228,9 +228,9 @@ void ft_execve(t_node *node);
 void free_matrix(char **matrix);
 // fd
 int ft_do_redir(t_node *node);
-int ft_do_redir2(t_node *node, char **arredir);
-int ft_do_redir2_pipe(t_node *node, char **arredir);
-int ft_do_redir3(t_node *node, char **ignore);
+int ft_do_redir2(t_node *node);
+int ft_do_redir2_pipe(t_node *node);
+int ft_do_redir3(t_node *node);
 void ft_reset_original_fd(t_node *node);
 int ft_fd_sub_level(t_node *node, int lvl, int is_first);
 int norm_exit_status(t_node *node, int i);
@@ -250,9 +250,9 @@ int is_redir_out(t_node *node, int lvl);
 // execute_utils2.c
 t_node *fd_storage(t_node *node);
 void ft_free_hidden_redir(char **arredir);
-t_node *ft_do_pipe(t_node *node, char **arredir);
-t_node *ft_do_and_or(t_node *node, t_node *prev_node, char **arredir);
-void	ft_single_cmd2(t_node *node, char **arredir, int (*f)(t_node *, char **));
+t_node *ft_do_pipe(t_node *node);
+t_node *ft_do_and_or(t_node *node, t_node *prev_node);
+int	ft_single_cmd2(t_node *node, int (*f)(t_node *));
 
 // UTILS
 int ft_strlen(char *s);
@@ -281,6 +281,7 @@ int ok_status(t_node *node);
 int is_builtin(t_node *node);
 t_node *go_next_cmd_and_or(t_node *node);
 int execute_builtin(t_node *node, t_shell *shell);
+void execute_recursiveV2(t_node *node);
 
 // test
 void print_node(t_shell *shell, t_node *node);

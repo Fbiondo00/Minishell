@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 23:32:44 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/02 05:07:08 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 04:28:49 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -272,7 +272,7 @@ char *sign_str(t_node *node, int lvl)
     alf = "ABCDEFGHILMNOPQRSTUVZabcdefghilmnopqrstuvz9876543210";
     printf("vale of lvl: %d\n", lvl);
     str = ft_strjoin("lvl", alf + ft_strlen(alf) - 1 - lvl);
-    printf("create_signature:%s|len:%d\n", str, ft_strlen(str));
+    printf(">create_signature:%s|len:%d\n", str, ft_strlen(str));
     return (str);
 }
 

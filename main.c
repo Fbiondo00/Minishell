@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:34:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 05:46:30 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,8 @@ int main(int argc, char **argv, char **env)
 // (cat <1 >7 | cat <1) >3 .. OK!
 // 0.MAIN
 // leaks
-// ls * >leaks
+// ls *    :leaks
+// echo $? :leaks
 // 1.EXECUTOR
 // A.do subshell
 //  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
@@ -152,6 +153,15 @@ int main(int argc, char **argv, char **env)
 // (<<u)|echo a non esegue echo a
 // (echo a && echo b)| cat  seg
 // --------------- FATTI ------------------
+
+// new_ok:
+// (echo a || echo b) || echo c && echo r    OK  out: a r
+// (echo a || echo b) && echo c && echo r    OK  out: a c r
+// (echo a && echo b) && echo c && echo r    OK  out: a b c r
+// (echo a && echo b) <m && echo c && echo r OK  out: a b c r m: 1 2
+// (echo a || (echo b ) >u) OK non esegue comando ne redir
+// (echo a || (echo b ) <u) OK non esegue comando ne redir
+// ----
 // echo c|       KO
 // |echo c       KO
 // (|(echo c))   KO
@@ -171,38 +181,44 @@ int main(int argc, char **argv, char **env)
 // a>& b         KO
 // a &>b         KO
 // a <> b        KO
-// a |> b        OK
-// ((ls))        OK ok
-// ((ls) )       OK ok
-// (((ls)))      OK ok
-// ((ls) | (ls)) OK , ok out, ma non sembra uscire dai fork
-// (ls) <u       OK, errore redir, pensa sia out
-// echo a |(>uu) OK ok
-// (<<u)|echo a  OK, errore non stampa a
+// echo a |> b   OK ok!
+// echo a &&> b  OK ok! out:a
+// echo a || < b   OK ok!, non esegue redir
+// echo a && < b  OK ok! out:a && error_redir
+// ((ls))        OK ok! out:ls
+// ((ls) )       OK ok! out:ls
+// (((ls)))      OK ok! out:ls
+// ((ls) | (ls)) OK ok! out:ls
+// (ls) <u       OK ok! out:error_redir
+// echo a |(>uu) OK ok! out: crea uu (vuoto)
+// (<<u)|echo a  OK ok!
+// (>a | echo b) OK ok!
+// (<d | echo b) OK ok! out: err_redir + b
+// <<u|echo a    OK ok!
 // ("echo')")    OK ok
 // echo a>b      OK ok
-// echo a|echo b>d<e           OK, ok crea solo d e da redir error
-// echo >a>b>cc<<ddd           OK, ok
+// echo a|echo b>d<e           OK, ok! crea solo d e da redir error
+// echo d >a>b>cc<<ddd           OK, ok, crea a,b,cc cc:d
 // echo a >"bb "c>y            OK, ok crea i 2 file e mette out in y
 // echo a >u>>og <<o"'  pp" p       OK
-// (echo a || (echo b ) >u)    OK, errore, crea b(e non deve) e c mette out + segfault
-// (echo b || echo a >e)       OK, ok b in out, ma seg fault
-// ((echo a && ls))            OK, ok
-// (echo a && ls) |cat         OK, errore, gli out non li mette in file + segfault
-// (echo a && (echo b && (echo c <z))) >p| cat     OK, non crea p, errore in generale
-// (echo a && (echo b && (echo c <u))>p) | cat     OK
-//  echo a || echo b | cat <<2                     OK
+// (echo a || (echo b ) >u)    OK ok!
+// (echo b || echo a >e)       OK ok!
+// (echo a && ls)              OK ok!
+// (echo a && ls) |cat         OK ok!
+// (echo a && (echo b && (echo c <z))) >p| cat     OK errore set_component
+// (echo a && (echo b && (echo c <u))>p) | cat     OK errore set_component
+//  echo a || echo b | cat <<2                     OK ok!
 // ---
-// echo a || echo b | echo c | echo d && echo e    OK
-// echo a &&echo b | echo c                        OK
-// echop a && echo b | echo c | echo d && echo e   OK
-// echop a && echo b | echo c | echo d || echo e   OK
-// io" echo a && echo ba" u
+// echo a || echo b | echo c | echo d && echo e    OK ok!
+// echo a &&echo b | echo c                        OK ok!
+// echop a && echo b | echo c | echo d && echo e   OK ok!
+// echop a && echo b | echo c | echo d || echo e   OK ok!
+// io" echo a && echo ba" u                        OK ok!
 // bash: io echo a && echo ba: command not found
-// io " echo a && echo ba" u
+// io " echo a && echo ba" u                       OK ok!
 // bash: io: command not found
 // --
-// ((ls) >zy | echo a && echo c) | cat
+// ((ls) >zy | echo a && echo c) | cat           OK  KO! non stampa c in out
 // (cat | cat | cat  >zi ) <du  && echo d
 // (cat <zu | cat | cat  >zi ) <du  && echo d
 // echo a >b || echo b >c (ma anche >>c)  => non crea c, perche non esegue il comando

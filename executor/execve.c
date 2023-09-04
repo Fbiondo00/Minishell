@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:42:40 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/02 22:03:23 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 04:58:51 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,10 +62,9 @@ void ft_execve(t_node *node)
     if (!path)
     {
         // write(2, "Error: command not found!?\n", 25);
-        ft_clean_exit(node->shell, "Error: command not found!?\n", 127,1);
+        ft_clean_exit(node->shell, "Error: command not found\n", 127,1);
         // exit(127);
     }
-    // passare il terzo param, ovvero l env fittizio??
     if (execve(path, node->content.cmd, node->shell->env) == -1)
     {
         write(2, "Error: command not found\n", 25);

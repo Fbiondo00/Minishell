@@ -3,25 +3,42 @@
 /*                                                        :::      ::::::::   */
 /*   redirection1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 22:13:46 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/31 22:15:36 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/04 04:07:54 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	set_lvl(t_node *node, int i, int num)
+// void	set_lvl(t_node *node, int i, int num)
+// {
+// 	node->content.redir[num].lvl = 0;
+// 	while (--i >= 0)
+// 	{
+// 		if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
+// 			break ;
+// 		if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
+// 			node->content.redir[num].lvl++;
+// 	}
+// }
+
+// V2 ((a )>1)>2, devono risultare tutti lvl 0
+void set_lvl(t_node *node, int i, int num)
 {
 	node->content.redir[num].lvl = 0;
 	while (--i >= 0)
 	{
+		if ((node->raw_cmd[i] == '|' || node->raw_cmd[i] == '&') && !in_quotes(node, i))
+			break;
 		if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
-			break ;
+			node->content.redir[num].lvl--;
 		if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
 			node->content.redir[num].lvl++;
 	}
+	if (node->content.redir[num].lvl < 0)
+		node->content.redir[num].lvl = 0;
 }
 
 void	set_redirection2(t_node *node, int i, int num)

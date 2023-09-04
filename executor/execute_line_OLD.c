@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:42:06 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 03:02:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,7 +179,7 @@ void executeOLD(t_shell *shell)
         ft_single_cmdOLD(shell->tree);
         return ;
     }
-    printf(" è presente almeno 1 nodo op...\n");
+    // printf(" è presente almeno 1 nodo op...\n");
     node = go_to_starter_node(shell->tree->left);
     ft_do_heredoc(node);
     while (1)
@@ -195,35 +195,34 @@ void executeOLD(t_shell *shell)
         }
         else if (!node->content.cmd && !node->content.cmd[0])
         {
-            printf("NODE_CMD WITH ONLY REDIR...\n");
+            // printf("NODE_CMD WITH ONLY REDIR...\n");
             ft_do_redir(node);
-            printf("PRE:JUST_REDIR|node:p%p\n", node);
-            printf("PRE:JUST_REDIR|prev_node:p%p\n", prev_node);
+            // printf("PRE:JUST_REDIR|node:p%p\n", node);
+            // printf("PRE:JUST_REDIR|prev_node:p%p\n", prev_node);
             prev_node = node;
             next_node = next_cmd_same_lvl(node);
-            printf("POST:JUST_REDIR|prev_node:p%p\n", prev_node);
-            printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
+            // printf("POST:JUST_REDIR|prev_node:p%p\n", prev_node);
+            // printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
         }
          if (node->back->content.op == PIPE)
         {
-            printf("ft_do_pipe...\n");
-            printf("PRE:PIPE|prev_node:p%p\n", prev_node);
+            // printf("ft_do_pipe...\n");
+            // printf("PRE:PIPE|prev_node:p%p\n", prev_node);
             next_node = ft_do_pipeOLD(node);
             prev_node = node;
-            printf("PRE:PIPE|node:p%p\n", node);
-            // next_node = next_cmd_same_lvl(node);
-            printf("POST:PIPE|next_node:p%p\n", next_node);
-            printf("POST:PIPE|prev_node:p%p\n", prev_node);
+            // printf("PRE:PIPE|node:p%p\n", node);
+            // printf("POST:PIPE|next_node:p%p\n", next_node);
+            // printf("POST:PIPE|prev_node:p%p\n", prev_node);
         }
         else if (node->back->content.op == AND || node->back->content.op == OR)
         {
-            printf("ft_do_and_or...\n");
-            printf("PRE:AND_OR|node:p%p\n", node);
-            printf("PRE:AND_OR|prev_node:p%p\n", prev_node);
+            // printf("ft_do_and_or...\n");
+            // printf("PRE:AND_OR|node:p%p\n", node);
+            // printf("PRE:AND_OR|prev_node:p%p\n", prev_node);
             next_node = ft_do_and_orOLD(node, prev_node);
             prev_node = node;
-            printf("AFTER:AND_OR|next_node:p%p\n", next_node);
-            printf("POST:AND_OR|prev_node:p%p\n", prev_node);
+            // printf("AFTER:AND_OR|next_node:p%p\n", next_node);
+            // printf("POST:AND_OR|prev_node:p%p\n", prev_node);
         }
         node = next_node;
     }

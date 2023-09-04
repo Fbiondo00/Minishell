@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/01 04:13:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/04 03:07:32 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ void ft_remove_heredoc(t_node *node)
     t_node *temp;
     t_node *next_node;
 
-    printf("IN ft_remove_heredoc\n");
+    // printf("IN ft_remove_heredoc\n");
     temp = node;
     next_node = NULL;
     while (1)
@@ -76,7 +76,7 @@ t_node *next_cmd_same_lvl(t_node *node)
         //     return (NULL);
         // else
         temp = next_node;
-        if (temp->lvl_subshell == node->lvl_subshell)
+        if (temp->back->lvl_subshell == node->back->lvl_subshell)
         {
             // printf("trovato nodo stesso lvl:%p\n",temp);
             // print_node(temp->shell, temp);
