@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 22:13:46 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/04 04:07:54 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/09 23:34:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,28 @@
 void set_lvl(t_node *node, int i, int num)
 {
 	node->content.redir[num].lvl = 0;
-	while (--i >= 0)
+	if (node == node->shell->tree)
 	{
-		if ((node->raw_cmd[i] == '|' || node->raw_cmd[i] == '&') && !in_quotes(node, i))
-			break;
-		if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
-			node->content.redir[num].lvl--;
-		if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
-			node->content.redir[num].lvl++;
+		while (--i >= 0)
+		{
+			if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
+				node->content.redir[num].lvl++;
+		}
 	}
-	if (node->content.redir[num].lvl < 0)
-		node->content.redir[num].lvl = 0;
+	else
+	{
+		while (--i >= 0)
+		{
+			if ((node->raw_cmd[i] == '|' || node->raw_cmd[i] == '&') && !in_quotes(node, i))
+				break;
+			if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
+				node->content.redir[num].lvl--;
+			if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
+				node->content.redir[num].lvl++;
+		}
+		if (node->content.redir[num].lvl < 0)
+			node->content.redir[num].lvl = 0;
+	}
 }
 
 void	set_redirection2(t_node *node, int i, int num)

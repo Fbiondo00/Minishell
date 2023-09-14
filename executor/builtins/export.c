@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/03 01:39:15 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/13 20:12:20 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ft_reach(t_shell *shell, char *str)
 			if (str[y] == '=')
 			{
 				free(shell->env[i]);
-				shell->env[i] = str;
+				shell->env[i] = ft_strdup(str);
 				return (1);
 			}
 			return (1);
@@ -69,7 +69,7 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 			return ;
 		}
 		shell->env = ft_realloc(shell->env, sizeof(char *) * (j + 2));
-		shell->env[j] = node->content.cmd[y];
+		shell->env[j] = ft_strdup(node->content.cmd[y]);
 		shell->env[j + 1] = 0;
 	}
 	if (ij - 1 == y)

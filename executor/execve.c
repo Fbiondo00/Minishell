@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:42:40 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 04:58:51 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 01:23:30 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ char *get_path(char *cmd, char **env)
     char **base;
 
     i = 0;
-    // var_expand(node, "PATH") in alternativa al while
     while (ft_strncmp(env[i], "PATH=", 5, 0))
         i++;
     base = ft_split((env[i] + 5), ':');
@@ -60,17 +59,11 @@ void ft_execve(t_node *node)
     else
         path = node->content.cmd[0];
     if (!path)
-    {
-        // write(2, "Error: command not found!?\n", 25);
         ft_clean_exit(node->shell, "Error: command not found\n", 127,1);
-        // exit(127);
-    }
     if (execve(path, node->content.cmd, node->shell->env) == -1)
     {
-        write(2, "Error: command not found\n", 25);
-        exit(127);
+        ft_clean_exit(node->shell, "Error: command not found\n", 127, 1);
     }
-    printf("NON ESCE!!\n");
 }
 
 // 3 func

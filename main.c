@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 05:46:30 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 16:20:55 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,109 +59,103 @@ int main(int argc, char **argv, char **env)
     while(1)
     {
         ft_read_line(&shell);
-        if (shell.rawline && shell.rawline[0]) //anche in ft_read_line?
+        if (shell.rawline && shell.rawline[0])
         {
             set_tree(&shell);
             set_components(&shell);
-            // executeOLD(&shell);
             executeV2(&shell);
-            ft_clean_exit(&shell, NULL , 3, 0);
+            ft_clean_exit(&shell, NULL , 0, 0);
         }
         // ci entra ogni volta che fai invio senza scrivere nulla
     }
 }
 
-// 5 func 
+// risolve il problema dei diversi tipi di skip eventuali,
+// in base alle condizioni dell exit status e op del nodo che viene fornito
+// tale funzione puo:
+// non skippare affatto:
+//  - ritorna next_node_same_lvl [DONE]
+// skippare:
+// - se dopo si presenta un nodo per il quale si dovrebbe forkare una subshell
+//   si skippa tutta la subshell e si procede al nodo in cui si dovrebbe rientrare
+//   dalla subshell stessa nel padre. [DONE]
+// - se si trova dentro una shell o subshell e non bisogna forkare
+//    - se il next_cmd ha come back_op and_or, ne skippa solo uno
+//    - se il next_cmd ha come back_op pipe, skippa tutta la sequenza
+//       fino al prossimo and_or.
+// tuttavia se si trova in subshell ed incontra prima la fine della subshell
+// fa una clean_exit (o fa fare clean_exit ad executeV2)
+// se sta invece in lvl_subshell == 0 invece deve far fare return a executeV2
+// riceve come nodo di input quello appena eseguito.
+t_node *next_oneV2(t_node *node)
+{
+    t_node *next;
+    t_node *temp;
+    t_node *resume;
+
+    next = next_cmd_same_lvl(node);
+    temp = node;
+    resume = NULL;
+    if (norm_checkV2skip(node))
+    {
+        return (next);
+    }
+    else
+    {
+        if (!next)
+            return (NULL);
+        if (ft_back_node(next)->lvl_subshell > node->shell->lvl_subshell &&
+            node->is_last == 0)
+        {
+            resume = next_cmd2(node->shell, last_cmd_same_lvl(node));
+            return (resume);
+        }
+        if (next->done_lock == 1 || (next && ft_back_node(next)->lvl_subshell < next->shell->lvl_subshell && next->shell->lvl_subshell != 0))
+        {
+            ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+        }
+        if (ft_get_op(next) == PIPE)
+        {
+            return (next);
+        }
+        if (ft_get_op(next) == AND || ft_get_op(next) == OR)
+        {
+            resume = next_cmd_same_lvl(next);
+            if (!resume)
+                return (NULL);
+            if (resume->done_lock == 1 || (resume && ft_back_node(resume)->lvl_subshell < resume->shell->lvl_subshell && resume->shell->lvl_subshell != 0))
+            {
+                ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+            }
+            return (resume);
+        }
+    }
+    return (NULL);
+}
+
+// 5 func
+
 //----------------------------TODO: ----------------------------------
-// leaks:
+// immagino si puo  togliere can_flag
+
+// uscita ctlr+d exit_status?
+
+// 0.MAIN
+// le.s-
+// ls *
+// echo $?
+// fd?
 // in wildcard> strjoin2
 // 	new_str = ft_strjoin2(new_str, tem); non dovrebbe esse friato new_str
-// https://stackoverflow.com/questions/75125258/why-does-the-command-leaks-atexit-hang-forever-c-program-with-child-process
-// exit seg.fault
 
-
-// (cat <1 && cat <1) >2, in questo caso funziona
-// FIXED!
-// (echo a >1 | echo b) >3
-// (echo a | echo b) >3
-// (cat <1 >7 | cat <1) >3 .. OK!
-// 0.MAIN
-// leaks
-// ls *    :leaks
-// echo $? :leaks
-// 1.EXECUTOR
-// A.do subshell
-//  potrebbero esserci dei buchi nei lvl, non seg, da far aprire a subshell
-//  echo a && echo b
-
-// bash-3.2$ unset HOME
-// bash-3.2$ cd
-// bash: cd: HOME not set
-
-// dubbi su norminette:
 // 1.SIGNAL:
 //  a.  void	ft_reset_signal(void) perche?
 //  b.  shell->error se è da settare errore, come?
 
 
 
-//----------------------------INFO VARIE: ---------------------------
-// 1. DEBUG
-// gdb -tui ./minishell > c > run
-//  -fsanitize=address
-
-// 2. COMPORTAMENTO REDIR BASH
-// IN generale se primo o ultimo redir input non esiste
-//  non viene considerato il secondo (si ferma prima)
-// e torna errore
-// bash-3.2$ ls -la <aa <u | cat
-// bash: u: No such file or directory
-
-// 3.  UTILIZZO DELLE PARENTESI TONDE
-// https://unix.stackexchange.com/questions/267660/difference-between-parentheses-and-braces-in-terminal
-// VALID
-// EX1. echo a | (>uu)
-// check se cmd  è vuota (O SE TUTTI SPAZI)non lanciare l execve ma uscire diretto
-
-// 4. https://www.shellcheck.net
-
-// in generale vengono sempre eseguite tutte le  redirections NECESSARIE prima del lancio dei
-// comandi.
-// echo a>b|echo b|echo c && pi zi ||   pippo <u z
-// Risultato:
-// > d (here_doc)
-// > u
-// c
-// bash: pi: command not found
-// bash: pippo: command not found
-
-// echo a>b|echo b|echo c && pi zi &&   pippo <u z
-// c
-// zsh: command not found: pi
-// non dice che u non esiste perche neanche la lancia. rientra nel ramo non lanciato.
-
-// come nel caso: // (echo b || echo a >e) non fa redir
-
-// pass func as argument
-
-// https://stackoverflow.com/questions/59987314/pass-a-function-or-pass-a-function-pointer-in-c
-
 // ------------------- TESTER: OK/KO in base a risultati bash -------------------
-// ------ WIP ------
-// a |> b        DUP2 ERR?
-// (ls) <g  deve dare errore, invece lo tratta come fosse un output
-// (<<u)|echo a non esegue echo a
-// (echo a && echo b)| cat  seg
-// --------------- FATTI ------------------
-
-// new_ok:
-// (echo a || echo b) || echo c && echo r    OK  out: a r
-// (echo a || echo b) && echo c && echo r    OK  out: a c r
-// (echo a && echo b) && echo c && echo r    OK  out: a b c r
-// (echo a && echo b) <m && echo c && echo r OK  out: a b c r m: 1 2
-// (echo a || (echo b ) >u) OK non esegue comando ne redir
-// (echo a || (echo b ) <u) OK non esegue comando ne redir
-// ----
+// ------------------------ syntax error verificati: OK! ------------------------
 // echo c|       KO
 // |echo c       KO
 // (|(echo c))   KO
@@ -181,186 +175,130 @@ int main(int argc, char **argv, char **env)
 // a>& b         KO
 // a &>b         KO
 // a <> b        KO
-// echo a |> b   OK ok!
-// echo a &&> b  OK ok! out:a
-// echo a || < b   OK ok!, non esegue redir
-// echo a && < b  OK ok! out:a && error_redir
-// ((ls))        OK ok! out:ls
-// ((ls) )       OK ok! out:ls
-// (((ls)))      OK ok! out:ls
-// ((ls) | (ls)) OK ok! out:ls
-// (ls) <u       OK ok! out:error_redir
-// echo a |(>uu) OK ok! out: crea uu (vuoto)
-// (<<u)|echo a  OK ok!
-// (>a | echo b) OK ok!
-// (<d | echo b) OK ok! out: err_redir + b
-// <<u|echo a    OK ok!
-// ("echo')")    OK ok
-// echo a>b      OK ok
-// echo a|echo b>d<e           OK, ok! crea solo d e da redir error
-// echo d >a>b>cc<<ddd           OK, ok, crea a,b,cc cc:d
-// echo a >"bb "c>y            OK, ok crea i 2 file e mette out in y
-// echo a >u>>og <<o"'  pp" p       OK
-// (echo a || (echo b ) >u)    OK ok!
-// (echo b || echo a >e)       OK ok!
-// (echo a && ls)              OK ok!
-// (echo a && ls) |cat         OK ok!
-// (echo a && (echo b && (echo c <z))) >p| cat     OK errore set_component
-// (echo a && (echo b && (echo c <u))>p) | cat     OK errore set_component
-//  echo a || echo b | cat <<2                     OK ok!
-// ---
-// echo a || echo b | echo c | echo d && echo e    OK ok!
-// echo a &&echo b | echo c                        OK ok!
-// echop a && echo b | echo c | echo d && echo e   OK ok!
-// echop a && echo b | echo c | echo d || echo e   OK ok!
-// io" echo a && echo ba" u                        OK ok!
-// bash: io echo a && echo ba: command not found
-// io " echo a && echo ba" u                       OK ok!
-// bash: io: command not found
-// --
-// ((ls) >zy | echo a && echo c) | cat           OK  KO! non stampa c in out
-// (cat | cat | cat  >zi ) <du  && echo d
-// (cat <zu | cat | cat  >zi ) <du  && echo d
-// echo a >b || echo b >c (ma anche >>c)  => non crea c, perche non esegue il comando
-// echo a >b || echo b <<c   solo nel caso dell here_doc lo esegue comunque
-// echo a >b || (echo b >c && echo d >e) => non crea c & e perche non esegue il cmd
-// echo a>1|(echo b>2||echo c  >3) |out:  |1:a |2:b  // il file 3 non viene creato
-
-// --
 // echo a <      KO
 // (echo a >)    KO
 // (echo a >>)   KO
 // echo a <<     KO
-// echo ciao >q "r"  OK
-// echo ciao >q"r"   OK
-// ((echo a>b) >c)<e OK
-
-// se fallisce calcolo redir input, non viene eseguito il cmd
-// EX. echo a <1
-
-// ----
-// export v="test" && (echo $v && v="modified" && echo $v) && echo $v  OK
-
-// echo a > "/Desktop/e u"
-//  bash: /Desktop/e u: No such file or directory
-
-//  echo a > "Desktop/e u"  
-//  bash: Desktop/e u: No such file or directory
-// ----
-//  echo a && echo b | (false && echo d | echo e)             OK > a
-//  echo a && echo b | echo c &&(  false && echo d | echo e ) OK > a c
-//  echo ok || echo zi && echo ciao || << gg                  OK 
 //  echo a && echo b | echo c ( false && echo d | echo e )          KO
 //  echo a && echo b | echo c (&&  false && echo d | echo e )       KO
 // echo a && echo b | echo c |( false && echo d | echo e ) echo c   KO
-// ----
-//  (echo a | echo b && echo c )| echo d                            OK
-//  echo a | echo b && echo c | echo d                              OK
-//  (echo a | echo b | echo c >zi ) >zu && echo d                   OK
 
-// -- test components --
-// (ECHO"b" && (ECHO "a" && (ECHO "d")))|ECHO "c"                   OK
-// ((echo a|echo b|echo u&& echo h|echo c|echo d)|(ECHO E&&ECHO F))&&(G|LS O|LS U) OK
+// ---------------------- verificati: OK! ----------------------------------
+// ------- >single_cmd<  -------
+// echo a>b           OK  out:  (b:a)
+// echo ciao >q "r"   OK  out: (q:ciao r)
+// echo ciao >q"r"    OK  out: (qr:ciao )
+// ("echo')")         OK  out: command not found
+// (ls) <g            OK  No such file or directory
+// ((ls))             OK  out:ls
+// ((ls)>1)>2         OK  out:  (1:ls |2:)
+// ((echo a>b) >c)<e  OK  No such file or directory
+// echo a >"bb "c>y                 OK  out:  (bb c: y:a)
+// echo d >a>b>cc<<ddd              OK  out:  (a: b: cc:d)
+// echo a >u>>og <<o"'  pp" p       OK  out:  (og:a p u:)
+// ((((echo a)>1)>2)>3)             OK out:   (1:a)
+// LS $HOME/Desktop                 OK
 
-// echo a >1 && ( echo b >2 || echo c>3) || echo d >4  (crea 1 e 2) OK
+// ------- >multi_cmd<  -------
+// ------- SENZA SUBSHELL  -------
+// a |> b                OK  out: command not found (b:)
+// echo a |> b           OK  out:  (b:)
+// echo a &&> b          OK  out: a  (b:)
+// echo a || < b         OK  out: a  non esegue redir
+// echo a && < b         OK  out: a && error_redir
+// <<u|echo a            OK  out: a
+// echo a|echo b>d<e                               OK  out: redir_error (d:)
+// echo a || echo b | cat <<2                      OK  out: a
+// echo a || echo b | echo c | echo d && echo e    OK  out: a e ^
+// echo a &&echo b | echo c                        OK  out: a c
+// echop a && echo b | echo c | echo d && echo e   OK  out: cmd_not_found ^
+// echop a && echo b | echo c | echo d || echo e   OK  out: e ^
+// io" echo a && echo ba" u                        OK  out: cmd_err
+// io " echo a && echo ba" u                       OK  out: cmd_err
+// echo a >b || echo b >c                          OK  out: (b:a)
+// echo a >b || echo b <<c                         OK  out: (b:a)
+// echo ok || echo zi && echo ciao || << gg        OK  out: ok ciao
+// -------   CON SUBSHELL  -------
+// ((ls) | (ls))                    OK  out:ls
+// (echo a && echo b)| cat          OK  out:a b
+// (echo a && ls) | cat             OK  out: a + ls
+// ( ls  && ls) | cat               OK  out: ls + ls
+// (echo b || echo a >e)            OK  out: b
+// (echo a && ls)                   OK  out: a + ls
+// (echo a &&  cat) >p              OK  out:  (p: a + rimane in attesa ctrl+c)
+// (echo a && ls)>2 |cat            OK  out:  (2: a + ls)
+// (echo a && echo b)| grep -w a| wc          OK
+// (echo a || (echo b ) >u)                   OK out: a
+// (echo a || (echo b ) >u)| cat | cat >gg    OK out:    (gg:a)
+// (echo a || (echo b ) >u)| cat | cat | grep -w a >gg  OK out: (gg:a)
+// (echo a && (echo b && (echo c <z))) >p && echo DDD  OK out: no_such_file (p: a b)
+// (echo a && (echo b && echo c)) | cat | grep -w c | cat >dd OK out: (dd:c)
+// (echo a || echo b) || echo c && echo r    OK  out: a r
+// (echo a || echo b) && echo c && echo r    OK  out: a c r
+// (echo a && echo b) && echo c && echo r    OK  out: a b c r
+// (echo a && echo b) <m && echo c && echo r OK  out: a b c r (creare m: 1 2) (con o senza m)
+// (echo a && echo b) <m && echo c && echo r       OK  out: err_redir m:
+// (echo a || (echo b ) >u)                        OK  out: a
+// (echo a || (echo b ) <u)                        OK  out: a
+// (echo a && (echo b && (echo c <z))) >p| cat     OK  out:err_redir (p: a b)
+// ((ls) | echo a && echo c) >zy| cat              OK  out:  (zy: a c)
+// ((ls) >zy | echo a && echo c) | cat             OK  out: a c    (zy:ls)
+// echo a >a | (echo b >b && echo d >d)            OK  out:        (a:a b:b d:d)
+// ((ls) | echo a && echo c) | cat                 OK  out: a c
+// (cat | cat | cat  >zi ) <du  && echo d          OK  out: no_such_file
+// (cat <zu | cat | cat  >zi ) <du  && echo d      OK: out: no_such_file
+// echo a>1|(echo b>2||echo c >3)                  OK  out:  (1:a 2:b)
+// echo a>1|(cat>2||echo c  >3)                               OK  out: (1:a 2:)
+// echo a && echo b | echo c &&(  false && echo d | echo e )  OK out: a c
+// (echo a | echo b && echo c )| echo d                       OK out: d
+// echo a | echo b && echo c | echo f                         OK out: b f
+// (echo a | echo b | echo c >zi ) >zu && echo d              OK out: d (zi:c zu:)
+// (ECHO"b" && (ECHO "a" && (ECHO "d")))|ECHO "c"             OK out: c && cmd_not_found
+// echo a >1 && ( echo b >2 || echo c>3) || echo d >4         OK out: (1:a 2:b)
+// echo a >1 && ( echo b >2 || echo c <<3) || echo d <<4      OK out: (1:a 2:b) ^
+// echo a| (cat ||echo c  >3 ) && echo d<4                    OK out: a && No such file
+// echo a | (cat || echo b) | cat                             OK  out: a
+// echo a | (echo d &&  echo b) | cat                 OK  out: d b
+// echo a | (echo d >z &&  echo b) | cat              OK  out: b   (z:d)
+// echo a | (echo d >z &&  echo b) >u | cat           OK  out:     (z:d|u:b)
+// (cat | cat | cat  >zi ) <du  && echo d             OK  out:d  (zi: contenuto "du")
+// (cat && ls >a) <du  && echo d                      OK: out: d + content "du" (a:ls )
+// (cat && ls >a) <du  >u && echo d                   OK: out: d  (a:ls u:content "du" )
+// (echo b || (echo a >o))                            OK  out:b
+// (echop b && (echo a >o))                           OK  out: cmd_not_found
+// (echo b && (echo a ))>i | echo c                   OK  out:c (i:b a)
+// (echo b && (echo a )>i) | echo c                   OK  out:c (i:a)
+// (echo b && (echo a >o && (echo d))) >p | echo c    OK  out:c (o:a p:b d)
+// (echo a && (echo b && (echo c)))| cat              OK  out: a b c
+// (echo a >d && (echo b && (echo c)))| cat           OK  out: b c (d: a)
+// echop a >b &&  (echo b >c && echo d >e)            OK out: cmd_not_found (b:)
+// echo a >b | (echo b >c && (echo d >e | echo f >o)) OK out: (b:a c:b e:d o:f)
+// echo a>1|(echo b>2||echo c  >3)                    OK out:   (1:a 2:b)
+// echo a && (echo b && (echo c))>d| cat              OK out: a (d:b c)
+// echo a >b || (echo b >c && echo d >e)              OK out:  (b: a)
+// >input file presenti:(test:gg)
+// echo a | (cat || echo b) <test| cat                                OK  out:gg
+// >input file presenti: (e:ok|test:gg)
+// echo a | (cat <e || echo b) <test| cat                             OK out: ok
+// echo a && echo b | (false && echo d | echo e)                      OK out: a
+// echo a && echo b | echo c |( echo a && echo d | echo e ) |echo c   OK out: a c
+// (echo a && (echo b && echo c && echo d)>d)| cat  OK out:a  (d: b c d)
+// (echo a && (echo b && (echo c))>d)| cat           OK  out: a  (d: b c)
+// (echo a && (echo b && (echo c <z))) >p            OK  out:  no_such_file  (p:a b)  
+// (echo a && (echo b && echo c <u)>p)               OK  out: a + no_such_file (p:b)
+// (echo a && (echo b && (echo c))>d)>r | cat        OK out: (d:b c r:a)
+// echo d && (echo a && (echo b && echo c <u)>p)>g   OK out: no_such_file (p:b g:a)
+// echo d && (echo b && echo c <u)>g                     OK out: d (g:b)
+// (echo a && (echo b && (echo c <u))>p) | cat           OK out: a + no_such_file (p:b)
+// echo a && echo b | (false && echo d | echo e) >g      OK out: a (g:)
+// (echo a && (echo b && (echo c <z))) >p || echo DDD    OK out: DDD + no_such (p: a b)
+// (cat | cat | cat  >zi ) <du  || echo d  (du:ciao)     OK  out: d  (zi:ciao)
 
-// echo a >1 && ( echo b >2 || echo c <<3) || echo d <<4            OK
-// esegue tutti here_doc a prescindere.
+// -------- 
+// (<<u)|echo a    non esegue echo a + esce da lvl0 + dup2_err
+// entra in ???? perche setta erroneamente is_last = 1,
+// valutare come condizione da aggiungere && cmd != starter_cmd
+// (<d | echo b)                    OK  out: err_redir + b
+// stesso caso
+// echo a >"a" 
 
-// bash-3.2$ echo a| (cat ||echo c  >3 ) | echo d<4                 OK
-// bash : 4 : No such file or directory
-
-// bash-3.2$ echo a| (cat ||echo c  >3 ) && echo d<4                OK
-// a
-// bash: 4: No such file or directory
-
-// ((((echo a)>1)>2)>3)  il valore finisce in 1                     OK
-
-// priorità input in subshell
-// caso PIPE(cmd partenza lvl.0):
-// next_cmd : è in fork, input viene dato solo al primo cmd della subshell
-
-// bash-3.2$ echo a | (cat || echo b) | cat
-// a
-
-// se presente una redir di subshell
-// PROBLEMA: non ho questa informazione. non so se la redir è sub_level o cmd related..
-// TO FIX!
-
-// supponendo di sapere se redir è sub_level o cmd related
-
-// se è presente anche input redir sub_level: la  redir vince sulla PIPE!!
-
-// bash-3.2$ echo a | (cat || echo b) <test| cat   (test:gg)
-// gg
-
-// se aggiungiamo anche input cmd related ( e:ok|test:gg)
-
-// bash-3.2$ echo a | (cat <e || echo b) <test| cat
-// ok
-
-// LS $HOME/Desktop
-
-// -------
-// CONCLUSIONE: ordine importanza INPUT
-// 1: cmd_level
-// 2: sub_level
-// 3: PIPE
-
-// tuttavia l ordine in cui vanno settate è inverso, ovvero:
-// 1: setto PIPE input (vale per solo per primo cmd se subshell)
-// 2: setto sub_level input
-// 3: setto cmd_level input
-
-// quindi operativamente prima di ogni pipe si esegue la func pipe()
-
-// CONCLUSIONE: ordine importanza OUTPUT
-// 1: cmd_level
-// 2: sub_level
-// 3: PIPE
-
-// tuttavia l ordine in cui vanno settate è inverso, ovvero:
-// 1: setto PIPE output (vale per solo per ultimo cmd se subshell) 
-// 2: setto sub_level output
-// 3: setto cmd_level output
-
-
-// 1: bash-3.2$ echo a | (echo d &&  echo b) | cat
-// d
-// b
-
-// 2: bash-3.2$ echo a | (echo d >z &&  echo b) | cat  (z:d)
-// b
-
-// bash-3.2$ echo a | (echo d >z &&  echo b) >u | cat  (z:d|u:b)
-// bash-3.2$ 
-
-// -------
-
-// N.B:
-// - sub_level R_INPUT viene settato SOLO NEL PRIMO CMD!
-// - sub_level R_INPUT_HERE_DOC viene settato SOLO NEL PRIMO CMD!
-// - sub_level TRUNC_OUTPUT viene settato in TUTTI i CMD!
-// - sub_level APPEND_OUTPUT viene settato in TUTTI i CMD!
-
-// N.B:
-// bash ha un comportamento anomalo nel caso successivo
-// (cat && cat ) <test
-// ovvero non richiede here_doc per il secondo comando. sembra non esegua il cmd proprio
-// SOLUZIONE: noi facciamo sempre here_doc, come in tutti gli altri casi!
-// -------
-
-// execve gestisce da solo l here_doc implicito! [DONE]
-// HERE_DOC implicito != here_doc settato, infatti:
-
-// se settato esegue subito here_doc, anche se il comando non viene eseguito
-// echop aa && cat <<u
-
-// se implicito non viene eseguito, ma è eseguito solo prima dell esecuzione cmd
-// echop aa && cat 
-
-// When the cat command does not contain any arguments, it waits for an input from your keyboard. If you try to run the cat command lacking any arguments, cat will wait for your input from the keyboard until it receives an end-of-file ( EOF ) signal produced by CTRL+D key combination. When entering some input from a keyboard, cat command will simply repeat any input and display it on the screen.
-
-
-// how to restore FD 
-// https://stackoverflow.com/questions/55771495/what-are-the-rules-of-closing-file-descriptors-after-calling-dup-dup2

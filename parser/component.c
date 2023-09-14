@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 04:52:44 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 02:07:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,12 @@ void	ft_ft(t_shell *s, t_node *n)
 	while (1)
 	{
 		l = calculate_lvl_diff(n);
+		if (l < 0)
+		{
+			n->is_last = 1;
+			if (next_cmd2(n->shell, n))
+				next_cmd2(n->shell, n)->is_last = 2;
+		}
 		if (is_left_branch(n))
 		{
 			n->back->lvl_lock = 1;
@@ -74,7 +80,6 @@ void	ft_ft(t_shell *s, t_node *n)
 			n->back->back->lvl_lock = 1;
 			n->back->back->back->lvl_subshell += (l + n->back->lvl_subshell);
 		}
-		print_node(s, n);
 		n = next_cmd2(s, n);
 		if (!n)
 			break ;
@@ -90,11 +95,9 @@ void	set_components(t_shell *shell)
 {
 	t_node	*node;
 
-	printf("------------------|FASE: SET COMPONENTS ALBERO|------------------\n");
 	if (is_node_cmd(shell->tree))
 	{
 		calculate_lvl_diff(shell->tree);
-		print_node(shell, shell->tree);
 		return ;
 	}
 	node = go_to_starter_node(shell->tree->left);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 20:51:20 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/14 15:55:37 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ void	shell_init(int argc, char **argv, char **env, t_shell *shell)
 	shell->temp_input = dup(STDIN_FILENO);
 	shell->temp_output = dup(STDOUT_FILENO);
 	shell->temp_error = dup(STDERR_FILENO);
+	shell->new_temp_output = -1;
+	shell->new_temp_input = -1;
+	shell->can_flag = 0;
 	shell->env = NULL;
 	shell->rawline = NULL;
 	shell->quote_idx = NULL;
@@ -42,6 +45,8 @@ void	node_init(t_node *node)
 	node->lvl_lock = 0;
 	node->done_lock = 0;
 	node->flag = -1;
+	node->flag_pipe = 0;
+	node->is_last = 0;
 	node->back = NULL;
 	node->left = NULL;
 	node->right = NULL;
@@ -80,3 +85,4 @@ int	ft_get_len_env(t_shell *shell)
 		;
 	return (ij);
 }
+

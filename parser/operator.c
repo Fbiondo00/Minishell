@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   operator.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/07 18:59:12 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/30 17:16:16 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/14 14:57:27 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,12 +94,10 @@ int	check_op_logic_than_pipe(t_node *node)
 {
 	if (there_is_logic_operator(node))
 	{
-		printf("there_is_logic_operator\n");
 		return (there_is_logic_operator(node));
 	}
 	if (get_idx_next_op(node, ft_strlen(node->raw_cmd) - 1))
 	{
-		printf("get_idx_next_op\n");
 		return (get_idx_next_op(node, ft_strlen(node->raw_cmd) - 1));
 	}
 	return (0);

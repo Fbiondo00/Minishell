@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 03:07:32 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 01:29:44 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,10 @@ void ft_remove_heredoc(t_node *node)
     t_node *temp;
     t_node *next_node;
 
-    // printf("IN ft_remove_heredoc\n");
     temp = node;
     next_node = NULL;
     while (1)
     {
-        // printf("PRE(next_cmd2),LAVORATO:REMOVE_HERE_DOC|temp:%p\n", temp);
         i = -1;
         while (++i < temp->content.kv_size)
         {
@@ -35,12 +33,9 @@ void ft_remove_heredoc(t_node *node)
                 if (unlink(path) != 0)
                     perror("unlink error");
                 free(path);
-                printf("Removed file:%s\n", temp->content.redir[i].value);
-
             }
         }
         next_node = next_cmd2(temp->shell, temp);
-        // printf("REMOVE_HERE_DOC|next_node:%p\n", next_node);
         if (!next_node)
             return;
         else
@@ -59,29 +54,23 @@ t_node *next_cmd_same_lvl(t_node *node)
     t_node *next_node;
 
     temp = node;
-    // temp->done_lock = 1;
     next_node = NULL;
     while (1)
     {
-        next_node = next_cmd2(node->shell, temp);
-        // printf("next_cmd2(node->shell, temp):%p\n", next_cmd2(node->shell, temp));
+        next_node = next_cmd2(temp->shell, temp);
         if (!next_node || next_node->done_lock == 1)
         {
-            if (next_node)
-                printf("next_node->done_lock:%d\n", next_node->done_lock);
             return (NULL);
         }
-            
-        // if (temp == next_node)
-        //     return (NULL);
-        // else
-        temp = next_node;
-        if (temp->back->lvl_subshell == node->back->lvl_subshell)
+        else if (ft_back_node(next_node)->lvl_subshell >= ft_back_node(temp)->lvl_subshell) 
         {
-            // printf("trovato nodo stesso lvl:%p\n",temp);
-            // print_node(temp->shell, temp);
-            return (temp);
+            return (next_node);
         }
+        else if (ft_back_node(next_node)->lvl_subshell < ft_back_node(temp)->lvl_subshell && next_node->is_last == 1)
+        {
+            return (next_node);
+        }
+        temp = next_node;
     }
     return (NULL);
 }
@@ -97,7 +86,6 @@ t_node *go_next_cmd_and_or(t_node *node)
 
     temp = node;
     next_node = NULL;
-    // printf("-----------!CERCO: ..go_next_cmd_and_or...--------------\n\n");
     while (1)
     {
         temp->done_lock = 1;
@@ -105,11 +93,8 @@ t_node *go_next_cmd_and_or(t_node *node)
         temp = next_node;
         if (!next_node)
             break;
-        if (next_node->back->content.op != PIPE && node->back != next_node->back)
+        if (ft_get_op(next_node) != PIPE && node->back != next_node->back)
         {
-            printf("next_node->back->content.op:%d\n", next_node->back->content.op);
-            printf("node->back:%p|next_node->back:%p\n", node->back, next_node->back);
-            printf("ritorno next_node:%p\n", next_node);
             return (next_node);
         }
     }

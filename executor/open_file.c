@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 03:02:25 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 01:33:56 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,10 @@ int ft_here_doc(t_node *node, int i, char *new_value)
     char *str;
     char *path;
 
-    printf("ENTRA IN FT_HERE_DOC\n");
     str = "123abc";
     fd = open(new_value, O_RDWR | O_TRUNC | O_CREAT, S_IRUSR | S_IWUSR | O_CLOEXEC);
     if (fd == -1)
         return (0);
-    printf("limiter:%s\n", node->content.redir[i].value);
     while ((ft_strncmp(str, node->content.redir[i].value, ft_strlen(str) - 1, 0)) || (ft_strlen(str) - 1) != ft_strlen(node->content.redir[i].value))
     {
         write(1, &">", 1);
@@ -34,18 +32,16 @@ int ft_here_doc(t_node *node, int i, char *new_value)
             perror("Write error");
         if (!str)
         {
-            path = ft_strjoin("./", new_value); // usare str, per ridurre righe?
+            path = ft_strjoin("./", new_value);
             if (unlink(path) != 0)
                 perror("unlink error");
             free(path);
         }
-        free(str); // mettere in else ??
+        free(str);
     }
     free(node->content.redir[i].value);
     node->content.redir[i].value = new_value;
-    printf("create_signature:%s|len:%d\n", node->content.redir[i].value, ft_strlen(node->content.redir[i].value));
     close(fd);
-    printf("ESCE DA FT_HERE_DOC\n");
     return (1);
 }
 
@@ -55,17 +51,14 @@ int ft_open(int *fd, char *str, int key)
 {
     if (key == R_OUTPUT_APPEND)
     {
-        // printf("FT_OPEN:key == R_OUTPUT_APPEND\n");
         *fd = open(str, O_RDWR | O_CREAT | O_APPEND | O_CLOEXEC, 0777);
     }
     else if (key == R_OUTPUT_TRUNC)
     {
-        // printf("FT_OPEN:key == R_OUTPUT_TRUNC\n");
         *fd = open(str, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0777);
     }
     else if (key == R_INPUT || key == R_INPUT_HERE_DOC)
     {
-        // printf("FT_OPEN:key == R_INPUT\n");
         *fd = open(str, O_RDONLY | O_CLOEXEC, 0777);
     }
     if (*fd == -1)
@@ -73,7 +66,6 @@ int ft_open(int *fd, char *str, int key)
         perror("Open error");
         return (0);
     }
-    // printf("ft_open: FILE APERTO!\n");
     return (1);
 }
 
@@ -90,22 +82,16 @@ int ft_open_file(t_node *node, int i)
     ft_open(&fd, node->content.redir[i].value, node->content.redir[i].key);
     if (fd == -1)
         return (0);
-    if (node->content.redir[i].fd != -1 && (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND))
+    if (node->content.redir[i].fd > 0 && (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND))
     {
-        printf("node->content.redir[i].fd != -1 && KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND\n");
-        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, node->content.redir[i].fd);
         ft_dup2(&fd, node->content.redir[i].fd);
     }
     else if (node->content.redir[i].key == R_INPUT || node->content.redir[i].key == R_INPUT_HERE_DOC)
     {
-        printf("KEY:R_INPUT|| R_INPUT_HERE_DOC\n");
-        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, STDIN_FILENO);
         ft_dup2(&fd, 0);
     }
     else if (node->content.redir[i].key == R_OUTPUT_TRUNC || node->content.redir[i].key == R_OUTPUT_APPEND)
     {
-        // printf("KEY:R_OUTPUT_TRUNC|| R_OUTPUT_APPEND\n");
-        // printf("ft_dup2(&fd:%d, node->content.redir[i].fd:%d)\n", fd, STDOUT_FILENO);
         ft_dup2(&fd, 1);
     }
     return (1);
@@ -118,9 +104,7 @@ char *create_signature(t_node *node, int i, int k)
     char *alf;
 
     alf="ABCDEFGHILMNOPQRSTUVZabcdefghilmnopqrstuvz123456789";
-    // printf("value of k: %d\n", k);
     str = ft_strjoin(node->content.redir[i].value, alf + ft_strlen(alf) - 1 - k);
-    printf("create_signature:%s|len:%d\n", str, ft_strlen(str));
     return (str);
 }
 // 
@@ -136,25 +120,18 @@ void ft_do_heredoc(t_node *node)
     t_node *temp;
     t_node *next_node;
 
-    // printf("IN ft_do_heredoc\n");
     k = 0;
     temp = node;
     next_node = NULL;
     while (1)
     {
-        // printf("PRE(next_cmd2),LAVORATO:HERE_DOC|temp:%p\n", temp);
         i = -1;
         while (++i < temp->content.kv_size)
         {
             if (temp->content.redir[i].key == R_INPUT_HERE_DOC)
-            {
                 ft_here_doc(temp, i, create_signature(temp, i, k++));
-                // printf("redir modificata [i:%d]..\n", i);
-                // print_node(temp->shell, temp);
-            }
         }
         next_node = next_cmd2(temp->shell, temp);
-        // printf("POST(next_cmd2):HERE_DOC|next_node:%p\n", next_node);
         if (!next_node)
             return ;
         else

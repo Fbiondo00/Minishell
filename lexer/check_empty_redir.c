@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   check_empty_redir.c                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:12:38 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 20:51:55 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/03 02:21:39 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ int	is_value(t_shell *shell, char *tmp, int idx)
 		if (tmp[idx] == 39 && !in_quotes_str(shell, idx))
 			norm_is_value(tmp, &count, &idx, 39);
 		else if ((tmp[idx] != ' ' && !in_quotes_str(shell, idx))
-				|| (ft_strchr(chars, tmp[idx]) && !in_quotes_str(shell, idx)))
+			|| (ft_strchr(chars, tmp[idx]) && !in_quotes_str(shell, idx)))
 		{
 			count++;
 			break ;

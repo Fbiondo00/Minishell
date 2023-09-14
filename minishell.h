@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 16:44:31 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/14 16:22:57 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ typedef struct s_node
 	int					lvl_lock;
 	int					done_lock;
 	int					flag;
+	int					flag_pipe;
+	int					is_last;
 	int					std_in;
 	int					std_out;
 	int					std_err;
@@ -108,8 +110,11 @@ typedef struct s_shell
 	struct sigaction	signal_quit;
 	struct termios		tty_attrs;
 	int					error;
+	int					can_flag;
 	int					temp_input;
 	int					temp_output;
+	int					new_temp_output;
+	int					new_temp_input;
 	int					temp_error;
 	char				*rawline;
 	char				*quote_idx;
@@ -227,12 +232,10 @@ void ft_pwd(t_node *node);
 void ft_execve(t_node *node);
 void free_matrix(char **matrix);
 // fd
-int ft_do_redir(t_node *node);
 int ft_do_redir2(t_node *node);
 int ft_do_redir2_pipe(t_node *node);
 int ft_do_redir3(t_node *node);
 void ft_reset_original_fd(t_node *node);
-int ft_fd_sub_level(t_node *node, int lvl, int is_first);
 int norm_exit_status(t_node *node, int i);
 int ft_fd_sub_level2(t_node *node, int lvl, int *is_first);
 int ft_fd_cmd_level(t_node *node);
@@ -249,7 +252,6 @@ t_node *last_cmd_same_lvl(t_node *node);
 int is_redir_out(t_node *node, int lvl);
 // execute_utils2.c
 t_node *fd_storage(t_node *node);
-void ft_free_hidden_redir(char **arredir);
 t_node *ft_do_pipe(t_node *node);
 t_node *ft_do_and_or(t_node *node, t_node *prev_node);
 int	ft_single_cmd2(t_node *node, int (*f)(t_node *));
@@ -275,9 +277,6 @@ int ft_strncmp(char *s1, char *s2, int n, int flag);
 int get_idx_eq_str(char *str);
 char *ft_strjoin2(char const *s1, char const *s2);
 char	*ft_itoa(int n);
-void	ft_free_str(char **str);
-void	norm_remove_heredoc(t_shell *shell);
-void	remove_node(t_node *node);
 // exec_utils
 int ft_dup2(int *fd, int arg);
 int ok_status(t_node *node);
@@ -285,9 +284,6 @@ int is_builtin(t_node *node);
 t_node *go_next_cmd_and_or(t_node *node);
 int execute_builtin(t_node *node, t_shell *shell);
 void execute_recursiveV2(t_node *node);
-
-// test
-void print_node(t_shell *shell, t_node *node);
 
 // GNL
 char *get_next_line(int fd);
@@ -298,9 +294,15 @@ void *ft_free(char *s1, char *s2);
 size_t ft_is_newline(char c);
 // clean_exit.c
 void ft_free_str(char **str);
+// execute_single_cmd.c
+void execute_single_cmd(t_node *node);
+int ft_get_op(t_node *node);
+t_node *ft_back_node(t_node *node);
+t_node *next_oneV2(t_node *node);
+int norm_checkV2skip(t_node *node);
+t_node *wrap_ft_single_cmd2(t_node *node);
 
 //TEST_OLD
-void executeOLD(t_shell *shell);
 void addr_str(char *str, char *msg);
 void addr_matr(char **str, char *msg);
 #endif

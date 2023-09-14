@@ -6,86 +6,80 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/04 05:39:06 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 02:08:33 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void execute_recursive(t_node *node, char **arredir);
 void execute_recursiveV2(t_node *node);
 
-// esegue il singolo cmd, ovvero:
-// fa le redir (tranne here_doc che è gia fatta)
-// if r_input fail, stampa errore
-// altrimenti esegue il cmd
-// reset fd_originali
-int	ft_single_cmd2(t_node *node, int (*f)(t_node *))
+// esegue la redirection dell output della subshell.
+// se op del nodo è AND/OR stampa l output
+// se op del nodo è PIPE fornisce output come input next_cmd
+void ft_do_redir_fork(t_node *node, t_shell *shell)
 {
-	int status;
-	int res;
-	pid_t pid;
-
-	printf("in single_cmd...\n");
-	res = f(node);
-	if (res != 0)
+	char *str;
+	
+	if (!node || ft_get_op(node) == AND || ft_get_op(node) == OR)
 	{
-		printf("ERRORE>ft_do_redir\n");
-		ft_reset_original_fd(node);
-		return(res);
-	}
-	// printf("dopo fd_redir...\n");
-	if (node->content.cmd && node->content.cmd[0])
-	{
-		if (is_builtin(node))
-			execute_builtin(node, node->shell);
-		else
+		str = get_next_line(shell->new_temp_input);
+		while (str != NULL)
 		{
-			printf("fork..\n");
-			// refactor per utilizzo anche in pipe
-			pid = fork();
-			if (pid == 0)
-				ft_execve(node);
-			else
-			{
-				waitpid(pid, &status, 0);
-				printf("FINE SINGLE_CMD!\n");
-				node->shell->exit_status = WSTOPSIG(status);
-				// printf("node->shell->exit_status:%d\n", node->shell->exit_status);
-			}
-		}
+			printf("%s", str);
+			ft_free_str(&str);
+			str = get_next_line(shell->new_temp_input);
+		} 
 	}
-	ft_reset_original_fd(node);
-	// printf("POST: ft_reset_original_fd|pid:%d\n",getpid());
-	return (0);
+	else
+	{
+		dup2(shell->new_temp_input, STDIN_FILENO);
+		node->flag_pipe = 1;
+	}
+	close(shell->new_temp_input);
 }
-
 
 t_node *fork_executeV2(t_node *node)
 {
 	pid_t pid;
+	int fd[2];
 	int status;
+	t_node *resume_node;
 
-	printf("IN fork_execute...\n");
+	resume_node = NULL;
+	if (node->shell->lvl_subshell == 0)
+	{
+		if (pipe(fd) == -1)
+			perror("pipe");
+	}
 	pid = fork();
 	if (pid == 0)
 	{
-		printf("siamo nel figlio\n");
+		if (node->shell->lvl_subshell == 0)
+		{
+			close(fd[0]);
+			node->shell->new_temp_output = fd[1];
+		}
 		node->shell->lvl_subshell++;
 		execute_recursiveV2(node);
 	}
 	else
 	{
 		waitpid(pid, &status, 0);
-		printf("siamo nel padre\n");
 		node->shell->exit_status = WSTOPSIG(status);
+		resume_node = next_cmd2(node->shell, last_cmd_same_lvl(node));
+		if (node->shell->lvl_subshell == 0)
+		{
+			close(fd[1]);
+			node->shell->new_temp_input = fd[0];
+			ft_do_redir_fork(resume_node, node->shell);
+		}
 	}
-	return (next_cmd2(node->shell, last_cmd_same_lvl(node)));
+	return (resume_node);
 }
 
-// coincide con la parte del multi_cmd dell attuale execute
-// esegue tutta la sequenza di nodi_cmd del suo stesso lvl
-// si blocca se finisce la riga
+
+
 t_node *just_executeV2(t_node *temp)
 {
 	t_node *node;
@@ -94,135 +88,173 @@ t_node *just_executeV2(t_node *temp)
 
 	node = temp;
 	prev_node = NULL;
+	next_node = NULL;
 	while (1)
 	{
-		printf("--- START GIRO LOOP ---\n");
-		if (!node || node->done_lock == 1)
+		if (temp->shell->lvl_subshell >0)
+			dup2(temp->shell->new_temp_output, STDOUT_FILENO);
+		if (!node->content.cmd || !node->content.cmd[0])
 		{
-			if (node)
+			if (ft_get_op(node) == PIPE ||(!prev_node && node == go_to_starter_node(node->shell->tree->left)) || (prev_node && norm_check(node)) || (!prev_node && node != go_to_starter_node(node->shell->tree->left) && norm_check(node)))
 			{
-				printf("in just_execute..\n");
-				printf("node->done_lock:%d\n", node->done_lock);
-				ft_reset_original_fd(node->shell->tree);
-				// return (NULL);
+				if (ft_do_redir2(node) == 1)
+				{
+					return (next_cmd_same_lvl(node));
+				}
+				if (ft_do_redir2(node) == 2)
+				{
+					return (next_cmd2(node->shell, last_cmd_same_lvl(node)));
+				}
+				node->done_lock = 1;
+				next_node = next_cmd_same_lvl(node);
+				if (next_node != NULL)
+					prev_node = node;
 			}
 			else
 			{
-				printf("in just_execute: NODE == NULL\n");
-				// return (NULL);
-				// return (next_cmd2(prev_node->shell, prev_node));
-			}
-			if (prev_node != NULL)
-				return (next_cmd2(prev_node->shell, prev_node));
-			else
-				return (temp);
-		}
-		else if (!node->content.cmd || !node->content.cmd[0])
-		{
-			printf("NODE_CMD WITH ONLY REDIR...\n");
-			if (ft_do_redir2(node) == 1)
-			{
-				printf("errore redir CMD_LVL!\n");
 				return (next_cmd_same_lvl(node));
 			}
-			if (ft_do_redir2(node) == 2)
-			{
-				printf("errore redir SUB_LVL!\n");
-				return (next_cmd2(node->shell, last_cmd_same_lvl(node)));
-			}
-			printf("PRE:JUST_REDIR|node:p%p\n", node);
-			printf("PRE:JUST_REDIR|prev_node:p%p\n", prev_node);
-			node->done_lock = 1;
-			next_node = next_cmd_same_lvl(node);
-			if (next_node != NULL)
-				prev_node = node;
-			printf("POST:JUST_REDIR|prev_node:p%p\n", prev_node);
-			printf("POST:JUST_REDIR|next_node:p%p\n", next_node);
 		}
-		else if (node->back->content.op == PIPE)
+		else if (ft_get_op(node) == PIPE)
 		{
-			printf("ft_do_pipe...\n");
-			printf("PRE:PIPE|prev_node:p%p\n", prev_node);
 			next_node = ft_do_pipe(node);
 			node->done_lock = 1;
 			if (next_node != NULL)
 				prev_node = node;
-			printf("PRE:PIPE|node:p%p\n", node);
-			printf("POST:PIPE|next_node:p%p\n", next_node);
-			printf("POST:PIPE|prev_node:p%p\n", prev_node);
 		}
-		else if (node->back->content.op == AND || node->back->content.op == OR)
+		else if (ft_back_node(node)->lvl_subshell > node->shell->lvl_subshell && node != go_to_starter_node(node->shell->tree->left) && ft_back_node(node)->content.op == PIPE)
 		{
-			printf("ft_do_and_or...\n");
-			printf("PRE:AND_OR|node:p%p\n", node);
-			printf("PRE:AND_OR|prev_node:p%p\n", prev_node);
+			next_node = wrap_ft_single_cmd2(node);
+			node->done_lock = 1;
+			if (next_node != NULL)
+				prev_node = node;
+		}
+		else if (ft_get_op(node) == AND || ft_get_op(node) == OR )
+		{
 			next_node = ft_do_and_or(node, prev_node);
 			node->done_lock = 1;
 			if (next_node != NULL)
 				prev_node = node;
-			printf("AFTER:AND_OR|next_node:p%p\n", next_node);
-			printf("POST:AND_OR|prev_node:p%p\n", prev_node);
 		}
 		node = next_node;
+		if (!node || node->done_lock == 1)
+		{
+			if (node)
+			{
+				return (node);
+			}
+			else
+			{
+				return (NULL);
+			}
+		}
+		return (next_node);
 	}
 }
 
-// V2 senza hidden
+t_node *wrap_ft_single_cmd2(t_node *node)
+{
+	int res;
+
+	res = ft_single_cmd2(node, ft_do_redir2);
+	if (res == 1)
+	{
+		return (next_cmd_same_lvl(node));
+	}
+	if (res == 2)
+	{ 
+		ft_clean_exit(node->shell, NULL, 34, 1);
+	}
+	return (next_cmd_same_lvl(node));
+}
+
 void execute_recursiveV2(t_node *node)
 {
 	t_node *temp;
 	t_node *next_node;
 
 	temp = node;
-	printf("IN execute_recursiveV2...\n");
 	while (1)
 	{
-		if (!node || node->done_lock == 1)
-		{ // è ultimo nodo, possiamo essere in subshell oppure no
+		if ((node != NULL && next_cmd_same_lvl(node) && node->is_last == 1) || ( node && node->is_last == 1 && !next_cmd_same_lvl(node) && node->done_lock == 0))
+		{
+			ft_dup2(&node->shell->new_temp_output, STDOUT_FILENO);
+			if (ft_get_op(node) == PIPE || (node == go_to_starter_node(node->shell->tree->left)) || (norm_check(node)))
+				ft_single_cmd2(node, ft_do_redir2);
+			ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+		} 
+		if (!node || node->done_lock == 1 || (node && ft_back_node(node)->lvl_subshell < node->shell->lvl_subshell  && node->shell->lvl_subshell != 0))
+		{ 
 			if (!node)
-				printf("NON C E NODO!!\n");
-			else
 			{
-				printf("C E NODO!!\n");
-				printf("node->done_lock:%d\n", node->done_lock);
-				printf("node-> back->lvl_subshell:%d\n", node->back->lvl_subshell);
-				printf("node->shell->lvl_subshell:%d\n", node->shell->lvl_subshell);
+				while (temp->shell->lvl_subshell > 0)
+					ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+				if (temp->shell->lvl_subshell == 0)
+					return;
 			}
-			if (node && node->done_lock == 1 && node->back->lvl_subshell >= node->shell->lvl_subshell && node->shell->lvl_subshell != 0)
+			else 
 			{
-				printf("node->done_lock:%d\n", node->done_lock);
-				printf("USCITA DALLA SUBSHELL!\n");
+				ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
+			}
+			if ((node && node->done_lock == 1 && ft_back_node(node)->lvl_subshell >= node->shell->lvl_subshell && node->shell->lvl_subshell != 0))
+			{
 				ft_clean_exit(node->shell, NULL, node->shell->exit_status, 1);
 			}
 			else
 			{
-				printf("NON SIAMO IN SUBSHELL, RITORNA NEXT_LINE\n");
 				return;
 			}
 		}
-		if (node->back->lvl_subshell == node->shell->lvl_subshell)
+		if (ft_back_node(node)->lvl_subshell == node->shell->lvl_subshell || node->is_last == 1 || node->is_last == 2)
 		{
-			printf("entra in just_executeV2\n");
 			next_node = just_executeV2(node);
+			node->shell->can_flag++;
 		}
-		else if (node->back->lvl_subshell > node->shell->lvl_subshell)
+		else if (ft_back_node(node)->lvl_subshell > node->shell->lvl_subshell && node->is_last == 0)
 		{
-			printf("entra in fork_executeV2\n");
 			next_node = fork_executeV2(node);
 		}
 		node = next_node;
 	}
 }
 
-
-
-// coincide con la parte iniziale dell attuale execute
-void execute_single_cmd(t_node *node)
+void fix_out_trunc(t_node *node)
 {
-	ft_do_heredoc(node);
-	printf("dopo:ft_do_heredoc(node);\n");
-	ft_single_cmd2(node, ft_do_redir3);
-	printf("dopo:ft_single_cmd2(node, NULL, ft_do_redir3);\n");
+	int i;
+	int fd;
+
+	i = -1;
+	if (node->content.redir == NULL)
+	{
+		return;
+	}
+	while (++i < node->content.kv_size)
+    {
+		if (node->content.redir[i].lvl > 0 && node->content.redir[i].key == R_OUTPUT_TRUNC)
+		{
+			fd = open(node->content.redir[i].value, O_RDWR | O_CREAT | O_TRUNC | O_CLOEXEC, 0777);
+			close (fd);
+			node->content.redir[i].key = R_OUTPUT_APPEND;
+		}
+	}
+}
+
+// se presente un node_op con lvl subshell < 0, lo setta a 0
+void fix_redir(t_node *node)
+{
+	t_node *temp;
+	t_node *next_node;
+
+	temp = node;
+	next_node = NULL;
+	while (1)
+	{
+		fix_out_trunc(temp);
+		next_node = next_cmd2(node->shell, temp);
+		if (!next_node)
+			return;
+		temp = next_node;
+	}
 }
 
 // se presente un node_op con lvl subshell < 0, lo setta a 0
@@ -246,19 +278,61 @@ void fix_lvl_subshell(t_node *node)
 
 void executeV2(t_shell *shell)
 {
-	printf("------------------|FASE: EXECUTOR|------------------\n");
 	if(is_node_cmd(shell->tree))
 	{
-		printf("esegue execute_single_cmd(shell->tree);\n");
 		execute_single_cmd(shell->tree);
 	}
 	else
 	{
-		// fix_lvl_subshell(go_to_starter_node(shell->tree->left));
-		printf("esegue execute_recursive(go_to_starter_node(shell->tree->left), NULL);\n");
+		fix_redir(go_to_starter_node(shell->tree->left));
+		fix_lvl_subshell(go_to_starter_node(shell->tree->left));
 		ft_do_heredoc(go_to_starter_node(shell->tree->left));
 		execute_recursiveV2(go_to_starter_node(shell->tree->left));
 	}
 }
 
-// 6 func
+// dato un nodo ritorna l op corrispettivo
+// se è left -> back
+// se è right -> back -> back
+// se è last -> back
+// non dovrebbe mai tornare 0
+int ft_get_op(t_node *node)
+{
+	if (!next_cmd2(node->shell, node))
+	{
+		return (node->back->content.op);
+	}
+	if (is_left_branch(node))
+	{
+		return (node->back->content.op);
+	}
+	if (!is_left_branch(node))
+	{
+		return (node->back->back->content.op);
+	}
+	return (0);
+}
+
+t_node *ft_back_node(t_node *node)
+{
+	if (!next_cmd2(node->shell, node))
+	{
+		return (node->back);
+	}
+	if (is_left_branch(node))
+	{
+		return (node->back);
+	}
+	if (!is_left_branch(node))
+	{	
+		if (node->back->back->right == node->back)
+		{
+			if (node->back->back->back)
+				return (node->back->back->back);
+			else
+				return (node->back);
+		}
+		return (node->back->back);
+	}
+	return (0);
+}

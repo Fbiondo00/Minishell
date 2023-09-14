@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 17:51:56 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:34:57 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 14:57:01 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,12 +57,10 @@ void	set_branch(t_node *node, t_node *back_node)
 	new_idx = check_op_logic_than_pipe(node);
 	if (new_idx)
 	{
-		printf("in set_branch >set_node_operator..\n");
 		set_node_operator(node, back_node, new_idx);
 	}
 	else
 	{
-		printf("in set_branch >set_node_cmd..\n");
 		set_node_cmd(node, back_node);
 	}
 }
