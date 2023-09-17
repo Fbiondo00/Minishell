@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 17:40:50 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/17 21:53:38 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,33 @@ int	main(int argc, char **argv, char **env)
 	}
 }
 
+t_node *ft_main1(t_node *n, t_node *p, t_node	*r)
+{
+        if (!p)
+			return (NULL);
+		if (ft_back_node(p)->lvl_subshell > n->shell->lvl_subshell
+			&& n->is_last == 0)
+			return (next_cmd2(n->shell, last_cmd_same_lvl(n)));
+		if (p->done_lock == 1 || (p
+            && ft_back_node(p)->lvl_subshell < p->shell->lvl_subshell
+            && p->shell->lvl_subshell != 0))
+			ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
+		if (ft_get_op(p) == PIPE)
+			return (p);
+		if (ft_get_op(p) == AND || ft_get_op(p) == OR)
+		{
+			r = next_cmd_same_lvl(p);
+			if (!r)
+				return (NULL);
+			if (r->done_lock == 1 || (r
+					&& ft_back_node(r)->lvl_subshell < r->shell->lvl_subshell
+					&& r->shell->lvl_subshell != 0))
+				ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
+			return (r);
+		}
+        return(NULL);
+}
+
 // risolve il problema dei diversi tipi di skip eventuali,
 // in base alle condizioni dell exit status e op del nodo che viene fornito
 // tale funzione puo:
@@ -90,38 +117,17 @@ t_node	*next_onev2(t_node *n)
 {
 	t_node	*p;
 	t_node	*r;
+    t_node  *fb;
 
+    fb = NULL;
 	p = next_cmd_same_lvl(n);
 	r = NULL;
 	if (norm_checkV2skip(n))
 		return (p);
 	else
 	{
-		if (!p)
-			return (NULL);
-		if (ft_back_node(p)->lvl_subshell > n->shell->lvl_subshell
-			&& n->is_last == 0)
-		{
-			r = next_cmd2(n->shell, last_cmd_same_lvl(n));
-			return (r);
-		}
-		if (p->done_lock == 1 || (p
-				&& ft_back_node(p)->lvl_subshell < p->shell->lvl_subshell
-				&& p->shell->lvl_subshell != 0))
-			ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
-		if (ft_get_op(p) == PIPE)
-			return (p);
-		if (ft_get_op(p) == AND || ft_get_op(p) == OR)
-		{
-			r = next_cmd_same_lvl(p);
-			if (!r)
-				return (NULL);
-			if (r->done_lock == 1 || (r
-					&& ft_back_node(r)->lvl_subshell < r->shell->lvl_subshell
-					&& r->shell->lvl_subshell != 0))
-				ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
-			return (r);
-		}
+        fb = ft_main1(n,p,r);
+            return(fb);
 	}
 	return (NULL);
 }
