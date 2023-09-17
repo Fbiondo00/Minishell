@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 23:40:11 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 15:00:07 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 17:16:20 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,6 @@ t_node *ft_do_pipe(t_node *node)
 {
     pid_t pid;
     int status;
-    int is_last;
     int len;
     int fd[2];
 
@@ -89,7 +88,6 @@ t_node *ft_do_pipe(t_node *node)
         return (do_exit(node));
     else
     {
-        is_last = is_last_pipe(node);
         if (node->flag_pipe == 0 || node->is_last == 2)
         {
             if (pipe(fd) == -1)
@@ -160,7 +158,7 @@ t_node *ft_do_and_or(t_node *node, t_node *prev_node)
         { 
             ft_clean_exit(node->shell, NULL, 34, 1);
         }
-        printt = next_oneV2(node);
+        printt = next_onev2(node);
         return (printt);
     }
     return (go_next_cmd_and_or(node));

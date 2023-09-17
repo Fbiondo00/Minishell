@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 20:50:42 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/04 20:51:09 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/14 17:27:09 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,39 @@ int	ft_atoi(const char *str)
 		i++;
 	}
 	return (j * segn);
+}
+
+void	ft_free_str(char **str)
+{
+	if (*str)
+	{
+		free(*str);
+		*str = NULL;
+	}
+}
+
+void	norm_remove_heredoc(t_shell *shell)
+{
+	if (is_node_cmd(shell->tree))
+	{
+		ft_remove_heredoc(shell->tree);
+	}
+	else
+	{
+		ft_remove_heredoc(go_to_starter_node(shell->tree->left));
+	}
+}
+
+void	remove_node(t_node *node)
+{
+	ft_free_str(&node->raw_cmd);
+	ft_free_str(&node->quote_idx);
+	if (node->content.cmd != NULL)
+		free_matrix(node->content.cmd);
+	if (node->content.redir != NULL)
+	{
+		ft_free_str(&node->content.redir->value);
+		free(node->content.redir);
+	}
+	free(node);
 }

@@ -3,29 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   redirection1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 22:13:46 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/09 23:34:52 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/14 17:26:43 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-// void	set_lvl(t_node *node, int i, int num)
-// {
-// 	node->content.redir[num].lvl = 0;
-// 	while (--i >= 0)
-// 	{
-// 		if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
-// 			break ;
-// 		if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
-// 			node->content.redir[num].lvl++;
-// 	}
-// }
-
 // V2 ((a )>1)>2, devono risultare tutti lvl 0
-void set_lvl(t_node *node, int i, int num)
+void	set_lvl(t_node *node, int i, int num)
 {
 	node->content.redir[num].lvl = 0;
 	if (node == node->shell->tree)
@@ -40,8 +28,9 @@ void set_lvl(t_node *node, int i, int num)
 	{
 		while (--i >= 0)
 		{
-			if ((node->raw_cmd[i] == '|' || node->raw_cmd[i] == '&') && !in_quotes(node, i))
-				break;
+			if ((node->raw_cmd[i] == '|' || node->raw_cmd[i] == '&')
+				&& !in_quotes(node, i))
+				break ;
 			if (node->raw_cmd[i] == '(' && !in_quotes(node, i))
 				node->content.redir[num].lvl--;
 			if (node->raw_cmd[i] == ')' && !in_quotes(node, i))
