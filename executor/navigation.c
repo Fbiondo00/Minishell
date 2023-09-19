@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   navigation.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:46:46 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 01:54:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/19 22:52:09 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,12 +42,33 @@ int	is_node_cmd(t_node *node)
 	return (0);
 }
 
+t_node	*next_cmd1(t_node *node, t_node *to_check)
+{
+	if (node->back->back)
+	{
+		if ((!node->back->back->back && node->back == node->shell->tree->right)
+			|| !node->back->back->right)
+			return (NULL);
+		if (node->back->back->right == node->back)
+			to_check = node->back->back->back->right;
+		else
+			to_check = node->back->back->right;
+		if (is_node_cmd(to_check))
+			return (to_check);
+		else
+			return (go_to_starter_node(to_check));
+	}
+	else
+		return (NULL);
+}
+
 // torna il generico next_cmd
 // entra sempre un node_cmd, esce sempre un node_cmd (o NULL)
 t_node	*next_cmd2(t_shell *shell, t_node *node)
 {
 	t_node	*to_check;
 
+	to_check = NULL;
 	if (!node || shell->tree == node)
 		return (NULL);
 	if (is_left_branch(node))
@@ -58,24 +79,7 @@ t_node	*next_cmd2(t_shell *shell, t_node *node)
 			return (go_to_starter_node(node->back->right));
 	}
 	else
-	{
-		if (node->back->back)
-		{
-			if ((!node->back->back->back
-					&& node->back == node->shell->tree->right)
-				|| !node->back->back->right)
-				return (NULL);
-			if (node->back->back->right == node->back)
-				to_check = node->back->back->back->right;
-			else
-				to_check = node->back->back->right;
-			if (is_node_cmd(to_check))
-				return (to_check);
-			else
-				return (go_to_starter_node(to_check));
-		}
-		else
-			return (NULL);
-	}
+		return(next_cmd1(node, to_check));
+	return(NULL);
 }
 // 5 func
