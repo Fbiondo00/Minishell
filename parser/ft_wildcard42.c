@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 03:11:16 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/03 02:36:38 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/18 18:26:34 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 DIR	*dir42(void)
 {
-	const char	*dirname;
-	DIR			*dir;
+	char	*dirname;
+	DIR		*dir;
 
 	dirname = getcwd(0, 0);
 	dir = opendir(dirname);
@@ -24,6 +24,7 @@ DIR	*dir42(void)
 		perror("opendir() error");
 		return (NULL);
 	}
+	free(dirname);
 	return (dir);
 }
 
@@ -45,7 +46,7 @@ char	*new_str_1(char *str, char *new_str, int flag)
 			if (!new_str)
 				new_str = ft_strjoin2(tem, " ");
 			else
-				new_str = ft_strjoin2(new_str, tem);
+				norm_wild(&new_str, tem);
 			free(tem);
 			entry = readdir(dir);
 		}

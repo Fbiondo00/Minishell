@@ -6,11 +6,33 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 15:20:21 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/03 02:37:01 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/18 17:16:36 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	norm_wild(char **new_str, char *tem)
+{
+	char	*tem2;
+
+	tem2 = ft_strdup(*new_str);
+	free(*new_str);
+	*new_str = ft_strjoin2(tem2, tem);
+	free(tem2);
+}
+
+char	*norm_wild_return(char **dirname, DIR **dir, char *new_str, int flag)
+{
+	if (flag == 1)
+	{
+		free(*dirname);
+		return ((char *)1);
+	}
+	free(*dirname);
+	closedir(*dir);
+	return (new_str);
+}
 
 void	ft_input(char *new_str, t_node *node, int y)
 {
@@ -25,6 +47,7 @@ void	ft_input(char *new_str, t_node *node, int y)
 		quote = modify_raw_and_quote2(node, y, new_str, 48);
 		ft_free_str(&node->quote_idx);
 		node->quote_idx = quote;
+		free(new_str);
 	}
 }
 

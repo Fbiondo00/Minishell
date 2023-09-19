@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_wildcard.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/23 01:45:48 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/25 03:12:17 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/18 17:13:27 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,28 +35,26 @@ char	*ft_one(void)
 	char			*tem;
 	char			*new_str;
 	struct dirent	*entry;
-	const char		*dirname;
+	char			*dirname;
 	DIR				*dir;
 
 	new_str = NULL;
 	dirname = getcwd(0, 0);
 	dir = opendir(dirname);
 	if (dir == NULL)
-	{
-		perror("opendir() error");
-		return ((char *)1);
-	}
+		return (norm_wild_return(&dirname, &dir, new_str, 1));
 	entry = readdir(dir);
 	while ((entry))
 	{
 		tem = ft_strjoin2(entry->d_name, " ");
 		if (!new_str)
 			new_str = ft_strjoin2(tem, " ");
-		new_str = ft_strjoin2(new_str, tem);
+		else
+			norm_wild(&new_str, tem);
 		free(tem);
 		entry = readdir(dir);
 	}
-	return (new_str);
+	return (norm_wild_return(&dirname, &dir, new_str, 0));
 }
 
 int	ft_max(t_node *node, int i)

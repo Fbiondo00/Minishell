@@ -6,26 +6,28 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 16:12:38 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:21:39 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/17 00:33:36 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_is_valid_norm(char *chars, char c, int idx, int count)
+int	ft_is_valid_norm2(int idx, int count)
 {
-	if (count == 0 || ft_strchr(chars, c))
-		return (0);
-	else
+	if (count > 2)
 		return (idx);
+	else
+		return (0);
 }
 
 void	norm_is_value(char *tmp, int *count, int *idx, int q)
 {
 	while (++(*idx) < ft_strlen(tmp))
+	{
+		(*count)++;
 		if (tmp[*idx] == q)
 			break ;
-	(*count)++;
+	}
 }
 
 // riceve idx del char dopo redir
@@ -48,13 +50,10 @@ int	is_value(t_shell *shell, char *tmp, int idx)
 			norm_is_value(tmp, &count, &idx, 39);
 		else if ((tmp[idx] != ' ' && !in_quotes_str(shell, idx))
 			|| (ft_strchr(chars, tmp[idx]) && !in_quotes_str(shell, idx)))
-		{
-			count++;
-			break ;
-		}
+			return (1);
 		idx++;
 	}
-	return (ft_is_valid_norm(chars, tmp[idx], idx, count));
+	return (ft_is_valid_norm2(idx, count));
 }
 
 // echo 7>1>2

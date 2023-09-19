@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:56:05 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 17:20:53 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/19 00:35:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	ft_clean_exit1(t_shell *shell, int exit_status)
+{
+	free_envp(shell);
+	just_reset(shell);
+	close(shell->temp_input);
+	if (shell->new_temp_output != -1)
+	{
+		close(shell->new_temp_output);
+		shell->new_temp_output = -1;
+	}
+	if (shell->new_temp_input != -1)
+	{
+		close(shell->new_temp_input);
+		shell->new_temp_input = -1;
+	}
+	close(shell->temp_output);
+	close(shell->temp_error);
+	exit(exit_status);
+}
 
 // ritorna 1, se status ok ritorna 0 se status ko
 // 1. check status
@@ -85,24 +105,4 @@ int	is_builtin(t_node *node)
 	else if (!ft_strncmp(node->content.cmd[0], "cd", len, 1))
 		return (1);
 	return (0);
-}
-
-void	ft_clean_exit1(t_shell *shell, int exit_status)
-{
-	free_envp(shell);
-	just_reset(shell);
-	close(shell->temp_input);
-	if (shell->new_temp_output != -1)
-	{
-		close(shell->new_temp_output);
-		shell->new_temp_output = -1;
-	}
-	if (shell->new_temp_input != -1)
-	{
-		close(shell->new_temp_input);
-		shell->new_temp_input = -1;
-	}
-	close(shell->temp_output);
-	close(shell->temp_error);
-	exit(exit_status);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 22:13:46 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/14 17:26:43 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/19 00:21:00 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

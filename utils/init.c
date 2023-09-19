@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 15:55:37 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/19 17:16:59 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@ void	shell_init(int argc, char **argv, char **env, t_shell *shell)
 	shell->temp_error = dup(STDERR_FILENO);
 	shell->new_temp_output = -1;
 	shell->new_temp_input = -1;
-	shell->can_flag = 0;
 	shell->env = NULL;
 	shell->rawline = NULL;
 	shell->quote_idx = NULL;
@@ -85,4 +84,3 @@ int	ft_get_len_env(t_shell *shell)
 		;
 	return (ij);
 }
-

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 17:39:14 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/19 15:09:13 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	recursive_remove(t_node *node)
 	{
 		recursive_remove(node->left);
 		recursive_remove(node->right);
-	}
+	}	
 	else
 		remove_node(node);
 }
@@ -40,7 +40,6 @@ void	just_reset(t_shell *shell)
 	shell->error = 0;
 	shell->exit_builtin = 0;
 	shell->exit_status = 0;
-	shell->can_flag = 0;
 	shell->lvl_subshell = 0;
 	ft_free_str(&shell->rawline);
 	ft_free_str(&shell->quote_idx);

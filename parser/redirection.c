@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/08/31 22:51:41 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/16 22:40:09 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,14 +56,14 @@ char	*ft_wwew(t_node *node, char *str, int idx, int *i)
 	return (str);
 }
 
-char	*set(t_node *node, char *str, int *i, int j)
+char	*set(t_node *node, char *str, int *i, int *j)
 {
 	node->flag = 39;
 	while (++(*i) < ft_strlen(node->raw_cmd))
 	{
 		if (node->raw_cmd[*i] == 39)
 			break ;
-		str[++j] = node->raw_cmd[*i];
+		str[++(*j)] = node->raw_cmd[*i];
 	}
 	return (str);
 }
@@ -89,7 +89,7 @@ char	*set_token(t_node *node, char *chars, char *str, int *i)
 			}
 		}
 		else if (node->raw_cmd[*i] == 39 && !in_quotes(node, *i))
-			str = set(node, str, i, j);
+			str = set(node, str, i, &j);
 		str[++j] = node->raw_cmd[(*i)++];
 	}
 	return (str);

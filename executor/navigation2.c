@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   navigation2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:02:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/17 22:03:11 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/19 01:56:41 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,28 +49,23 @@ void	ft_remove_heredoc(t_node *node)
 // il nodo da ritornare è node->right. (verifica affermazione)
 t_node	*next_cmd_same_lvl(t_node *node)
 {
-	t_node	*t;
-	t_node	*n;
+	t_node	*temp;
+	t_node	*next_node;
 
-	t = node;
-	n = NULL;
+	temp = node;
+	next_node = NULL;
 	while (1)
 	{
-		n = next_cmd2(t->shell, t);
-		if (!n || n->done_lock == 1)
-		{
+		next_node = next_cmd2(temp->shell, temp);
+		if (!next_node || next_node->done_lock == 1)
 			return (NULL);
-		}
-		else if (ft_back_node(n)->lvl_subshell >= ft_back_node(t)->lvl_subshell)
-		{
-			return (n);
-		}
-		else if (ft_back_node(n)->lvl_subshell < ft_back_node(t)->lvl_subshell
-				&& n->is_last == 1)
-		{
-			return (n);
-		}
-		t = n;
+		else if (ft_back_node(next_node)->lvl_subshell
+			>= ft_back_node(temp)->lvl_subshell)
+			return (next_node);
+		else if (ft_back_node(next_node)->lvl_subshell
+			< ft_back_node(temp)->lvl_subshell && next_node->is_last == 1)
+			return (next_node);
+		temp = next_node;
 	}
 	return (NULL);
 }
@@ -93,8 +88,11 @@ t_node	*go_next_cmd_and_or(t_node *node)
 		temp = next_node;
 		if (!next_node)
 			break ;
-		if (ft_get_op(next_node) != PIPE && node->back != next_node->back)
+		if (ft_back_node(next_node)->content.op
+			!= PIPE && node->back != next_node->back)
 		{
+			if (next_cmd2(next_node->shell, next_node))
+				return (next_cmd2(next_node->shell, next_node));
 			return (next_node);
 		}
 	}
