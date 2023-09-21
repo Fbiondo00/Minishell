@@ -6,13 +6,13 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/27 01:47:08 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/21 00:46:10 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void ft_head(int sign)
+void	ft_head(int sign)
 {
 	// t_shell *shell;
 	if (sign == SIGINT)
@@ -25,19 +25,19 @@ void ft_head(int sign)
 	}
 }
 
-void ft_does_nothing(int signum)
+void	ft_does_nothing(int signum)
 {
 	(void)signum;
-	return;
+	return ;
 }
 
-void ft_handle_quit(int signum)
+void	ft_handle_quit(int signum)
 {
 	if (signum != SIGQUIT)
-		return;
+		return ;
 }
 
-void ft_signals(t_shell *shell)
+void	ft_signals(t_shell *shell)
 {
 	tcgetattr(STDIN_FILENO, &shell->tty_attrs);
 	shell->tty_attrs.c_lflag &= ~(ECHOCTL);
@@ -70,7 +70,7 @@ void ft_signals(t_shell *shell)
 // 	sigaction(SIGQUIT, &signal, 0);
 // }
 
-int ft_continue(t_shell *shell, int n)
+int	ft_continue(t_shell *shell, int n)
 {
 	if (n == 1 && (!shell->rawline || !shell->rawline[0]))
 	{

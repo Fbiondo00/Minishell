@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/13 22:49:26 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/14 02:07:39 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/21 00:43:49 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,6 +51,21 @@ int	calculate_lvl_diff(t_node *node)
 	return (count);
 }
 
+void	norm_if_ft(t_node **n, int l)
+{
+	if (l < 0)
+	{
+		(*n)->is_last = 1;
+		if (next_cmd2((*n)->shell, *n))
+			next_cmd2((*n)->shell, *n)->is_last = 2;
+	}
+	if (is_left_branch(*n))
+	{
+		(*n)->back->lvl_lock = 1;
+		(*n)->back->lvl_subshell += l;
+	}
+}
+
 void	ft_ft(t_shell *s, t_node *n)
 {
 	int	l;
@@ -58,17 +73,7 @@ void	ft_ft(t_shell *s, t_node *n)
 	while (1)
 	{
 		l = calculate_lvl_diff(n);
-		if (l < 0)
-		{
-			n->is_last = 1;
-			if (next_cmd2(n->shell, n))
-				next_cmd2(n->shell, n)->is_last = 2;
-		}
-		if (is_left_branch(n))
-		{
-			n->back->lvl_lock = 1;
-			n->back->lvl_subshell += l;
-		}
+		norm_if_ft(&n, l);
 		if (next_cmd2(s, n) && !is_left_branch(n) && !n->back->back->lvl_lock)
 		{
 			n->back->back->lvl_lock = 1;

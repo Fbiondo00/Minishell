@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 02:02:56 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 02:09:57 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/21 00:53:06 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,4 +96,5 @@ void	executev2(t_shell *shell)
 		ft_do_heredoc(go_to_starter_node(shell->tree->left));
 		execute_recursivev2(go_to_starter_node(shell->tree->left));
 	}
+	norm_remove_heredoc(shell);
 }

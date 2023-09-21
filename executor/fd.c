@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:47:03 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 16:06:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 22:10:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@ void	ft_reset_original_fd(t_node *node)
 	dup2(node->shell->temp_input, STDIN_FILENO);
 	dup2(node->shell->temp_output, STDOUT_FILENO);
 	dup2(node->shell->temp_error, STDERR_FILENO);
+}
+
+int	norm_if1_sub(t_node **node, int i)
+{
+	if (ft_open_file(*node, i) == 0)
+		return (0);
+	(*node)->content.redir[i].key = R_OUTPUT_APPEND;
+	if (ft_open_file(*node, i) == 0)
+		return (0);
+	return (1);
 }
 
 // V2 is_first viene determinato dentro la funzione
@@ -39,13 +49,8 @@ int	ft_fd_sub_level2(t_node *node, int lvl, int *is_first)
 					|| node->content.redir[i].key == R_OUTPUT_TRUNC))
 			{
 				if (node->content.redir[i].key == R_OUTPUT_TRUNC)
-				{
-					if (ft_open_file(node, i) == 0)
+					if (!norm_if1_sub(&node, i))
 						return (0);
-					node->content.redir[i].key = R_OUTPUT_APPEND;
-					if (ft_open_file(node, i) == 0)
-						return (0);
-				}
 				if (ft_open_file(node, i) == 0)
 					return (0);
 			}

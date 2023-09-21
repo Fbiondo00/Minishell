@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 23:40:11 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 16:09:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 22:04:52 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,5 +115,3 @@ t_node	*ft_do_and_or(t_node *node, t_node *prev_node)
 	}
 	return (go_next_cmd_and_or(node));
 }
-
-// 5 func

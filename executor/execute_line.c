@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/02 18:01:09 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 15:07:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 16:43:33 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 
 void	execute_recursivev2(t_node *node);
 
-void	norm_node(t_node **node, t_node **prev_node, t_node *next_node)
+int	norm_check2(t_node *node)
 {
-	(*node)->done_lock = 1;
-	if (next_node != NULL)
-		*prev_node = *node;
+	return (ft_back_node(node)->lvl_subshell > node->shell->lvl_subshell
+		&& node != go_to_starter_node(node->shell->tree->left)
+		&& ft_back_node(node)->content.op == PIPE);
 }
 
 // esegue la redirection dell output della subshell.

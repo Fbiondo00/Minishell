@@ -6,11 +6,27 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 15:53:44 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 16:28:34 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 22:32:29 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	norm_while_here(t_node *node, char *str, int i)
+{
+	return ((ft_strncmp(str, node->content.redir[i].value,
+				ft_strlen(str) - 1, 0)) || (ft_strlen(str) - 1)
+		!= ft_strlen(node->content.redir[i].value));
+}
+
+void	norm_here_doc1(t_node *node, char **str, int i, int fd)
+{
+	write(1, &">", 1);
+	*str = get_next_line(0);
+	if ((ft_strncmp(*str, node->content.redir[i].value, ft_strlen(*str) - 1, 0))
+		&& write(fd, *str, ft_strlen(*str)) == -1)
+		perror("Write error");
+}
 
 void	norm_child_pipe(t_node **node, int fd[2])
 {
@@ -33,6 +49,19 @@ void	norm_child_pipe(t_node **node, int fd[2])
 		exit(execute_builtin(*node, (*node)->shell));
 	else
 		ft_execve(*node);
+}
+
+void	norm_pipe_father(t_node **node, int *status, int pid, int fd[2])
+{
+	waitpid(pid, status, 0);
+	(*node)->shell->exit_status = WSTOPSIG(*status);
+	if ((*node)->shell->exit_status == 34)
+		ft_clean_exit((*node)->shell, NULL, 1, 1);
+	if ((*node)->flag_pipe == 0 || (*node)->is_last == 2)
+	{
+		close(fd[1]);
+		ft_dup2(&fd[0], STDIN_FILENO);
+	}
 }
 
 // n.b1: pipe vince su finto append
@@ -58,17 +87,7 @@ t_node	*ft_do_pipe(t_node *node)
 		if (pid == 0)
 			norm_child_pipe(&node, fd);
 		else
-		{
-			waitpid(pid, &status, 0);
-			node->shell->exit_status = WSTOPSIG(status);
-			if (node->shell->exit_status == 34)
-				ft_clean_exit(node->shell, NULL, 1, 1);
-			if (node->flag_pipe == 0 || node->is_last == 2)
-			{
-				close(fd[1]);
-				ft_dup2(&fd[0], STDIN_FILENO);
-			}
-		}
+			norm_pipe_father(&node, &status, pid, fd);
 	}
 	return (next_cmd_same_lvl(node));
 }

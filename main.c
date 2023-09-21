@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 14:45:45 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/21 11:28:47 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,70 +58,13 @@ int	main(int argc, char **argv, char **env)
 	}
 }
 
-t_node	*ft_main1(t_node *n, t_node *p, t_node *r)
-{
-	if (!p)
-		return (NULL);
-	if (ft_back_node(p)->lvl_subshell > n->shell->lvl_subshell
-		&& n->is_last == 0)
-		return (next_cmd2(n->shell, last_cmd_same_lvl(n)));
-	if (p->done_lock == 1 || (p && ft_back_node(p)->lvl_subshell
-			< p->shell->lvl_subshell && p->shell->lvl_subshell != 0))
-		ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
-	if (ft_get_op(p) == PIPE)
-		return (p);
-	if (ft_get_op(p) == AND || ft_get_op(p) == OR)
-	{
-		r = next_cmd_same_lvl(p);
-		if (!r)
-			return (NULL);
-		if (r->done_lock == 1 || (r && ft_back_node(r)->lvl_subshell
-				< r->shell->lvl_subshell && r->shell->lvl_subshell != 0))
-			ft_clean_exit(n->shell, NULL, n->shell->exit_status, 1);
-		return (r);
-	}
-	return (NULL);
-}
-
-// risolve il problema dei diversi tipi di skip eventuali,
-// in base alle condizioni dell exit status e op del nodo che viene fornito
-// tale funzione puo:
-// non skippare affatto:
-//  - ritorna next_node_same_lvl [DONE]
-// skippare:
-// - se dopo si presenta un nodo per il quale si dovrebbe forkare una subshell
-//   si skippa tutta la subshell e si procede al nodo in cui si dovrebbe rientrare
-//   dalla subshell stessa nel padre. [DONE]
-// - se si trova dentro una shell o subshell e non bisogna forkare
-//    - se il next_cmd ha come back_op and_or, ne skippa solo uno
-//    - se il next_cmd ha come back_op pipe, skippa tutta la sequenza
-//       fino al prossimo and_or.
-// tuttavia se si trova in subshell ed incontra prima la fine della subshell
-// fa una clean_exit (o fa fare clean_exit ad executeV2)
-// se sta invece in lvl_subshell == 0 invece deve far fare return a executeV2
-// riceve come nodo di input quello appena eseguito.
-t_node	*next_onev2(t_node *n)
-{
-	t_node	*p;
-	t_node	*r;
-
-	p = next_cmd_same_lvl(n);
-	r = NULL;
-	if (norm_checkv2skip(n))
-		return (p);
-	else
-		return (ft_main1(n, p, r));
-}
-
-// 5 func
-
 //--------------------------------------------------------------
 // uscita ctlr+d exit_status?
 
 // SIGNAL:
-//   void	ft_reset_signal(void) 
-// ------------------- TESTER: OK/KO in base a risultati bash -------------------
-// ------------------------ syntax error verificati: OK! ------------------------
+//   void	ft_reset_signal(void)
+// ----------------- TESTER: OK/KO in base a risultati bash -----------------
+// ---------------------- syntax error verificati: OK! ----------------------
 // echo c|       KO
 // |echo c       KO
 // (|(echo c))   KO
@@ -129,7 +72,6 @@ t_node	*next_onev2(t_node *n)
 // ((echo c)|)   KO
 // (|echo c)     KO
 // (echo c|)     KO
-// (())          KO
 // ((dispari)    KO
 // a | | echo b  KO
 // (ls) c        KO
@@ -161,8 +103,7 @@ t_node	*next_onev2(t_node *n)
 // ((echo a>b) >c)<e  OK  No such file or directory
 // echo a >"bb "c>y                 OK  out:  (bb c: y:a)
 // echo d >a>b>cc<<ddd              OK  out:  (a: b: cc:d)
-// echo a >u>>og <<o"'  pp" p       OK  out:  (og:a p u:)
-// ((((echo a)>1)>2)>3)             OK out:   (1:a 2: 3:)
+// ((((echo a)>1)>2)>3)             OK out:   (1:a)
 // LS $HOME/Desktop                 OK
 
 // ------- >multi_cmd<  -------
@@ -191,18 +132,17 @@ t_node	*next_onev2(t_node *n)
 // ( ls  && ls) | cat               OK  out: ls + ls
 // (echo b || echo a >e)            OK  out: b
 // (echo a && ls)                   OK  out: a + ls
-// (echo a &&  cat) >p              OK  out:  (p: a + rimane in attesa ctrl+c)
 // (echo a && ls)>2 |cat            OK  out:  (2: a + ls)
 // (echo a && echo b)| grep -w a| wc                    OK out: 1 1 2
 // (echo a || (echo b ) >u)                             OK out: a
 // (echo a || (echo b ) >u)| cat | cat >gg              OK out:    (gg:a)
 // (echo a || (echo b ) >u)| cat | cat | grep -w a >gg  OK out: (gg:a)
-// (echo a && (echo b && (echo c <z))) >p && echo DDD   OK out: no_such_file (p: a b)
+// (echo a && (echo b && (echo c <z))) >p && echo DDD  OK out: no_s_fi (p: a b)
 // (echo a && (echo b && echo c)) | cat | grep -w c | cat >dd    OK out: (dd:c)
 // (echo a || echo b) || echo c && echo r                        OK  out: a r
 // (echo a || echo b) && echo c && echo r          OK  out: a c r
 // (echo a && echo b) && echo c && echo r          OK  out: a b c r
-// (echo a && echo b) <m && echo c && echo r       OK  out: a b c r (creare m: ciao)
+// (echo a && echo b) <m && echo c && echo r   OK  out: a b c r (creare m: ciao)
 // (echo a && echo b) <m && echo c && echo r       OK  out: err_redir (senza m)
 // (echo a || (echo b ) >u)                        OK  out: a
 // (echo a || (echo b ) <u)                        OK  out: a
@@ -212,24 +152,24 @@ t_node	*next_onev2(t_node *n)
 // echo a >a | (echo b >b && echo d >d)            OK  out:        (a:a b:b d:d)
 // ((ls) | echo a && echo c) | cat                 OK  out: a c
 // (cat | cat | cat  >zi ) <du  && echo d          OK  out: no_such_file
-// (cat <zu | cat | cat  >zi ) <du  && echo d      OK: out: no_such_file
+// (cat | cat >zi ) <du  && echo d                 OK: out: no_such_file
 // echo a>1|(echo b>2||echo c >3)                  OK  out:  (1:a 2:b)
 // echo a>1|(cat>2||echo c  >3)                               OK  out: (1:a 2:)
 // echo a && echo b | echo c &&(  false && echo d | echo e )  OK out: a c
 // (echo a | echo b && echo c )| echo d                       OK out: d
 // echo a | echo b && echo c | echo f                         OK out: b f
-// (echo a | echo b | echo c >zi ) >zu && echo d              OK out: d (zi:c zu:)
-// (ECHO"b" && (ECHO "a" && (ECHO "d")))|ECHO "c"             OK out: c && cmd_not_found
-// echo a >1 && ( echo b >2 || echo c>3) || echo d >4         OK out: (1:a 2:b)
-// echo a >1 && ( echo b >2 || echo c <<3) || echo d <<4      OK out: (1:a 2:b) ^
-// echo a| (cat ||echo c  >3 ) && echo d<4                    OK out: a && No such file
+// (echo a | echo b | echo c >zi ) >zu && echo d          OK out: d (zi:c zu:)
+// (ECHO"b" && (ECHO "a" && (ECHO "d")))|ECHO "c"         OK out: c cmd_nt_found
+// echo a >1 && ( echo b >2 || echo c>3) || echo d >4     OK out: (1:a 2:b)
+// echo a >1 && ( echo b >2 || echo c <<3) || echo d <<4  OK out: (1:a 2:b)
+// echo a| (cat ||echo c  >3 ) && echo d<4                OK out: a no_su_file
 // echo a | (cat || echo b) | cat                             OK  out: a
 // echo a | (echo d &&  echo b) | cat                 OK  out: d b
 // echo a | (echo d >z &&  echo b) | cat              OK  out: b   (z:d)
 // echo a | (echo d >z &&  echo b) >u | cat           OK  out:     (z:d|u:b)
-// (cat | cat | cat  >zi ) <du  && echo d             OK  out:d  (zi: contenuto "du")
-// (cat && ls >a) <du  && echo d                      OK: out: d + content "du" (a:ls )
-// (cat && ls >a) <du  >u && echo d                   OK: out: d  (a:ls u:content "du" )
+// (cat | cat | cat  >zi ) <du  && echo d       OK  out:d  (zi: contenuto "du")
+// (cat && ls >a) <du  && echo d                OK: out: d + content "du" (a:ls)
+// (cat && ls >a) <du  >u && echo d             OK: out: d (a:ls u:content "du")
 // (echo b || (echo a >o))                            OK  out:b
 // (echop b && (echo a >o))                           OK  out: cmd_not_found
 // (echo b && (echo a ))>i | echo c                   OK  out:c (i:b a)
@@ -238,24 +178,23 @@ t_node	*next_onev2(t_node *n)
 // (echo a && (echo b && (echo c)))| cat              OK  out: a b c
 // (echo a >d && (echo b && (echo c)))| cat           OK  out: b c (d: a)
 // echop a >b &&  (echo b >c && echo d >e)            OK out: cmd_not_found (b:)
-// echo a >b | (echo b >c && (echo d >e | echo f >o)) OK out: (b:a c:b e:d o:f)
+// echo a >a | (echo b >b && (echo d >d | echo f >f)) OK out: (a:a b:b d:d f:f)
 // echo a>1|(echo b>2||echo c  >3)                    OK out:   (1:a 2:b)
 // echo a && (echo b && (echo c))>d| cat              OK out: a (d:b c)
-// echo a >b || (echo b >c && echo d >e)              OK out:  (b: a)
+// echo a >b || (echo b >c && echo d >e)              OK out:   (b: a)
 // >input file presenti:(test:gg)
-// echo a | (cat || echo b) <test| cat                                OK  out:gg
+// echo a | (cat || echo b) <test| cat                               OK  out:gg
 // >input file presenti: (e:ok|test:gg)
-// echo a | (cat <e || echo b) <test| cat                             OK out: ok
-// echo a && echo b | (false && echo d | echo e)                      OK out: a
-// echo a && echo b | echo c |( echo a && echo d | echo e ) |echo c   OK out: a c
+// echo a | (cat <e || echo b) <test| cat                            OK out: ok
+// echo a && echo b | (false && echo d | echo e)                     OK out: a
+// echo a && echo b | echo c |( echo a && echo d | echo e ) |echo c  OK out: a c
 // (echo a && (echo b && echo c && echo d)>d)| cat  OK out:a  (d: b c d)
 // (echo a && (echo b && (echo c))>d)| cat           OK  out: a  (d: b c)
-// (echo a && (echo b && (echo c <z))) >p            OK  out:  no_such_file  (p:a b)
-// (echo a && (echo b && echo c <u)>p)               OK  out: a + no_such_file (p:b)
+// (echo a && (echo b && (echo c <z))) >p            OK  out:  no_s_file (p:a b)
+// (echo a && (echo b && echo c <u)>p)               OK  out: a no_s_file (p:b)
 // (echo a && (echo b && (echo c))>d)>r | cat        OK  out: (d:b c r:a)
-// echo d && (echo a && (echo b && echo c <u)>p)>g   OK  out: d + no_such_file (p:b g:a)
+// echo d && (echo a && (echo b && echo c <u)>p)>g   OK  out: no_s_fil (p:b g:a)
 // echo d && (echo b && echo c <u)>g                     OK  out: d (g:b)
-// (echo a && (echo b && (echo c <u))>p) | cat           OK  out: a + no_such_file (p:b)
+// (echo a && (echo b && (echo c <u))>p) | cat       OK  out: a no_su_fil (p:b)
 // echo a && echo b | (false && echo d | echo e) >g      OK  out: a (g:)
-// (echo a && (echo b && (echo c <z))) >p || echo DDD    OK  out: DDD + no_such (p: a b)
-// (cat | cat | cat  >zi ) <du  || echo d  (du:ciao)     OK  out:   (zi:ciao)
+// (echo a && (echo b && (echo c <z))) >p || echo DDD  OK out: DDD no_su (p:a b)

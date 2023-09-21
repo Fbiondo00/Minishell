@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 15:09:13 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/21 00:54:16 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,10 +45,7 @@ void	just_reset(t_shell *shell)
 	ft_free_str(&shell->quote_idx);
 	ft_free_str(&shell->str);
 	if (shell->tree != NULL)
-	{
-		norm_remove_heredoc(shell);
 		remove_tree(shell);
-	}
 }
 
 void	ft_reset_original_fd_null(t_shell *shell)

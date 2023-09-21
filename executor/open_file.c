@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/19 16:07:07 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 22:31:06 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,9 @@ int	ft_here_doc(t_node *node, int i, char *new_value)
 			| O_CREAT, S_IRUSR | S_IWUSR | O_CLOEXEC);
 	if (fd == -1)
 		return (0);
-	while ((ft_strncmp(str, node->content.redir[i].value,
-				ft_strlen(str) - 1, 0)) || (ft_strlen(str) - 1)
-		!= ft_strlen(node->content.redir[i].value))
+	while (norm_while_here(node, str, i))
 	{
-		write(1, &">", 1);
-		str = get_next_line(0);
-		if ((ft_strncmp(str, node->content.redir[i].value, ft_strlen(str)
-					- 1, 0)) && write(fd, str, ft_strlen(str)) == -1)
-			perror("Write error");
+		norm_here_doc1(node, &str, i, fd);
 		if (!str)
 		{
 			path = ft_strjoin("./", new_value);
@@ -133,5 +127,3 @@ void	ft_do_heredoc(t_node *node)
 			temp = next_node;
 	}
 }
-
-// 5 func
