@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_wild_modify.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 17:58:33 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/08/31 18:03:17 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/23 19:44:48 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,14 +70,14 @@ char	*modify_raw_and_quote2(t_node *node, int idx, char *str, char c)
 
 	y = mod_raw_a_qu2(node, idx);
 	tot_len = tot_len_1(node, str, idx, y);
-	new_st = malloc(tot_len + 1);
+	new_st = malloc(sizeof(*new_st) * (tot_len + 1));
 	new_st[tot_len] = '\0';
 	i = -1;
 	if (c == 32)
 		new_st = str2(node, str, idx, new_st);
 	else if (c == 48)
 	{
-		while (++i < tot_len)
+		while (++i < tot_len && node->raw_cmd[i])
 		{
 			if (node->raw_cmd[i] == 34)
 				new_st[i] = 34;

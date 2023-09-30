@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/21 00:54:16 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/30 01:03:14 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,15 @@
 
 void	recursive_remove(t_node *node)
 {
-	if (node->left != NULL)
+	if (is_node_cmd(node))
+		remove_node(node);
+	else
 	{
 		recursive_remove(node->left);
 		recursive_remove(node->right);
-	}	
-	else
 		remove_node(node);
+	}
+
 }
 
 void	remove_tree(t_shell *shell)
@@ -28,10 +30,7 @@ void	remove_tree(t_shell *shell)
 	if (is_node_cmd(shell->tree))
 		remove_node(shell->tree);
 	else
-	{
 		recursive_remove(shell->tree);
-		remove_node(shell->tree);
-	}
 	shell->tree = NULL;
 }
 

@@ -3,18 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/03 02:02:22 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/30 16:40:34 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	ft_isdigit(int n)
+int	ft_isdigit(int n, int y)
 {
-	if ((n < 48 || n > 57))
+	if(y == 0)
+		{
+		if(n != 45)
+			return(0);
+		return(1);
+		}
+	if(n < 48 || n > 57)
 		return (0);
 	return (1);
 }
@@ -22,11 +28,13 @@ int	ft_isdigit(int n)
 int	is_check(char *str)
 {
 	int	i;
+	int y = -1;
 
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isdigit(str[i]))
+		if (!ft_isdigit(str[i], ++y))
+			// if(str[i] != 45)
 			return (0);
 	}
 	return (1);

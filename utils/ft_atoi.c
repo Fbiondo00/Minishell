@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/04 20:50:42 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/19 00:34:44 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/30 00:55:25 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,16 +35,21 @@ void	norm_remove_heredoc(t_shell *shell)
 
 void	remove_node(t_node *node)
 {
+	int	i;
+
+	i = -1;
 	ft_free_str(&node->raw_cmd);
 	ft_free_str(&node->quote_idx);
 	if (node->content.cmd != NULL)
 		free_matrix(node->content.cmd);
 	if (node->content.redir != NULL)
 	{
-		ft_free_str(&node->content.redir->value);
+		while (++i < node->content.kv_size)
+			ft_free_str(&node->content.redir[i].value);
 		free(node->content.redir);
 	}
 	free(node);
+	node = NULL;
 }
 
 int	ft_atoi(const char *str)

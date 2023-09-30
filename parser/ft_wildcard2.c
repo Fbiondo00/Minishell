@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 15:20:21 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/18 17:16:36 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/23 18:38:48 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,10 +57,10 @@ char	*create_str(t_node *node, int max, int min)
 	int		ij;
 
 	ij = 0;
-	str = malloc(max - min + 1);
+	str = malloc(sizeof(*str) *(max - min + 1));
 	if (!str)
 		return (NULL);
-	while (min <= max && (node->raw_cmd[min] != 32 && node->raw_cmd[min]))
+	while (min < max && (node->raw_cmd[min] != 32 && node->raw_cmd[min]))
 		str[ij++] = node->raw_cmd[min++];
 	str[ij++] = 0;
 	return (str);

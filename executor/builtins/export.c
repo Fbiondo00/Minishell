@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/13 20:12:20 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/30 17:04:20 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
 				ft_name_value(node, shell, ij, ++y);
 			return ;
 		}
-		shell->env = ft_realloc(shell->env, sizeof(char *) * (j + 2));
+		shell->env =  ft_realloc(shell->env, sizeof(char *) * (j + 2));
 		shell->env[j] = ft_strdup(node->content.cmd[y]);
 		shell->env[j + 1] = 0;
 	}

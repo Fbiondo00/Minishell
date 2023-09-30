@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/16 22:40:09 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/29 20:35:43 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,16 @@ char	*modify_str(t_node *node, char *str)
 	return (new_str);
 }
 
-char	*ft_wwew(t_node *node, char *str, int idx, int *i)
+char	*ft_wwew(t_node *node, int idx, int *i)
 {
-	int	len;
+	int		len;
+	char	*str;
 
 	*i = idx + 1;
 	while (node->raw_cmd[*i] == ' ')
 		(*i)++;
 	len = get_len_value(node, *i);
-	str = malloc(len + 1);
-	str[len] = '\0';
+	str = calloc(len + 2, 1);
 	return (str);
 }
 
@@ -68,7 +68,7 @@ char	*set(t_node *node, char *str, int *i, int *j)
 	return (str);
 }
 
-char	*set_token(t_node *node, char *chars, char *str, int *i)
+void	set_token(t_node *node, char *chars, char *str, int *i)
 {
 	int	j;
 
@@ -92,7 +92,6 @@ char	*set_token(t_node *node, char *chars, char *str, int *i)
 			str = set(node, str, i, &j);
 		str[++j] = node->raw_cmd[(*i)++];
 	}
-	return (str);
 }
 
 // verifica per ogni redirection ( > >> < <<)
@@ -110,16 +109,19 @@ void	set_token_redirection(t_node *node, int idx, int num)
 	char	*str;
 	char	*new_str;
 
-	str = NULL;
-	new_str = NULL;
 	chars = "><()";
-	str = ft_wwew(node, str, idx, &i);
-	str = set_token(node, chars, str, &i);
+	str = ft_wwew(node, idx, &i);
+	set_token(node, chars, str, &i);
 	new_str = modify_str(node, str);
-	if (new_str)
+	if (new_str != NULL)
+	{
 		node->content.redir[num].value = new_str;
+		free(str);
+		str = NULL;
+	}
 	else
 		node->content.redir[num].value = str;
+
 	set_redir_op(node, idx, num);
 	set_raw_cmd_and_quote_idx(node, idx, i);
 }

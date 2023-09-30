@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 21:53:08 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/20 22:31:06 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/29 20:51:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,8 +35,8 @@ int	ft_here_doc(t_node *node, int i, char *new_value)
 				perror("unlink error");
 			free(path);
 		}
-		free(str);
 	}
+	free(str);
 	free(node->content.redir[i].value);
 	node->content.redir[i].value = new_value;
 	close(fd);
