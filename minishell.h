@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:25 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/10/02 15:47:42 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 17:03:11 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -258,6 +258,7 @@ t_node					*ft_do_and_or(t_node *node, t_node *prev_node);
 int						ft_single_cmd2(t_node *node, int (*f)(t_node *));
 
 // UTILS
+int						ft_reach(t_shell *shell, char *str);
 int						ft_strlen(char *s);
 char					*ft_strchr(char *s, char ch);
 void					ft_clean_exit(t_shell *shell, char *str,

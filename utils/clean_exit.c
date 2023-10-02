@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/10/02 15:46:55 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 17:04:12 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,10 +70,10 @@ void	ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 		just_reset(shell);
 		if (exit_status != 0)
 			shell->exit_status = exit_status;
-		if (flag_status == 1)
+		if (g_flag_status == 1)
 		{
 			shell->exit_status = 130;
-			flag_status = 0;
+			g_flag_status = 0;
 		}
 	}
 	if (str)

@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/10/02 15:45:53 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 17:01:49 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,6 @@ int	ft_reach(t_shell *shell, char *str)
 			}
 			return (1);
 		}
-	}
-	return (0);
-}
-
-int	ft_controll(t_node *node, t_shell *shell, int y, int ij)
-{
-	if (ft_check(node, y) == 1)
-	{
-		if (node->content.cmd[++y])
-			ft_name_value(node, shell, ij, y);
-		return (1);
 	}
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 01:29:36 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/10/02 15:46:01 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 17:02:02 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,17 @@ int	ft_check(t_node *node, int i)
 	}
 	if (ftcheck11(node, i) == 1)
 		return (write(2, "not a valid identifier\n", 23) - 22);
+	return (0);
+}
+
+int	ft_controll(t_node *node, t_shell *shell, int y, int ij)
+{
+	if (ft_check(node, y) == 1)
+	{
+		if (node->content.cmd[++y])
+			ft_name_value(node, shell, ij, y);
+		return (1);
+	}
 	return (0);
 }
 
