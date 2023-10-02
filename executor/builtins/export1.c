@@ -74,7 +74,7 @@ void	ft_conc(t_shell *shell, char *str, int y)
 				if (str[j] == '=')
 					break ;
 			}
-			new_str = ft_strjoin(shell->env[i], str + ++j);
+			new_str = ft_strjoin(shell->env[i], str + j);
 			free(shell->env[i]);
 			shell->env[i] = new_str;
 			return ;

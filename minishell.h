@@ -27,6 +27,7 @@
 # include <sys/wait.h>
 # include <termios.h>
 # include <unistd.h>
+#include <stdint.h>
 
 // MESSAGE
 # define PROMPT_MSG "fbrdhell-2.0 $"
