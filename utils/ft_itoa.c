@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 21:55:45 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/03 01:33:03 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:46:45 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,4 +74,19 @@ char	*ft_itoa(int n)
 		nlen--;
 	}
 	return (str);
+}
+
+void	*ft_calloc(size_t count, size_t size)
+{
+	void	*res;
+	int		len;
+
+	if (count == SIZE_MAX || size == SIZE_MAX)
+		return (NULL);
+	len = count * size;
+	res = (void *) malloc(len);
+	if (res == NULL)
+		return (NULL);
+	ft_bzero(res, len);
+	return (res);
 }

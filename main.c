@@ -3,14 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/06/25 22:20:06 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/30 11:35:28 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:49:31 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_flag_status = 0;
 
 // ritorna  1 in caso sia presente nelle double quotes "
 // ritorna -1 in caso sia presente nelle single quotes '
@@ -53,23 +55,15 @@ int	main(int argc, char **argv, char **env)
 			set_tree(&shell);
 			set_components(&shell);
 			executev2(&shell);
-			ft_clean_exit(&shell, NULL, 0, 0);
+			ft_clean_exit(&shell, NULL, shell.exit_status, 0);
 		}
 	}
 }
 
 //--------------------------------------------------------------
-// uscita ctlr+d exit_status?
 
-// valgrind --leak-check=full  --show-leak-kinds=definite,indirect,possible -s ./minishell
-
-// SIGNAL:
-//  void	ft_reset_signal(void)
-//  clean_history
-//  exit_status
-//  --exit
-//  *
-//  flag open?
+// valgrind --leak-check=full  
+//--show-leak-kinds=definite,indirect,possible -s ./minishell
 
 // --- single cmd ---
 // 3. invalid read/write dopo ft_wwew ->calloc

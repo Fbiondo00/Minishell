@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 18:59:32 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/30 17:30:39 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 00:01:26 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,20 +39,6 @@ void	bubble_sort_strings(char **strings, int num_strings)
 	}
 }
 
-void	get_idx_eq_str42(char *str)
-{
-	int	i;
-
-	i = -1;
-	while (str[++i])
-	{
-		if (str[i] == '=')
-			break ;
-	}
-	str[i] = '=';
-}
-
-
 void	ft_conc_2(t_shell *shell, char *str, int i)
 {
 	int		y;
@@ -83,9 +69,6 @@ void	ft_conc(t_shell *shell, char *str, int y)
 		if ((ft_strncmp(shell->env[i], str, y, 1)) == 0)
 		{
 			j = -1;
-			
-			get_idx_eq_str42(shell->env[i]);
-
 			while (str[++j])
 			{
 				if (str[j] == '=')

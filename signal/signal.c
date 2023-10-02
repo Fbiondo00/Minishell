@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/22 17:11:30 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:37:48 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 
 void	ft_head(int sign)
 {
-	// t_shell *shell;
 	if (sign == SIGINT)
 	{
 		write(1, "\n", 1);
 		// rl_replace_line("", 1);
 		rl_on_new_line();
 		rl_redisplay();
-		// shell->error = 130;
+		flag_status = 1;
 	}
 }
 

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/30 01:03:14 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:46:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ void	recursive_remove(t_node *node)
 		recursive_remove(node->right);
 		remove_node(node);
 	}
-
 }
 
 void	remove_tree(t_shell *shell)
@@ -71,6 +70,11 @@ void	ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 		just_reset(shell);
 		if (exit_status != 0)
 			shell->exit_status = exit_status;
+		if (flag_status == 1)
+		{
+			shell->exit_status = 130;
+			flag_status = 0;
+		}
 	}
 	if (str)
 		write(2, str, ft_strlen(str));

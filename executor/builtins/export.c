@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 16:19:07 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/30 17:04:20 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/02 15:45:53 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,33 +49,15 @@ int	ft_reach(t_shell *shell, char *str)
 	return (0);
 }
 
-void	ft_name_value(t_node *node, t_shell *shell, int ij, int y)
+int	ft_controll(t_node *node, t_shell *shell, int y, int ij)
 {
-	int	i;
-	int	j;
-
-	j = -1;
-	i = 0;
-	while (shell->env[++j])
-		;
-	while (node->content.cmd[y][++i])
-		;
-	if (ij > y)
+	if (ft_check(node, y) == 1)
 	{
-		if ((ft_reach(shell, node->content.cmd[y]) == 1))
-		{
-			if (node->content.cmd[y + 1])
-				ft_name_value(node, shell, ij, ++y);
-			return ;
-		}
-		shell->env =  ft_realloc(shell->env, sizeof(char *) * (j + 2));
-		shell->env[j] = ft_strdup(node->content.cmd[y]);
-		shell->env[j + 1] = 0;
+		if (node->content.cmd[++y])
+			ft_name_value(node, shell, ij, y);
+		return (1);
 	}
-	if (ij - 1 == y)
-		return ;
-	else
-		ft_name_value(node, shell, ij, ++y);
+	return (0);
 }
 
 void	ft_export1(t_shell *shell)
@@ -111,11 +93,6 @@ void	ft_export(t_shell *shell, t_node *node)
 	ij = ft_get_len_mat(node);
 	if (ij >= 2)
 	{
-		if (ft_check(node) == 1)
-		{
-			node->shell->exit_status = 1;
-			return ;
-		}
 		ft_name_value(node, shell, ij, 1);
 		node->shell->exit_status = 0;
 		return ;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/09 15:42:52 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/29 20:35:43 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/10/02 15:46:37 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*ft_wwew(t_node *node, int idx, int *i)
 	while (node->raw_cmd[*i] == ' ')
 		(*i)++;
 	len = get_len_value(node, *i);
-	str = calloc(len + 2, 1);
+	str = ft_calloc(len + 2, 1);
 	return (str);
 }
 
@@ -121,7 +121,6 @@ void	set_token_redirection(t_node *node, int idx, int num)
 	}
 	else
 		node->content.redir[num].value = str;
-
 	set_redir_op(node, idx, num);
 	set_raw_cmd_and_quote_idx(node, idx, i);
 }
