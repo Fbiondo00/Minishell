@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/25 01:29:36 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/10/02 17:02:02 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/03 17:54:07 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,20 +19,20 @@ int	ftcheck11(t_node *node, int i)
 	y = -1;
 	if (node->content.cmd[i])
 	{
-		while (node->content.cmd[i][++y])
+		while ((node->content.cmd[i][++y] != '=' && node->content.cmd[i][y] != '+') && node->content.cmd[i][y])
 		{
 			if ((node->content.cmd[i][y] >= '0'
 					&& node->content.cmd[i][y] <= '9')
 				|| (node->content.cmd[i][y] >= 'a'
 					&& node->content.cmd[i][y] <= 'z')
 				|| (node->content.cmd[i][y] >= 'A'
-					&& node->content.cmd[i][y] <= 'Z')
-				|| node->content.cmd[i][y] == '='
-				|| node->content.cmd[i][y] == '+')
+					&& node->content.cmd[i][y] <= 'Z'))
 				continue ;
 			else
 				return (1);
 		}
+		if(node->content.cmd[i][++y] == '+' && node->content.cmd[i][++y] == '=')
+			return(1);
 	}
 	return (0);
 }
