@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/27 20:51:33 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/23 21:41:26 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/30 17:05:36 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ void	ft_remove_quotes(t_node *node, int idx, char d)
 			j = -1;
 			k = 0;
 			str = malloc(ft_strlen(node->content.cmd[idx]));
-			str[ft_strlen(node->content.cmd[idx]) - 1] = '\0';
+			str[ft_strlen(node->content.cmd[idx])] = '\0';
 			while (++j < ft_strlen(node->content.cmd[idx]))
 			{
 				if (j == i)

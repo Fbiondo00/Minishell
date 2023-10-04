@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export1.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/24 18:59:32 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/10/03 17:34:15 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/18 17:14:28 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,7 @@ void	ft_conc(t_shell *shell, char *str, int y)
 				if (str[j] == '=')
 					break ;
 			}
-			new_str = ft_strjoin(shell->env[i], str + j);
+			new_str = ft_strjoin(shell->env[i], str + ++j);
 			free(shell->env[i]);
 			shell->env[i] = new_str;
 			return ;

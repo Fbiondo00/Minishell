@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/14 23:58:55 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/10/02 15:41:05 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/19 17:16:59 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	ft_get_len_env(t_shell *shell)
 {
 	int	ij;
 
-	ij = -1;
+	ij = 0;
 	while (shell->env[++ij])
 		;
 	return (ij);

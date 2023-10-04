@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/19 02:03:01 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/29 19:04:56 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/20 03:23:31 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ int	norm_if_exec_recursive(t_node **node, t_node **temp)
 		if ((*node) == NULL)
 		{
 			while ((*temp)->shell->lvl_subshell > 0)
-				ft_clean_exit((*temp)->shell, NULL, (*temp)
+				ft_clean_exit((*node)->shell, NULL, (*node)
 					->shell->exit_status, 1);
 			if ((*temp)->shell->lvl_subshell == 0)
 				return (1);

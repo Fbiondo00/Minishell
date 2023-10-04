@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_exp_doll.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/31 17:50:39 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/23 19:46:42 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/31 18:04:34 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ char	*modify_raw_and_quote(t_node *node, int idx, char *str, char c)
 		new_st = str1(node, str, idx, new_st);
 	else if (c == 48)
 	{
-		while (++i < tot_len && node->raw_cmd[i])
+		while (++i < tot_len)
 		{
 			if (node->raw_cmd[i] == 34)
 				new_st[i] = 34;

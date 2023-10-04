@@ -76,7 +76,7 @@ void	set_raw_cmd_and_quote_idx(t_node *node, int start, int finish)
 
 	i = -1;
 	chars = "><";
-	if (start >= 1 && ft_strchr(chars, node->raw_cmd[start - 1]))
+	if (ft_strchr(chars, node->raw_cmd[start - 1]))
 		start--;
 	while (++i < ft_strlen(node->raw_cmd))
 	{

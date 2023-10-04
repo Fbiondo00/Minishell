@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   clean_exit.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
+/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/02 01:14:21 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/10/02 17:04:12 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/09/21 00:54:16 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,13 @@
 
 void	recursive_remove(t_node *node)
 {
-	if (is_node_cmd(node))
-		remove_node(node);
-	else
+	if (node->left != NULL)
 	{
 		recursive_remove(node->left);
 		recursive_remove(node->right);
+	}	
+	else
 		remove_node(node);
-	}
 }
 
 void	remove_tree(t_shell *shell)
@@ -29,7 +28,10 @@ void	remove_tree(t_shell *shell)
 	if (is_node_cmd(shell->tree))
 		remove_node(shell->tree);
 	else
+	{
 		recursive_remove(shell->tree);
+		remove_node(shell->tree);
+	}
 	shell->tree = NULL;
 }
 
@@ -70,11 +72,6 @@ void	ft_clean_exit(t_shell *shell, char *str, int exit_status, int to_exit)
 		just_reset(shell);
 		if (exit_status != 0)
 			shell->exit_status = exit_status;
-		if (g_flag_status == 1)
-		{
-			shell->exit_status = 130;
-			g_flag_status = 0;
-		}
 	}
 	if (str)
 		write(2, str, ft_strlen(str));

@@ -6,7 +6,7 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/23 15:46:49 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/23 18:22:17 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/27 02:15:59 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,5 +97,26 @@ void	*ft_memcpy(void *dest, const void *src, size_t n)
 
 void	*ft_realloc(void *ptr, size_t size)
 {
-	return (realloc(ptr, size));
+	void	*new_ptr;
+
+	if (ptr)
+	{
+		if (size)
+		{
+			new_ptr = malloc(size);
+			if (!new_ptr)
+				return (NULL);
+			ft_bzero(new_ptr, size);
+			ft_memcpy(new_ptr, ptr, size);
+		}
+		else
+		{
+			new_ptr = (unsigned char *)malloc(sizeof(ptr));
+			if (!new_ptr)
+				return (NULL);
+		}
+		free(ptr);
+		return (new_ptr);
+	}
+	return ((unsigned char *)malloc(sizeof(ptr) * size));
 }

@@ -6,21 +6,15 @@
 /*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/21 18:03:28 by rdolzi            #+#    #+#             */
-/*   Updated: 2023/09/30 20:25:03 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/09/03 02:02:22 by rdolzi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../minishell.h"
 
-int	ft_isdigit(int n, int y)
+int	ft_isdigit(int n)
 {
-	if (y == 0)
-	{
-		if (n != 45)
-			return (0);
-		return (1);
-	}
-	if (n < 48 || n > 57)
+	if ((n < 48 || n > 57))
 		return (0);
 	return (1);
 }
@@ -28,13 +22,11 @@ int	ft_isdigit(int n, int y)
 int	is_check(char *str)
 {
 	int	i;
-	int	y;
 
-	y = -1;
 	i = -1;
 	while (str[++i])
 	{
-		if (!ft_isdigit(str[i], ++y))
+		if (!ft_isdigit(str[i]))
 			return (0);
 	}
 	return (1);

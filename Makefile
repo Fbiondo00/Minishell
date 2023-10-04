@@ -10,7 +10,7 @@ UTILS    =  $(wildcard utils/*.c)
 OBJS  = ${SRC:.c=.o} $(PARSER:%.c=%.o) $(LEXER:%.c=%.o) $(EXECUTOR:%.c=%.o) $(SIGNAL:%.c=%.o) $(UTILS:%.c=%.o)
 
 FLAGS = -Wextra -Werror -Wall
-CC    = @gcc -g3 ${FLAGS} 
+CC    = @gcc ${FLAGS} 
 RM    = @rm -f
 
 RED		=	\033[31m

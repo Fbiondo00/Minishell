@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_mod_raw_a_qu.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rdolzi <rdolzi@student.42roma.it>          +#+  +:+       +#+        */
+/*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/30 22:19:31 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/09/23 19:47:00 by rdolzi           ###   ########.fr       */
+/*   Updated: 2023/08/31 18:03:13 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ char	*modify_raw_and_quote3(t_node *node, int idx, char *str, char c)
 		new_st = str3(node, str, idx, new_st);
 	else if (c == 48)
 	{
-		while (++i < tot_len && node->raw_cmd[i])
+		while (++i < tot_len)
 		{
 			if (node->raw_cmd[i] == 34)
 				new_st[i] = 34;
