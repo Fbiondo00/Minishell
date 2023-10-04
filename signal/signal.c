@@ -6,7 +6,7 @@
 /*   By: flaviobiondo <flaviobiondo@student.42.f    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/07/15 18:01:04 by flaviobiond       #+#    #+#             */
-/*   Updated: 2023/10/03 15:33:58 by flaviobiond      ###   ########.fr       */
+/*   Updated: 2023/10/04 13:31:55 by flaviobiond      ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void	ft_head(int sign)
 	if (sign == SIGINT)
 	{
 		write(1, "\n", 1);
-		// rl_repla ce_line("", 1);
+		rl_replace_line("", 1);
 		rl_on_new_line();
 		rl_redisplay();
 		g_flag_status = 1;
